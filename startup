@@ -1,0 +1,2 @@
+ttab 'cd client && flutter run lib/main.dart'
+ttab 'cd server && mix phx.server'
