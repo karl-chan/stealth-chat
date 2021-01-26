@@ -15,8 +15,8 @@ defmodule Server.Application do
       ServerWeb.Endpoint,
       # Start a worker by calling: Server.Worker.start_link(arg)
       # {Server.Worker, arg}
-      Server.Cache.config(),
-      Server.Mongo.config()
+      Server.Caches.UserCache.spec(),
+      Server.Mongo.spec()
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

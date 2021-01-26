@@ -1,6 +1,5 @@
 defmodule ServerWeb.Router do
   use ServerWeb, :router
-  alias Server.Cache
   require Logger
 
   pipeline :browser do
@@ -13,44 +12,6 @@ defmodule ServerWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  defp verify_user_signature(conn, _opts) do
-    sig_user = get_req_header(conn, "sig_user") |> List.first()
-    sig_timestamp = get_req_header(conn, "sig_timestamp") |> List.first()
-    sig_hash = get_req_header(conn, "sig_hash") |> List.first()
-    body = conn.body_params
-
-    try do
-      if sig_user == nil or sig_timestamp == nil or sig_hash == nil do
-        throw("Missing signature")
-      end
-
-      timestamp =
-        sig_timestamp
-        |> Integer.parse()
-        |> Kernel.elem(0)
-        |> DateTime.from_unix!()
-
-      now = DateTime.utc_now()
-
-      if abs(DateTime.diff(now, timestamp)) > 60 do
-        throw("Timestamp too old: #{timestamp} compared to now: #{now}!")
-      end
-
-      msg = "#{sig_timestamp}|#{body}"
-      user_public_key = Cache.get_public_key(sig_user)
-      {:ok, sigvalid} = ExPublicKey.verify(msg, Base.decode64!(sig_hash), user_public_key)
-
-      if not sigvalid do
-        throw("Signature does not match!")
-      end
-    catch
-      err ->
-        conn |> put_status(:unauthorized) |> text(err) |> halt()
-    else
-      _ -> conn
-    end
   end
 
   scope "/", ServerWeb do
@@ -69,7 +30,7 @@ defmodule ServerWeb.Router do
 
     scope "/" do
       # authenticated routes
-      pipe_through :verify_user_signature
+      pipe_through ServerWeb.Plugs.AuthPlug
 
       resources "/user", UserController, only: [:show, :delete]
     end
@@ -88,6 +49,13 @@ defmodule ServerWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ServerWeb.Telemetry
+    end
+  end
+
+  if Mix.env() == :test do
+    scope "/", ServerWeb do
+      pipe_through ServerWeb.Plugs.AuthPlug
+      resources "/test", TestController, only: [:index, :create]
     end
   end
 end
