@@ -8,15 +8,17 @@ import 'package:stealth_chat/login/LoginPage.dart';
 
 part 'dictionary_page.freezed.dart';
 
-class DictionaryController extends GetxController {
+class DictionaryController extends LoginController {
   final searchTermController = TextEditingController();
   RxBool isSearching = false.obs;
   Rx<Search> currSearch = Rx(null);
 
+  DictionaryController(Function callback) : super(callback);
+
   void performSearch() async {
     isSearching.value = true;
     String term = searchTermController.text;
-    await LoginController.loginAndRedirect(term, () async {
+    await loginAndRedirect(term, () async {
       // login failed
       currSearch.value = (await searchDictionary(term));
       isSearching.value = false;
@@ -40,14 +42,19 @@ class DictionaryController extends GetxController {
   }
 }
 
-class DictionaryPage extends StatelessWidget {
+class DictionaryPage extends LoginPage {
+  final Function callback;
+
+  DictionaryPage({Key key, Function callback})
+      : this.callback = callback,
+        super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    DictionaryController c = Get.put(DictionaryController());
+    DictionaryController c = Get.put(DictionaryController(callback));
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(
           Icons.book,

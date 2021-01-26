@@ -1,11 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stealth_chat/db/contacts.dart';
 import 'package:stealth_chat/db/db.dart';
 import 'package:stealth_chat/util/properties.dart';
 import 'package:stealth_chat/util/security/keys.dart';
-
-import 'db/contacts.dart';
 
 part 'globals.freezed.dart';
 
@@ -36,6 +35,10 @@ class Globals {
 
     return this;
   }
+}
+
+class Paths {
+  static const ACCEPT_INVITE = '/accept-invite';
 }
 
 class Prefs {

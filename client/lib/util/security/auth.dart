@@ -1,9 +1,8 @@
 import 'package:crypton/crypton.dart';
 import 'package:get/get.dart';
+import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
-
-import '../../globals.dart';
 
 class Auth {
   static Globals globals = Get.find();

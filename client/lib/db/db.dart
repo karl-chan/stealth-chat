@@ -5,8 +5,7 @@ import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-
-import 'contacts.dart';
+import 'package:stealth_chat/db/contacts.dart';
 
 part 'db.g.dart';
 
