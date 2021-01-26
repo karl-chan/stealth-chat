@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../globals.dart';
+import 'package:stealth_chat/globals.dart';
 
 class SettingsPage extends StatelessWidget {
+  SettingsPage({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();

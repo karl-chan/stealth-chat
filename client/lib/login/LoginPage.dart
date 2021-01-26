@@ -6,10 +6,17 @@ import 'package:stealth_chat/stealth/dictionary_page.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 
 class LoginController extends GetxController {
-  static loginAndRedirect(String password, Future<void> onLoginFailed()) async {
+  final Function callback;
+
+  LoginController(Function callback) : this.callback = callback;
+
+  loginAndRedirect(String password, Future<void> onLoginFailed()) async {
     bool success = Auth.login(password);
     if (success) {
       Get.off(HomePage());
+      if (callback != null) {
+        callback();
+      }
     } else {
       await onLoginFailed();
     }
@@ -17,9 +24,14 @@ class LoginController extends GetxController {
 }
 
 class LoginPage extends StatelessWidget {
+  final Function callback;
+
+  LoginPage({Key key, Function callback})
+      : this.callback = callback,
+        super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Get.put(LoginController());
-    return DictionaryPage();
+    return DictionaryPage(callback: callback);
   }
 }

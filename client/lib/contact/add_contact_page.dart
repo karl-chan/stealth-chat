@@ -1,14 +1,169 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:share/share.dart';
+import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/util/security/rsa.dart';
 
-class AddContactPage extends StatefulWidget {
-  @override
-  _AddContactPageState createState() => _AddContactPageState();
+class AddContactController extends GetxController {
+  final Uri inviteLink;
+
+  RxString message = ''.obs;
+  RxString renderedMessage = ''.obs;
+
+  AddContactController(Globals globals)
+      : this.inviteLink = generateInviteLink(globals) {
+    updateRenderedMessage();
+  }
+
+  static Uri generateInviteLink(Globals globals) {
+    String id = globals.user.id;
+    String name = globals.user.name;
+    String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    String signature = Rsa.sign('$id|$name|$timestamp', globals.user.keys);
+
+    return Uri(
+        scheme: globals.properties.get('applink.scheme'),
+        host: globals.properties.get('applink.host'),
+        path: Paths.ACCEPT_INVITE,
+        queryParameters: {
+          'id': id,
+          'name': name,
+          'ts': timestamp,
+          'sig': signature
+        });
+  }
+
+  void updateMessage(String newMessage) {
+    message.value = newMessage;
+    updateRenderedMessage();
+  }
+
+  void updateRenderedMessage() {
+    renderedMessage.value =
+        '$message\nJoin me by clicking on the following link: $inviteLink';
+  }
+
+  void sendInvite() {
+    Share.share(renderedMessage.value);
+  }
 }
 
-class _AddContactPageState extends State<AddContactPage> {
+class AddContactPage extends StatelessWidget {
+  const AddContactPage({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    Globals globals = Get.find();
+
+    AddContactController c = Get.put(AddContactController(globals));
+
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Add contact'),
+            bottom: TabBar(
+              tabs: [Tab(text: 'Via Message'), Tab(text: 'In person')],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              Padding(
+                  padding: EdgeInsets.all(10),
+                  child: ViaMessageTab(globals, c)),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: AcceptInviteTab(globals, c),
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+class HeaderText extends StatelessWidget {
+  final String text;
+
+  HeaderText(String text, {Key key})
+      : this.text = text,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
+    );
+  }
+}
+
+class ViaMessageTab extends StatelessWidget {
+  final Globals globals;
+
+  final AddContactController c;
+
+  const ViaMessageTab(Globals globals, AddContactController c, {Key key})
+      : this.globals = globals,
+        this.c = c,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 20),
+        HeaderText("Via email, SMS or IM"),
+        SizedBox(height: 20),
+        TextField(
+          onChanged: c.updateMessage,
+          keyboardType: TextInputType.multiline,
+          minLines: 3,
+          maxLines: null,
+          decoration: InputDecoration(
+              labelText: "Add a personal message (optional)",
+              hintText: "e.g. Hi, this is ${globals.user.name}."),
+        ),
+        SizedBox(height: 50),
+        HeaderText("Preview"),
+        Card(child: Obx(() => SelectableText(c.renderedMessage.value))),
+        MaterialButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Send invite'),
+              const SizedBox(width: 10),
+              const Icon(Icons.send)
+            ],
+          ),
+          color: Colors.green,
+          textColor: Colors.white,
+          onPressed: c.sendInvite,
+        )
+      ],
+    ));
+  }
+}
+
+class AcceptInviteTab extends StatelessWidget {
+  final Globals globals;
+
+  final AddContactController c;
+
+  const AcceptInviteTab(Globals globals, AddContactController c, {Key key})
+      : this.globals = globals,
+        this.c = c,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [],
+    ));
   }
 }

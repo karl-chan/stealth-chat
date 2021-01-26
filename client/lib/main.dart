@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'boot/boot_screen.dart';
+import 'package:stealth_chat/boot/boot_screen.dart';
+import 'package:stealth_chat/contact/accept_invite_page.dart';
+import 'package:stealth_chat/globals.dart';
+import 'package:uni_links/uni_links.dart';
 
 void main() async {
   runApp(MainApp());
@@ -14,10 +16,13 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  Function bootCallback;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    registerAppLinkHandlers();
   }
 
   @override
@@ -36,6 +41,32 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         break;
       default:
     }
+  }
+
+  registerAppLinkHandlers() async {
+    // on cold boot
+    Uri appLink = await getInitialUri();
+    await handleAppLinkOnColdBoot(appLink);
+
+    // on warm pause
+    getUriLinksStream().listen((link) async {
+      await handleAppLinkOnWarmPause(link);
+    });
+  }
+
+  handleAppLinkOnColdBoot(Uri appLink) async {
+    if (appLink != null) {
+      if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
+        bootCallback = () async {
+          Get.to(AcceptInvitePage(appLink));
+        };
+      }
+    }
+  }
+
+  handleAppLinkOnWarmPause(Uri appLink) async {
+    await handleAppLinkOnColdBoot(appLink);
+    Get.offAll(BootScreen(callback: bootCallback));
   }
 
   @override
@@ -58,7 +89,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BootScreen(),
+      home: BootScreen(callback: bootCallback),
     );
   }
 }

@@ -26,10 +26,12 @@ dependencies:
   http: 0.12.1
   ini:
   json_serializable: 
+  logging:
   moor: 3.4.0
   package_info: 
   path:
   path_provider:
+  share: '>=0.6.5+4 <2.0.0'
   shared_preferences: 
   steel_crypt: 
     git:
@@ -37,6 +39,7 @@ dependencies:
       ref: 662008c
   sqlite3_flutter_libs: 0.3.0
   tuple:
+  uni_links: 0.4.0
   uuid:
   web_socket_channel:
 

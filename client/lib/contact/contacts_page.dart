@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stealth_chat/contact/add_contact_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
 
-import 'add_contact_page.dart';
-
 class ContactsPage extends StatelessWidget {
+  ContactsPage({Key key}) : super(key: key);
+
   void _navigate(Menu item) {
     switch (item) {
       case Menu.addContact:

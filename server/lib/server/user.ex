@@ -14,7 +14,7 @@ defmodule Server.User do
       if already_exists(id) do
         {:error, "Username #{id} is already taken!"}
       else
-        case Mongo.insert_one(:mongo, @coll, %{"id" => id, "public_key" => public_key}) do
+        case Mongo.insert_one(:mongo, @coll, %{"id" => id, "publicKey" => public_key}) do
           {:ok, _} ->
             {:ok, "Registered user #{id} successfully!"}
 

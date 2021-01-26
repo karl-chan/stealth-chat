@@ -18,6 +18,9 @@ enum RegistrationStep {
 class RegistrationController extends GetxController {
   final String id = Uuid().v4();
   final Globals globals = Get.find();
+  final Function callback;
+
+  RegistrationController(Function callback) : this.callback = callback;
 
   Rx<RegistrationStep> step = RegistrationStep.SET_USERNAME.obs;
   RxBool isRegistering = false.obs;
@@ -109,8 +112,12 @@ class RegistrationController extends GetxController {
       case RegistrationStep.REGISTRATION:
         final registrationSuccess = await runRegistration();
         if (registrationSuccess) {
-          Get.offAll(HomePage());
-        } else {}
+          if (callback != null) {
+            callback();
+          } else {
+            Get.off(HomePage());
+          }
+        }
     }
   }
 
@@ -140,9 +147,15 @@ class RegistrationController extends GetxController {
 }
 
 class RegistrationPage extends StatelessWidget {
+  final Function callback;
+
+  RegistrationPage({Key key, Function callback})
+      : this.callback = callback,
+        super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(RegistrationController());
+    final c = Get.put(RegistrationController(callback));
 
     return Scaffold(
         appBar: AppBar(title: Text("Register")),

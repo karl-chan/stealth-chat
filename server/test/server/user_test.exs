@@ -26,7 +26,7 @@ defmodule Server.UserTest do
   test "create, show and delete user" do
     assert {:ok, "Registered user test successfully!"} == User.create("test", "public_key", true)
     {:ok, user} = User.show("test")
-    assert match?(%{"id" => "test", "public_key" => "public_key"}, user)
+    assert match?(%{"id" => "test", "publicKey" => "public_key"}, user)
     assert {:ok, "User test deleted!"} == User.delete("test")
   end
 end
