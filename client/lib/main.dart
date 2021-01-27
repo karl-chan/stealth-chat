@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:logging/logging.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
 import 'package:stealth_chat/globals.dart';
@@ -79,8 +77,6 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    log('Building main...', level: Level.WARNING.value);
-    log('Callback: $bootCallback', level: Level.WARNING.value);
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
