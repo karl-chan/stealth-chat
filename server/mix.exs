@@ -41,13 +41,14 @@ defmodule Server.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:cachex, "~> 3.3.0"},
       {:configparser_ex, "~> 4.0.0"},
+      {:enum_type, "~> 1.1.3"},
       {:ex_crypto, "~> 0.10.0"},
       {:floki, "~> 0.29.0"},
       {:google_api_drive, "~> 0.20.4"},
       {:goth, "~> 1.2.0"},
       {:jason, "~> 1.0"},
       {:mock, "~> 0.3.6", only: :test},
-      {:mongodb_driver, "~> 0.6"},
+      {:mongodb_driver, "~> 0.7.1"},
       {:plug_cowboy, "~> 2.0"},
       {:tesla, "~> 1.4.0"}
     ]

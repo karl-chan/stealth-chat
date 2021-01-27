@@ -6,9 +6,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class Api {
-  static final Globals globals = Get.find();
-
-  static final host = globals.properties.get('server.host');
+  static final host = Get.find<Globals>().properties.get('server.host');
 
   static Future<http.Response> get(String endpoint,
           {Map<String, String> headers: const {}}) =>
@@ -31,6 +29,7 @@ class Api {
 
   static Map<String, String> _sign(
       {Map<String, String> headers, dynamic body = ""}) {
+    Globals globals = Get.find();
     if (globals.user.id == null) {
       // no sign
       return headers;

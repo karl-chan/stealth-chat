@@ -1,22 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'aes.dart';
+part of 'error_event.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
 // ignore: non_constant_identifier_names
-_$_AesMessage _$_$_AesMessageFromJson(Map<String, dynamic> json) {
-  return _$_AesMessage(
-    encrypted: json['encrypted'] as String,
-    iv: json['iv'] as String,
+_$_ErrorMessage _$_$_ErrorMessageFromJson(Map<String, dynamic> json) {
+  return _$_ErrorMessage(
+    message: json['message'] as String,
   );
 }
 
 // ignore: non_constant_identifier_names
-Map<String, dynamic> _$_$_AesMessageToJson(_$_AesMessage instance) =>
+Map<String, dynamic> _$_$_ErrorMessageToJson(_$_ErrorMessage instance) =>
     <String, dynamic>{
-      'encrypted': instance.encrypted,
-      'iv': instance.iv,
+      'message': instance.message,
     };
