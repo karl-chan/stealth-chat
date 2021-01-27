@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logging/logging.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
 import 'package:stealth_chat/globals.dart';
@@ -16,6 +20,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  StreamSubscription _sub;
   Function bootCallback;
 
   @override
@@ -27,6 +32,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    if (_sub != null) {
+      _sub.cancel();
+    }
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -43,18 +51,18 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     }
   }
 
-  registerAppLinkHandlers() async {
+  Future<void> registerAppLinkHandlers() async {
     // on cold boot
     Uri appLink = await getInitialUri();
     await handleAppLinkOnColdBoot(appLink);
 
     // on warm pause
-    getUriLinksStream().listen((link) async {
+    _sub = getUriLinksStream().listen((link) async {
       await handleAppLinkOnWarmPause(link);
     });
   }
 
-  handleAppLinkOnColdBoot(Uri appLink) async {
+  Future<void> handleAppLinkOnColdBoot(Uri appLink) async {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
         bootCallback = () async {
@@ -64,13 +72,15 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     }
   }
 
-  handleAppLinkOnWarmPause(Uri appLink) async {
+  Future<void> handleAppLinkOnWarmPause(Uri appLink) async {
     await handleAppLinkOnColdBoot(appLink);
     Get.offAll(BootScreen(callback: bootCallback));
   }
 
   @override
   Widget build(BuildContext context) {
+    log('Building main...', level: Level.WARNING.value);
+    log('Callback: $bootCallback', level: Level.WARNING.value);
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

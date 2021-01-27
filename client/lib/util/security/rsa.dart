@@ -4,7 +4,6 @@ import 'package:stealth_chat/util/security/keys.dart';
 
 class Rsa {
   static String sign(String message, Keys keys) {
-    // ignore: deprecated_member_use
     return base64
         .encode(keys.privateKey.createSHA256Signature(utf8.encode(message)));
   }
