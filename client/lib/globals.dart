@@ -3,6 +3,7 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stealth_chat/db/contacts.dart';
 import 'package:stealth_chat/db/db.dart';
+import 'package:stealth_chat/socket/socket.dart';
 import 'package:stealth_chat/util/properties.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 
@@ -16,6 +17,9 @@ class Globals {
   // database handles
   Database db;
 
+  // socket handles
+  Socket socket;
+
   // app variables
   Properties properties;
   User user;
@@ -26,6 +30,8 @@ class Globals {
 
     AppDb appDb = AppDb();
     db = Database(appDb, ContactsDao(appDb));
+
+    socket = Socket(this);
 
     properties = await Properties.init();
 
