@@ -7,14 +7,18 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class AddContactController extends GetxController {
+  final TextEditingController personalMessageController;
   final Uri inviteLink;
 
   RxString message = ''.obs;
   RxString renderedMessage = ''.obs;
 
   AddContactController(Globals globals)
-      : this.inviteLink = generateInviteLink(globals) {
+      : this.personalMessageController =
+            TextEditingController(text: 'Hi, this is ${globals.user.name}!'),
+        this.inviteLink = generateInviteLink(globals) {
     updateRenderedMessage();
+    personalMessageController.addListener(updateRenderedMessage);
   }
 
   static Uri generateInviteLink(Globals globals) {
@@ -35,14 +39,12 @@ class AddContactController extends GetxController {
         });
   }
 
-  void updateMessage(String newMessage) {
-    message.value = newMessage;
-    updateRenderedMessage();
-  }
-
   void updateRenderedMessage() {
-    renderedMessage.value =
-        '$message\nJoin me by clicking on the following link: $inviteLink';
+    renderedMessage.value = '''${personalMessageController.text}
+
+Join me by opening the following link:
+
+$inviteLink''';
   }
 
   void sendInvite() {
@@ -116,19 +118,19 @@ class ViaMessageTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
-        HeaderText("Via email, SMS or IM"),
+        HeaderText('Send an email, SMS or IM'),
         SizedBox(height: 20),
         TextField(
-          onChanged: c.updateMessage,
+          controller: c.personalMessageController,
           keyboardType: TextInputType.multiline,
           minLines: 3,
           maxLines: null,
           decoration: InputDecoration(
-              labelText: "Add a personal message (optional)",
-              hintText: "e.g. Hi, this is ${globals.user.name}."),
+              labelText: 'Add a personal message (optional)',
+              hintText: 'e.g. Hi, this is ${globals.user.name}.'),
         ),
         SizedBox(height: 50),
-        HeaderText("Preview"),
+        HeaderText('Preview'),
         Card(child: Obx(() => SelectableText(c.renderedMessage.value))),
         MaterialButton(
           child: Row(

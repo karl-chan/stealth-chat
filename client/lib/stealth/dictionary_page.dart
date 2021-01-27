@@ -31,9 +31,9 @@ class DictionaryController extends LoginController {
     final document = parse(response.body);
     final searchResults =
         document.querySelectorAll('.def-block.ddef_block').map((e) {
-      String definition = e.querySelector(".def.ddef_d.db").text.trim();
+      String definition = e.querySelector('.def.ddef_d.db').text.trim();
       List<String> examples = e
-          .querySelectorAll(".examp.dexamp")
+          .querySelectorAll('.examp.dexamp')
           .map((e2) => e2.text.trim())
           .toList();
       return SearchResult(definition: definition, examples: examples);

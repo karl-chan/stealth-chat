@@ -6,13 +6,14 @@
     "configurations": [
         {
             "type": "mix_task",
-            "name": "mix (Default task)",
+            "name": "Phoenix",
             "request": "launch",
-            "projectDir": "${workspaceRoot}"
+            "task": "phx.server",
+            "projectDir": "${workspaceRoot}",
         },
         {
             "type": "mix_task",
-            "name": "mix test",
+            "name": "Tests",
             "request": "launch",
             "task": "test",
             "taskArgs": [
@@ -24,13 +25,6 @@
                 "test/**/test_helper.exs",
                 "test/**/*_test.exs"
             ]
-        },
-        {
-            "type": "mix_task",
-            "name": "mix phx.server",
-            "request": "launch",
-            "task": "phx.server",
-            "projectDir": "${workspaceRoot}",
         },
     ]
 }

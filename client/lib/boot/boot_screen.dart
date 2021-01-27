@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:logging/logging.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
 import 'package:stealth_chat/register/registration_page.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 enum BootStatus {
   BOOTING,
@@ -24,10 +22,10 @@ class BootController extends GetxController {
   boot() async {
     Globals globals;
     if (Get.isRegistered<Globals>()) {
-      log('Globals is already registered', level: Level.INFO.value);
+      logInfo('Globals is already registered');
       globals = Get.find();
     } else {
-      log('Initialising globals...', level: Level.INFO.value);
+      logInfo('Initialising globals...');
       globals = await Globals().init();
       Get.put(globals);
     }

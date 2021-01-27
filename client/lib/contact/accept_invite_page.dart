@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/api/user_api.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/home/home_page.dart';
+import 'package:stealth_chat/socket/client/accept_invite_event.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
@@ -13,6 +16,7 @@ class AcceptInviteController extends GetxController {
   final String id;
   final String timestamp;
   final String signature;
+  RSAPublicKey publicKey;
 
   final RxString name;
   final RxString errorText = RxString(null);
@@ -40,16 +44,18 @@ class AcceptInviteController extends GetxController {
       return;
     }
 
-    var user;
+    ShowUserResponse user;
     try {
       user = await UserApi.show(id);
+      publicKey = RSAPublicKey.fromPEM(user.publicKey);
     } catch (err) {
       errorText.value = 'Failed to obtain contact\'s information. $err';
+      logError(err);
       return;
     }
 
-    if (!Rsa.verify('$id|$name|$timestamp', signature,
-        Keys(publicKey: RSAPublicKey.fromPEM(user.publicKey)))) {
+    if (!Rsa.verify(
+        '$id|$name|$timestamp', signature, Keys(publicKey: publicKey))) {
       errorText.value =
           'The invite link is malformed. Please request a new link from your contact.';
       return;
@@ -62,6 +68,27 @@ class AcceptInviteController extends GetxController {
           'The invite link should be opened by your contact, not yourself.';
       return;
     }
+  }
+
+  void accept() async {
+    // notify server
+    globals.socket.client.acceptInvite
+        .push(AcceptInviteMessage(id: id, name: name.value));
+
+    // add to contacts
+    await globals.db.contacts.addContact(id, name.value, publicKey);
+
+    finish();
+    Get.snackbar('Done!', 'Added $name to my contacts.',
+        snackPosition: SnackPosition.BOTTOM);
+  }
+
+  void decline() {
+    finish();
+  }
+
+  void finish() {
+    Get.off(HomePage());
   }
 }
 
@@ -80,32 +107,52 @@ class AcceptInvitePage extends StatelessWidget {
 
     final errorScreen = Obx(() => Container(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error, color: Colors.red, size: 50),
-              Text(c.errorText.value)
+              Icon(Icons.error, color: Colors.red, size: 150),
+              SizedBox(height: 50),
+              Text(
+                c.errorText.value,
+                style: TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              )
             ],
           ),
         ));
 
-    final acceptInviteScreen = Obx(() => Column(
+    final acceptInviteScreen = Column(
+      children: [
+        SizedBox(height: 100),
+        Column(children: [
+          Text('Do you wish to add', style: TextStyle(fontSize: 18)),
+          SizedBox(height: 10),
+          Obx(() => Text(c.name.value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24))),
+          SizedBox(height: 10),
+          Text('to your contacts?', style: TextStyle(fontSize: 18))
+        ]),
+        SizedBox(height: 100),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(c.name.value),
-            Row(
-              children: [
-                TextButton(
-                  child: const Text('Confirm'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 8),
-              ],
+            OutlinedButton(
+              child: const Text('Accept'),
+              onPressed: c.accept,
+              style: OutlinedButton.styleFrom(
+                  primary: Colors.green, side: BorderSide(color: Colors.green)),
             ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              child: const Text('Decline'),
+              onPressed: c.decline,
+              style: OutlinedButton.styleFrom(
+                  primary: Colors.red, side: BorderSide(color: Colors.red)),
+            ),
+            const SizedBox(width: 8),
           ],
-        ));
+        ),
+      ],
+    );
 
     return Scaffold(
         appBar: AppBar(
