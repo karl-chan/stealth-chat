@@ -4,7 +4,7 @@ defmodule Server.User do
   @coll "users"
 
   def show(id) do
-    Mongo.find_one(:mongo, @coll, %{id: id})
+    Mongo.find_one(:mongo, @coll, %{id: id}, projection: %{_id: 0})
   end
 
   def create(id, public_key) do
