@@ -5,7 +5,7 @@ import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 
 class Auth {
-  static Globals globals = Get.find();
+  static final Globals globals = Get.find();
 
   static void setUser(String id, String name, String password, Keys keys) {
     assert(globals.user.id == null, "User is already registered!");
