@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/api/user_api.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/home/home_page.dart';
+import 'package:stealth_chat/socket/events.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
@@ -45,6 +48,7 @@ class AcceptInviteController extends GetxController {
       user = await UserApi.show(id);
     } catch (err) {
       errorText.value = 'Failed to obtain contact\'s information. $err';
+      logError(err);
       return;
     }
 
@@ -62,6 +66,21 @@ class AcceptInviteController extends GetxController {
           'The invite link should be opened by your contact, not yourself.';
       return;
     }
+  }
+
+  void accept() {
+    globals.socket.acceptInviteStream
+        .add(AcceptInviteMessage(id: id, name: name.value));
+    Get.snackbar('Done!', 'Added $name to my contacts.');
+    finish();
+  }
+
+  void decline() {
+    finish();
+  }
+
+  void finish() {
+    Get.off(HomePage());
   }
 }
 
@@ -93,13 +112,13 @@ class AcceptInvitePage extends StatelessWidget {
             Row(
               children: [
                 TextButton(
-                  child: const Text('Confirm'),
-                  onPressed: () {/* ... */},
+                  child: const Text('Accept'),
+                  onPressed: c.accept,
                 ),
                 const SizedBox(width: 8),
                 TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {/* ... */},
+                  child: const Text('Decline'),
+                  onPressed: c.decline,
                 ),
                 const SizedBox(width: 8),
               ],

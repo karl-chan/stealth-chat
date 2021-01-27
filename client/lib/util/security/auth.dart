@@ -52,6 +52,8 @@ class Auth {
       globals.user = globals.user.copyWith(
           keys: keys.copyWith(publicKey: publicKey, privateKey: privateKey));
 
+      globals.socket.connect();
+
       return true;
     } else {
       return false;

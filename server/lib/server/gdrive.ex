@@ -122,6 +122,7 @@ defmodule Server.GDrive do
     end
   end
 
+  @dialyzer {:nowarn_function, create_file: 3}
   def create_file(conn, path, body) do
     {dirname, basename} = {Path.dirname(path), Path.basename(path)}
 
