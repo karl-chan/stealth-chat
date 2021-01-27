@@ -1,8 +1,9 @@
 defmodule ServerWeb.UserSocket do
   use Phoenix.Socket
+  alias ServerWeb.Plugs.AuthPlug
 
   ## Channels
-  # channel "room:*", ServerWeb.RoomChannel
+  channel "message:*", ServerWeb.MessageChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -16,8 +17,22 @@ defmodule ServerWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(params, socket, _connect_info) do
+    sig_user = params["sig-user"]
+    sig_timestamp = params["sig-timestamp"]
+    sig_hash = params["sig-hash"]
+
+    msg = sig_timestamp
+
+    try do
+      AuthPlug.verify(sig_user, sig_timestamp, sig_hash, msg)
+    catch
+      err ->
+        {:error, err}
+    else
+      _ ->
+        {:ok, assign(socket, :user_id, sig_user)}
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
