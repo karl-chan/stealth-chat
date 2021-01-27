@@ -9,16 +9,18 @@ part of 'db.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Contact extends DataClass implements Insertable<Contact> {
   final String id;
-  final String ofUser;
-  Contact({@required this.id, @required this.ofUser});
+  final String name;
+  final String publicKey;
+  Contact({@required this.id, @required this.name, @required this.publicKey});
   factory Contact.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return Contact(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      ofUser:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}of_user']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      publicKey: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}public_key']),
     );
   }
   @override
@@ -27,8 +29,11 @@ class Contact extends DataClass implements Insertable<Contact> {
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<String>(id);
     }
-    if (!nullToAbsent || ofUser != null) {
-      map['of_user'] = Variable<String>(ofUser);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || publicKey != null) {
+      map['public_key'] = Variable<String>(publicKey);
     }
     return map;
   }
@@ -36,8 +41,10 @@ class Contact extends DataClass implements Insertable<Contact> {
   ContactsCompanion toCompanion(bool nullToAbsent) {
     return ContactsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      ofUser:
-          ofUser == null && nullToAbsent ? const Value.absent() : Value(ofUser),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      publicKey: publicKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publicKey),
     );
   }
 
@@ -46,7 +53,8 @@ class Contact extends DataClass implements Insertable<Contact> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Contact(
       id: serializer.fromJson<String>(json['id']),
-      ofUser: serializer.fromJson<String>(json['ofUser']),
+      name: serializer.fromJson<String>(json['name']),
+      publicKey: serializer.fromJson<String>(json['publicKey']),
     );
   }
   @override
@@ -54,57 +62,72 @@ class Contact extends DataClass implements Insertable<Contact> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'ofUser': serializer.toJson<String>(ofUser),
+      'name': serializer.toJson<String>(name),
+      'publicKey': serializer.toJson<String>(publicKey),
     };
   }
 
-  Contact copyWith({String id, String ofUser}) => Contact(
+  Contact copyWith({String id, String name, String publicKey}) => Contact(
         id: id ?? this.id,
-        ofUser: ofUser ?? this.ofUser,
+        name: name ?? this.name,
+        publicKey: publicKey ?? this.publicKey,
       );
   @override
   String toString() {
     return (StringBuffer('Contact(')
           ..write('id: $id, ')
-          ..write('ofUser: $ofUser')
+          ..write('name: $name, ')
+          ..write('publicKey: $publicKey')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, ofUser.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, publicKey.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Contact && other.id == this.id && other.ofUser == this.ofUser);
+      (other is Contact &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.publicKey == this.publicKey);
 }
 
 class ContactsCompanion extends UpdateCompanion<Contact> {
   final Value<String> id;
-  final Value<String> ofUser;
+  final Value<String> name;
+  final Value<String> publicKey;
   const ContactsCompanion({
     this.id = const Value.absent(),
-    this.ofUser = const Value.absent(),
+    this.name = const Value.absent(),
+    this.publicKey = const Value.absent(),
   });
   ContactsCompanion.insert({
     @required String id,
-    @required String ofUser,
+    @required String name,
+    @required String publicKey,
   })  : id = Value(id),
-        ofUser = Value(ofUser);
+        name = Value(name),
+        publicKey = Value(publicKey);
   static Insertable<Contact> custom({
     Expression<String> id,
-    Expression<String> ofUser,
+    Expression<String> name,
+    Expression<String> publicKey,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (ofUser != null) 'of_user': ofUser,
+      if (name != null) 'name': name,
+      if (publicKey != null) 'public_key': publicKey,
     });
   }
 
-  ContactsCompanion copyWith({Value<String> id, Value<String> ofUser}) {
+  ContactsCompanion copyWith(
+      {Value<String> id, Value<String> name, Value<String> publicKey}) {
     return ContactsCompanion(
       id: id ?? this.id,
-      ofUser: ofUser ?? this.ofUser,
+      name: name ?? this.name,
+      publicKey: publicKey ?? this.publicKey,
     );
   }
 
@@ -114,8 +137,11 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (ofUser.present) {
-      map['of_user'] = Variable<String>(ofUser.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (publicKey.present) {
+      map['public_key'] = Variable<String>(publicKey.value);
     }
     return map;
   }
@@ -124,7 +150,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
   String toString() {
     return (StringBuffer('ContactsCompanion(')
           ..write('id: $id, ')
-          ..write('ofUser: $ofUser')
+          ..write('name: $name, ')
+          ..write('publicKey: $publicKey')
           ..write(')'))
         .toString();
   }
@@ -146,20 +173,32 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     );
   }
 
-  final VerificationMeta _ofUserMeta = const VerificationMeta('ofUser');
-  GeneratedTextColumn _ofUser;
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
   @override
-  GeneratedTextColumn get ofUser => _ofUser ??= _constructOfUser();
-  GeneratedTextColumn _constructOfUser() {
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
     return GeneratedTextColumn(
-      'of_user',
+      'name',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _publicKeyMeta = const VerificationMeta('publicKey');
+  GeneratedTextColumn _publicKey;
+  @override
+  GeneratedTextColumn get publicKey => _publicKey ??= _constructPublicKey();
+  GeneratedTextColumn _constructPublicKey() {
+    return GeneratedTextColumn(
+      'public_key',
       $tableName,
       false,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, ofUser];
+  List<GeneratedColumn> get $columns => [id, name, publicKey];
   @override
   $ContactsTable get asDslTable => this;
   @override
@@ -176,11 +215,17 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
-    if (data.containsKey('of_user')) {
-      context.handle(_ofUserMeta,
-          ofUser.isAcceptableOrUnknown(data['of_user'], _ofUserMeta));
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     } else if (isInserting) {
-      context.missing(_ofUserMeta);
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('public_key')) {
+      context.handle(_publicKeyMeta,
+          publicKey.isAcceptableOrUnknown(data['public_key'], _publicKeyMeta));
+    } else if (isInserting) {
+      context.missing(_publicKeyMeta);
     }
     return context;
   }

@@ -43,7 +43,7 @@ defmodule ServerWeb.Plugs.AuthPlugTest do
       get_public_key: fn _ ->
         state[:public_key] |> ExPublicKey.pem_encode()
       end do
-      timestamp = DateTime.utc_now() |> DateTime.to_unix() |> Integer.to_string()
+      timestamp = System.os_time(:second) |> Integer.to_string()
 
       conn =
         :get
@@ -64,7 +64,7 @@ defmodule ServerWeb.Plugs.AuthPlugTest do
       get_public_key: fn _ ->
         state[:public_key] |> ExPublicKey.pem_encode()
       end do
-      timestamp = DateTime.utc_now() |> DateTime.to_unix() |> Integer.to_string()
+      timestamp = System.os_time(:second) |> Integer.to_string()
       body = ""
       {:ok, sig} = "#{timestamp}|#{body}" |> ExPublicKey.sign(state[:private_key])
       hash = Base.encode64(sig)
@@ -88,7 +88,7 @@ defmodule ServerWeb.Plugs.AuthPlugTest do
         state[:public_key] |> ExPublicKey.pem_encode()
       end do
       params = %{foo: "bar"}
-      timestamp = DateTime.utc_now() |> DateTime.to_unix() |> Integer.to_string()
+      timestamp = System.os_time(:second) |> Integer.to_string()
       body = ""
       {:ok, sig} = "#{timestamp}|#{body}" |> ExPublicKey.sign(state[:private_key])
       hash = Base.encode64(sig)
@@ -112,7 +112,7 @@ defmodule ServerWeb.Plugs.AuthPlugTest do
         state[:public_key] |> ExPublicKey.pem_encode()
       end do
       params = Poison.encode!(%{foo: "bar"})
-      timestamp = DateTime.utc_now() |> DateTime.to_unix() |> Integer.to_string()
+      timestamp = System.os_time(:second) |> Integer.to_string()
       body = params
       {:ok, sig} = "#{timestamp}|#{body}" |> ExPublicKey.sign(state[:private_key])
       hash = Base.encode64(sig)

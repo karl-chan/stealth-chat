@@ -38,13 +38,18 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.paused:
-        // Get.offAll(LogoutWidget());
-        break;
+        if (Get.isRegistered<Globals>()) {
+          Globals globals = Get.find();
+          await globals.cleanUp();
+          await Get.delete<Globals>();
+        }
+        return;
+      case AppLifecycleState.resumed:
+        Get.offAll(BootScreen());
+        return;
       default:
     }
   }
