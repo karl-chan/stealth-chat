@@ -3,22 +3,20 @@ defmodule Server.Message do
 
   @coll "messages"
 
-  defenum Events do
-    # outgoing events
+  defenum ServerEvent do
     value(ERROR, "ERROR")
     value(INVITE_ACCEPTED, "INVITE_ACCEPTED")
-
-    # incoming events
-    value(ACCEPT_INVITE, "ACCEPT_INVITE")
-    value(ACK_LAST_MESSAGE_TIMESTAMP, "ACK_LAST_MESSAGE_TIMESTAMP")
-
-    default(ERROR)
   end
 
-  def insert(user_id, event, data) do
+  defenum ClientEvent do
+    value(ACCEPT_INVITE, "ACCEPT_INVITE")
+    value(ACK_LAST_MESSAGE_TIMESTAMP, "ACK_LAST_MESSAGE_TIMESTAMP")
+  end
+
+  def insert(user_id, server_event, data) do
     Mongo.insert_one(:mongo, @coll, %{
       "userId" => user_id,
-      "event" => event.value,
+      "event" => server_event.value,
       "payload" => %{
         "data" => data,
         "timestamp" => System.os_time(:nanosecond)

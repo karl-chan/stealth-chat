@@ -42,7 +42,7 @@ class AddContactController extends GetxController {
   void updateRenderedMessage() {
     renderedMessage.value = '''${personalMessageController.text}
 
-Join me by clicking on the following link:
+Join me by opening the following link:
 
 $inviteLink''';
   }
