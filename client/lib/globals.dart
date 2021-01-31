@@ -23,12 +23,13 @@ class Globals {
   // app variables
   Properties properties;
   User user;
+  int lastMessageTimestamp;
 
   Future<Globals> init() async {
     prefs = await SharedPreferences.getInstance();
     packageInfo = await PackageInfo.fromPlatform();
 
-    AppDb appDb = AppDb();
+    AppDb appDb = AppDb(this);
     db = Database(appDb, ContactsDao(appDb));
 
     socket = Socket(this);
@@ -38,8 +39,17 @@ class Globals {
     user = User(
         id: prefs.getString(Prefs.USER_ID),
         name: prefs.getString(Prefs.USER_NAME));
+    lastMessageTimestamp = prefs.getInt(Prefs.LAST_MESSSAGE_TIMESTAMP);
 
     return this;
+  }
+
+  Future<void> cleanUp() async {
+    socket.disconnect();
+    await Future.wait([
+      db.app.close(),
+      prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp)
+    ]);
   }
 }
 
@@ -54,6 +64,8 @@ class Prefs {
   static const USER_PUBLIC_KEY = 'USER_PUBLIC_KEY';
   static const USER_PRIVATE_KEY_ENCRYPTED = 'USER_PRIVATE_KEY_ENCRYPTED';
   static const USER_PRIVATE_KEY_ENCRYPTED_IV = 'USER_PRIVATE_KEY_ENCRYPTED_IV';
+
+  static const LAST_MESSSAGE_TIMESTAMP = 'LAST_MESSAGE_TIMESTAMP';
 }
 
 @freezed

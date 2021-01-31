@@ -3,7 +3,7 @@ defmodule ServerWeb.UserSocket do
   alias ServerWeb.Plugs.AuthPlug
 
   ## Channels
-  channel "message:*", ServerWeb.MessageChannel
+  channel "user:*", ServerWeb.UserChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
