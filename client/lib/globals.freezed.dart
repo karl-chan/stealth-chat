@@ -92,10 +92,11 @@ class __$DatabaseCopyWithImpl<$Res> extends _$DatabaseCopyWithImpl<$Res>
 }
 
 /// @nodoc
-class _$_Database implements _Database {
+class _$_Database extends _Database {
   const _$_Database(this.app, this.contacts)
       : assert(app != null),
-        assert(contacts != null);
+        assert(contacts != null),
+        super._();
 
   @override
   final AppDb app;
@@ -130,7 +131,8 @@ class _$_Database implements _Database {
       __$DatabaseCopyWithImpl<_Database>(this, _$identity);
 }
 
-abstract class _Database implements Database {
+abstract class _Database extends Database {
+  const _Database._() : super._();
   const factory _Database(AppDb app, ContactsDao contacts) = _$_Database;
 
   @override

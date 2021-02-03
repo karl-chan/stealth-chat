@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stealth_chat/db/contacts.dart';
 import 'package:stealth_chat/db/db.dart';
 import 'package:stealth_chat/socket/socket.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/properties.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 
@@ -45,10 +46,19 @@ class Globals {
   }
 
   Future<void> cleanUp() async {
-    socket.disconnect();
-    await Future.wait([
-      db.app.close(),
-      prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp)
+    logInfo('Cleaning up...');
+    await Future.wait<void>([
+      (() async {
+        socket.disconnect();
+        socket = null;
+      })(),
+      (() async {
+        await db.close();
+        db = null;
+      })(),
+      (() async {
+        await prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp);
+      })()
     ]);
   }
 }
@@ -69,8 +79,14 @@ class Prefs {
 }
 
 @freezed
-abstract class Database with _$Database {
+abstract class Database implements _$Database {
+  const Database._();
   const factory Database(AppDb app, ContactsDao contacts) = _Database;
+
+  Future<void> close() async {
+    logInfo('Closing database...');
+    return app.close();
+  }
 }
 
 @freezed

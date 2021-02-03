@@ -1,11 +1,10 @@
-import 'dart:async';
-
-import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
-import 'package:stealth_chat/socket/events.dart';
+import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
+import 'package:stealth_chat/socket/client/client_events.dart';
+import 'package:stealth_chat/socket/server/server_events.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class Socket {
@@ -14,15 +13,8 @@ class Socket {
   PhoenixSocket socket;
   PhoenixChannel channel;
 
-  // server events
-  Stream<int> timestampStream;
-  Stream<String> errorStream;
-  Stream<InviteAcceptedMessage> inviteAcceptedStream;
-
-  // client events
-  StreamController<AcceptInviteMessage> acceptInviteStream;
-  StreamController<AckLastMessageTimestampMessage>
-      ackLastMessageTimestampStream;
+  ServerEvents server;
+  ClientEvents client;
 
   Socket(Globals globals) : this.globals = globals;
 
@@ -46,13 +38,14 @@ class Socket {
         socketOptions: PhoenixSocketOptions(params: params))
       ..connect();
 
-    socket.openStream.listen((event) {
+    socket.openStream.listen((event) async {
+      // join channel
       channel = socket.addChannel(
           topic: 'user:${globals.user.id}',
           parameters: {'last_message_timestamp': globals.lastMessageTimestamp});
 
-      registerServerEvents();
-      registerClientEvents();
+      server = ServerEvents(channel, globals);
+      client = ClientEvents(channel);
     });
 
     socket.errorStream.listen((event) {
@@ -65,39 +58,13 @@ class Socket {
     });
   }
 
-  void registerServerEvents() {
-    final splitter = StreamSplitter(channel.messages);
-    splitter.split().forEach((message) {
-      globals.lastMessageTimestamp = message.payload['timestamp'];
-    });
-    errorStream = splitter
-        .split()
-        .where((message) => message.event.value == ServerEvent.ERROR)
-        .map((message) =>
-            ErrorMessage.fromJson(message.payload['data']).message);
-    inviteAcceptedStream = splitter
-        .split()
-        .where((message) => message.event.value == ServerEvent.INVITE_ACCEPTED)
-        .map((message) =>
-            InviteAcceptedMessage.fromJson(message.payload['data']));
-    channel.close();
-  }
-
-  void registerClientEvents() {
-    acceptInviteStream = StreamController()
-      ..stream.forEach((message) =>
-          channel.push(ClientEvent.ACCEPT_INVITE, message.toJson()));
-
-    ackLastMessageTimestampStream = StreamController()
-      ..stream.forEach((message) => channel.push(
-          ClientEvent.ACK_LAST_MESSAGE_TIMESTAMP, message.toJson()));
-  }
-
   void disconnect() {
     if (socket != null) {
-      ackLastMessageTimestampStream.add(AckLastMessageTimestampMessage(
+      client.ackLastMessageTimestamp.push(AckLastMessageTimestampMessage(
           lastMessageTimestamp: globals.lastMessageTimestamp));
+
       socket.dispose();
+      socket = null;
     }
   }
 }

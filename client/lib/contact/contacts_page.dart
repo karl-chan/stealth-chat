@@ -25,34 +25,42 @@ class ContactsPage extends StatelessWidget {
     Globals globals = Get.find();
     ContactsController c = Get.put(ContactsController(globals));
 
+    final appBar = AppBar(
+      title: const Text('Contacts'),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.person_add),
+          onPressed: () => Get.to(AddContactPage()),
+        ),
+        PopupMenuButton<Function>(
+          onSelected: (Function function) => function(),
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem<Function>(
+                  value: () => Get.to(SettingsPage()),
+                  child: const Text('Settings'))
+            ];
+          },
+        ),
+      ],
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contacts'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person_add),
-            onPressed: () => Get.to(AddContactPage()),
-          ),
-          PopupMenuButton<Function>(
-            onSelected: (Function function) => function(),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<Function>(
-                    value: () => Get.to(SettingsPage()),
-                    child: const Text('Settings'))
-              ];
-            },
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: Obx(() => ListView.separated(
             padding: const EdgeInsets.all(8),
             itemCount: c.contacts.length,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 50,
-                child: Center(child: Text(c.contacts.elementAt(index).name)),
-              );
+              final name = c.contacts.elementAt(index).name;
+              return ListTile(
+                  leading: CircleAvatar(
+                      child: Text(name.characters.elementAt(0).toUpperCase())),
+                  title: Text(name),
+                  subtitle: Text('Last message'),
+                  trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [Text('Last seen'), Text('12:00 AM')]));
             },
             separatorBuilder: (BuildContext context, int index) =>
                 const Divider(),

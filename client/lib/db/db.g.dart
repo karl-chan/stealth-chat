@@ -231,7 +231,7 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Contact map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

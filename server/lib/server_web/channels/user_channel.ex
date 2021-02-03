@@ -3,6 +3,7 @@ defmodule ServerWeb.UserChannel do
   alias Server.Message.ClientEvent
   alias Server.Message.ServerEvent
   import Phoenix.Channel
+  require Logger
 
   def join("user:" <> user_id, %{"last_message_timestamp" => last_message_timestamp}, socket) do
     stream_messages(user_id, last_message_timestamp, socket)
@@ -10,6 +11,7 @@ defmodule ServerWeb.UserChannel do
   end
 
   def handle_in(client_event, payload, socket) do
+    Logger.info("Received client event: " <> client_event)
     user_id = socket.assigns[:user_id]
 
     case {ClientEvent.from(client_event), payload} do
