@@ -31,11 +31,11 @@ defmodule ServerWeb.UserSocket do
       AuthPlug.verify(sig_user, sig_timestamp, sig_hash, sig_timestamp)
     rescue
       err ->
-        Logger.error("User: " <> sig_user <> " rejected from socket.\n" <> Kernel.inspect(err))
+        Logger.error("User: #{sig_user} rejected from socket.\n#{Kernel.inspect(err)}")
         :error
     else
       _ ->
-        Logger.info("User connected to socket: " <> sig_user)
+        Logger.info("User connected to socket: #{sig_user}")
         {:ok, assign(socket, :user_id, sig_user)}
     end
   end

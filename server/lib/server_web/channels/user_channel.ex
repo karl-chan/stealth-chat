@@ -12,12 +12,12 @@ defmodule ServerWeb.UserChannel do
 
     if authorized?(user_id, verified_user_id) do
       stream_messages(user_id, last_message_timestamp, socket)
+      Logger.info("User connected to channel: #{user_id}")
       {:ok, socket}
     else
       {:error,
        %{
-         reason:
-           "User: " <> verified_user_id <> " is not allowed to join channel user:" <> user_id
+         reason: "User: #{verified_user_id} is not allowed to join channel user: #{user_id}"
        }}
     end
   end
@@ -26,7 +26,7 @@ defmodule ServerWeb.UserChannel do
   # by sending replies to requests from the client
   @impl true
   def handle_in(client_event, payload, socket) do
-    Logger.info("Received client event: " <> client_event)
+    Logger.info("Received client event: #{client_event}")
     user_id = socket.assigns[:user_id]
 
     case {ClientEvent.from(client_event), payload} do
@@ -38,8 +38,16 @@ defmodule ServerWeb.UserChannel do
 
         {:reply, :ok, socket}
 
+      {ClientEvent.ACK_LAST_MESSAGE_TIMESTAMP,
+       %{"last_message_timestamp" => last_message_timestamp}} ->
+        Message.delete(user_id, last_message_timestamp)
+
+        {:reply, :ok, socket}
+
       _ ->
-        error_message = "Unrecognised client event: #{client_event} with payload: #{payload}"
+        error_message =
+          "Unrecognised client event: #{client_event} with payload: #{Poison.encode!(payload)}"
+
         {:reply, {:error, error_message}, socket}
     end
   end
@@ -50,10 +58,12 @@ defmodule ServerWeb.UserChannel do
     |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
 
     # listen for new messages
-    Message.stream(user_id, last_message_timestamp)
-    |> Enum.filter(fn change -> change["operationType"] == "insert" end)
-    |> Enum.map(fn change -> change["fullDocument"] end)
-    |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
+    spawn(fn ->
+      Message.stream(user_id, last_message_timestamp)
+      |> Enum.filter(fn change -> change["operationType"] == "insert" end)
+      |> Enum.map(fn change -> change["fullDocument"] end)
+      |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
+    end)
   end
 
   defp authorized?(user_id, verified_user_id) do

@@ -36,7 +36,7 @@ defmodule ServerWeb.Plugs.AuthPlug do
 
     now = DateTime.utc_now()
 
-    if abs(DateTime.diff(now, timestamp)) > 3600 do
+    if abs(DateTime.diff(now, timestamp)) > 60 do
       raise("Timestamp too old: #{timestamp} compared to now: #{now}!")
     end
 
