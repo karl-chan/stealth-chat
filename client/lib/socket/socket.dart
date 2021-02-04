@@ -5,7 +5,6 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/socket/client/client_events.dart';
 import 'package:stealth_chat/socket/server/server_events.dart';
-import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class Socket {
@@ -22,32 +21,27 @@ class Socket {
   void connect() {
     assert(globals.user.keys != null, 'User is not signed in!');
 
-    String socketHost = globals.properties.get('server.socket.host');
-
     String sigUser = globals.user.id;
     int sigTimestamp = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
     String msg = '$sigTimestamp';
     String sigHash = Rsa.sign(msg, globals.user.keys);
 
     final params = {
-      'sig-user': sigUser,
-      'sig-timestamp': sigTimestamp.toString(),
-      'sig-hash': sigHash
+      'sig_user': sigUser,
+      'sig_timestamp': sigTimestamp.toString(),
+      'sig_hash': sigHash,
     };
 
-    logInfo('Socket connection params: $params');
-
+    String socketHost = globals.properties.get('server.socket.host');
     socket = PhoenixSocket('$socketHost/socket/websocket',
         socketOptions: PhoenixSocketOptions(params: params))
       ..connect();
 
     socket.openStream.listen((event) async {
-      // join channel
-      logInfo('Socket open stream event: $event');
       channel = socket.addChannel(
           topic: 'user:${globals.user.id}',
-          parameters: {'last_message_timestamp': globals.lastMessageTimestamp});
-      channel.join();
+          parameters: {'last_message_timestamp': globals.lastMessageTimestamp})
+        ..join();
 
       server = ServerEvents(channel, globals);
       client = ClientEvents(channel);
