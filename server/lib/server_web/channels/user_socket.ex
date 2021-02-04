@@ -18,22 +18,24 @@ defmodule ServerWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(params, socket, _connect_info) do
-    Logger.info("Socket connection params: " <> Poison.encode!(params))
-
-    sig_user = params["sig-user"]
-    sig_timestamp = params["sig-timestamp"]
-    sig_hash = params["sig-hash"]
-
-    msg = sig_timestamp
-
+  def connect(
+        %{
+          "sig_user" => sig_user,
+          "sig_timestamp" => sig_timestamp,
+          "sig_hash" => sig_hash
+        },
+        socket,
+        _connect_info
+      ) do
     try do
-      AuthPlug.verify(sig_user, sig_timestamp, sig_hash, msg)
+      AuthPlug.verify(sig_user, sig_timestamp, sig_hash, sig_timestamp)
     rescue
       err ->
-        {:error, err}
+        Logger.error("User: " <> sig_user <> " rejected from socket.\n" <> Kernel.inspect(err))
+        :error
     else
       _ ->
+        Logger.info("User connected to socket: " <> sig_user)
         {:ok, assign(socket, :user_id, sig_user)}
     end
   end
@@ -49,5 +51,5 @@ defmodule ServerWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(_socket), do: nil
+  def id(socket), do: "user_socket:#{socket.assigns.user_id}"
 end

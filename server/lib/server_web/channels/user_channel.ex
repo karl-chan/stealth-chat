@@ -1,15 +1,30 @@
 defmodule ServerWeb.UserChannel do
+  use ServerWeb, :channel
+
   alias Server.Message
   alias Server.Message.ClientEvent
   alias Server.Message.ServerEvent
-  import Phoenix.Channel
   require Logger
 
+  @impl true
   def join("user:" <> user_id, %{"last_message_timestamp" => last_message_timestamp}, socket) do
-    stream_messages(user_id, last_message_timestamp, socket)
-    {:ok, socket}
+    verified_user_id = socket.assigns.user_id
+
+    if authorized?(user_id, verified_user_id) do
+      stream_messages(user_id, last_message_timestamp, socket)
+      {:ok, socket}
+    else
+      {:error,
+       %{
+         reason:
+           "User: " <> verified_user_id <> " is not allowed to join channel user:" <> user_id
+       }}
+    end
   end
 
+  # Channels can be used in a request/response fashion
+  # by sending replies to requests from the client
+  @impl true
   def handle_in(client_event, payload, socket) do
     Logger.info("Received client event: " <> client_event)
     user_id = socket.assigns[:user_id]
@@ -39,5 +54,9 @@ defmodule ServerWeb.UserChannel do
     |> Enum.filter(fn change -> change["operationType"] == "insert" end)
     |> Enum.map(fn change -> change["fullDocument"] end)
     |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
+  end
+
+  defp authorized?(user_id, verified_user_id) do
+    user_id == verified_user_id
   end
 end

@@ -11,12 +11,9 @@ defmodule ServerWeb.Plugs.AuthPlug do
     sig_hash = get_req_header(conn, "sig-hash") |> List.first()
     {:ok, body, _conn} = read_body(conn)
 
-    try do
-      if sig_user == nil or sig_timestamp == nil or sig_hash == nil do
-        raise("Missing signature")
-      end
+    msg = "#{sig_timestamp}|#{body}"
 
-      msg = "#{sig_timestamp}|#{body}"
+    try do
       verify(sig_user, sig_timestamp, sig_hash, msg)
     rescue
       err ->
