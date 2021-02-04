@@ -3,6 +3,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/server/error_event.dart';
 import 'package:stealth_chat/socket/server/invite_accepted_event.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 class ServerEvents {
   ErrorEvent error;
@@ -32,5 +33,9 @@ class ServerEvent<T> {
   ServerEvent(Stream<Message> messages, String event, FromJson<T> fromJson)
       : this.stream = messages
             .where((message) => message.event.value == event)
-            .map((message) => fromJson(message.payload['data']));
+            .map((message) {
+          final payload = message.payload['data'];
+          logDebug('Server event name: $event payload: $payload');
+          return fromJson(payload);
+        });
 }

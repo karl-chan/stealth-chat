@@ -1,6 +1,7 @@
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/socket/client/accept_invite_event.dart';
 import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 class ClientEvents {
   final AcceptInviteEvent acceptInvite;
@@ -24,6 +25,8 @@ abstract class ClientEvent<T> {
         this._toJson = toJson;
 
   Push push(T t) {
-    return _channel.push(_event, _toJson(t));
+    final payload = _toJson(t);
+    logDebug('Client event name: $_event payload: $payload');
+    return _channel.push(_event, payload);
   }
 }
