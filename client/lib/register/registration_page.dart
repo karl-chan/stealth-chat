@@ -158,11 +158,11 @@ class RegistrationPage extends StatelessWidget {
     final c = Get.put(RegistrationController(callback));
 
     return Scaffold(
-        appBar: AppBar(title: Text("Register")),
+        appBar: AppBar(title: Text('Register')),
         body: Obx(() => Stepper(
               steps: [
                 Step(
-                    title: const Text("Set username"),
+                    title: const Text('Set username'),
                     content: TextField(
                       controller: c.setUsernameController,
                       decoration: InputDecoration(
@@ -171,7 +171,7 @@ class RegistrationPage extends StatelessWidget {
                     isActive: c.isCurrentStep(RegistrationStep.SET_USERNAME),
                     state: c.getStepState(RegistrationStep.SET_USERNAME)),
                 Step(
-                    title: const Text("Set password"),
+                    title: const Text('Set password'),
                     content: TextField(
                       controller: c.setPasswordController,
                       decoration: InputDecoration(
@@ -180,7 +180,7 @@ class RegistrationPage extends StatelessWidget {
                     isActive: c.isCurrentStep(RegistrationStep.SET_PASSWORD),
                     state: c.getStepState(RegistrationStep.SET_PASSWORD)),
                 Step(
-                    title: const Text("Confirm password"),
+                    title: const Text('Confirm password'),
                     content: TextField(
                       controller: c.confirmPasswordController,
                       decoration: InputDecoration(
@@ -190,7 +190,7 @@ class RegistrationPage extends StatelessWidget {
                         c.isCurrentStep(RegistrationStep.CONFIRM_PASSWORD),
                     state: c.getStepState(RegistrationStep.CONFIRM_PASSWORD)),
                 Step(
-                    title: const Text("Register"),
+                    title: const Text('Register'),
                     content: ConstrainedBox(
                         constraints: BoxConstraints(maxHeight: 200),
                         child: c.isRegistering.value
@@ -204,7 +204,7 @@ class RegistrationPage extends StatelessWidget {
                                 ? Column(children: [
                                     Icon(Icons.error,
                                         color: Colors.red, size: 50),
-                                    Text(c.registrationErrorText.value ?? "")
+                                    Text(c.registrationErrorText.value ?? '')
                                   ])
                                 : SizedBox.shrink())),
                     isActive: c.isCurrentStep(RegistrationStep.REGISTRATION),

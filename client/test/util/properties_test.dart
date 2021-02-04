@@ -8,6 +8,6 @@ void main() {
 
   test('get', () async {
     final properties = await Properties.init();
-    expect(properties.get("server.host"), equals("http://localhost:3000"));
+    expect(properties.get('server.host'), equals('http://localhost:3000'));
   });
 }

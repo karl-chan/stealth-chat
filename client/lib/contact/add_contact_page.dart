@@ -118,7 +118,7 @@ class ViaMessageTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
-        HeaderText("Via email, SMS or IM"),
+        HeaderText('Send an email, SMS or IM'),
         SizedBox(height: 20),
         TextField(
           controller: c.personalMessageController,
@@ -126,11 +126,11 @@ class ViaMessageTab extends StatelessWidget {
           minLines: 3,
           maxLines: null,
           decoration: InputDecoration(
-              labelText: "Add a personal message (optional)",
-              hintText: "e.g. Hi, this is ${globals.user.name}."),
+              labelText: 'Add a personal message (optional)',
+              hintText: 'e.g. Hi, this is ${globals.user.name}.'),
         ),
         SizedBox(height: 50),
-        HeaderText("Preview"),
+        HeaderText('Preview'),
         Card(child: Obx(() => SelectableText(c.renderedMessage.value))),
         MaterialButton(
           child: Row(

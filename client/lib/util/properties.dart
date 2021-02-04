@@ -16,7 +16,7 @@ class Properties {
       : _config = Config.fromString(appProperties);
 
   String get(String path) {
-    assert(path.contains("."));
+    assert(path.contains('.'));
     final parts = List.from(
         path.characters.split('.'.characters, 2).map((chars) => chars.string));
     String section = parts[0];

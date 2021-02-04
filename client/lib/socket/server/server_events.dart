@@ -12,7 +12,9 @@ class ServerEvents {
     final splitter = StreamSplitter(channel.messages);
 
     splitter.split().forEach((message) {
-      globals.lastMessageTimestamp = message.payload['timestamp'];
+      if (message.payload?.containsKey('timestamp') == true) {
+        globals.lastMessageTimestamp = message.payload['timestamp'];
+      }
     });
 
     error = ErrorEvent(splitter.split());

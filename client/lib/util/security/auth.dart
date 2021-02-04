@@ -7,7 +7,7 @@ import 'package:stealth_chat/util/security/keys.dart';
 class Auth {
   static void setUser(String id, String name, String password, Keys keys) {
     Globals globals = Get.find();
-    assert(globals.user.id == null, "User is already registered!");
+    assert(globals.user.id == null, 'User is already registered!');
 
     final String hash = Keys.hashSecretKey(keys.secretKey, id);
     final encryptedPrivateKey = Aes.encrypt(keys.privateKey.toPEM(), keys);
@@ -26,7 +26,7 @@ class Auth {
 
   static bool login(String password) {
     Globals globals = Get.find();
-    assert(globals.user.id != null, "User is not registered!");
+    assert(globals.user.id != null, 'User is not registered!');
 
     final String passwordHash =
         globals.prefs.getString(Prefs.USER_PASSWORD_HASH);
@@ -48,9 +48,9 @@ class Auth {
           keys);
       RSAPublicKey publicKey = RSAPublicKey.fromPEM(publicKeyPem);
       RSAPrivateKey privateKey = RSAPrivateKey.fromPEM(privateKeyPem);
+      keys = keys.copyWith(publicKey: publicKey, privateKey: privateKey);
 
-      globals.user = globals.user.copyWith(
-          keys: keys.copyWith(publicKey: publicKey, privateKey: privateKey));
+      globals.login(keys);
 
       globals.socket.connect();
 

@@ -45,26 +45,48 @@ class ContactsPage extends StatelessWidget {
       ],
     );
 
+    final emptyView = DefaultTextStyle(
+        style: TextStyle(color: Colors.grey, fontSize: 24),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            'You have no contacts.',
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Press '),
+              Icon(
+                Icons.person_add,
+                color: Colors.green,
+              ),
+              Text(' to start.')
+            ],
+          )
+        ]));
+
+    final contactsList = Obx(() => ListView.separated(
+          padding: const EdgeInsets.all(8),
+          itemCount: c.contacts.length,
+          itemBuilder: (BuildContext context, int index) {
+            final name = c.contacts.elementAt(index).name;
+            return ListTile(
+                leading: CircleAvatar(
+                    child: Text(name.characters.elementAt(0).toUpperCase())),
+                title: Text(name),
+                subtitle: Text('Last message'),
+                trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [Text('Last seen'), Text('12:00 AM')]));
+          },
+          separatorBuilder: (BuildContext context, int index) =>
+              const Divider(),
+        ));
+
     return Scaffold(
       appBar: appBar,
-      body: Obx(() => ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemCount: c.contacts.length,
-            itemBuilder: (BuildContext context, int index) {
-              final name = c.contacts.elementAt(index).name;
-              return ListTile(
-                  leading: CircleAvatar(
-                      child: Text(name.characters.elementAt(0).toUpperCase())),
-                  title: Text(name),
-                  subtitle: Text('Last message'),
-                  trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [Text('Last seen'), Text('12:00 AM')]));
-            },
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
-          )),
+      body: Obx(() => c.contacts.isEmpty ? emptyView : contactsList),
     );
   }
 }

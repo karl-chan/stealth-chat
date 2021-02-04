@@ -43,7 +43,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         if (Get.isRegistered<Globals>()) {
           Globals globals = Get.find();
-          await globals.cleanUp();
+          if (globals.isLoggedIn) {
+            await globals.logout();
+          }
           await Get.delete<Globals>();
         }
         return;

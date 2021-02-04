@@ -5,6 +5,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/socket/client/client_events.dart';
 import 'package:stealth_chat/socket/server/server_events.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class Socket {
@@ -19,7 +20,7 @@ class Socket {
   Socket(Globals globals) : this.globals = globals;
 
   void connect() {
-    assert(globals.user.keys != null, "User is not signed in!");
+    assert(globals.user.keys != null, 'User is not signed in!');
 
     String socketHost = globals.properties.get('server.socket.host');
 
@@ -34,15 +35,19 @@ class Socket {
       'sig-hash': sigHash
     };
 
+    logInfo('Socket connection params: $params');
+
     socket = PhoenixSocket('$socketHost/socket/websocket',
         socketOptions: PhoenixSocketOptions(params: params))
       ..connect();
 
     socket.openStream.listen((event) async {
       // join channel
+      logInfo('Socket open stream event: $event');
       channel = socket.addChannel(
           topic: 'user:${globals.user.id}',
           parameters: {'last_message_timestamp': globals.lastMessageTimestamp});
+      channel.join();
 
       server = ServerEvents(channel, globals);
       client = ClientEvents(channel);
@@ -58,13 +63,14 @@ class Socket {
     });
   }
 
-  void disconnect() {
-    if (socket != null) {
-      client.ackLastMessageTimestamp.push(AckLastMessageTimestampMessage(
-          lastMessageTimestamp: globals.lastMessageTimestamp));
+  Future<void> close() async {
+    await client.ackLastMessageTimestamp
+        .push(AckLastMessageTimestampMessage(
+            lastMessageTimestamp: globals.lastMessageTimestamp))
+        .future;
 
-      socket.dispose();
-      socket = null;
-    }
+    socket.dispose();
+    channel = null;
+    socket = null;
   }
 }

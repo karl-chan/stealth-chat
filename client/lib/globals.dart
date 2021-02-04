@@ -15,6 +15,9 @@ class Globals {
   SharedPreferences prefs;
   PackageInfo packageInfo;
 
+  // auth status
+  bool isLoggedIn = false;
+
   // database handles
   Database db;
 
@@ -30,8 +33,7 @@ class Globals {
     prefs = await SharedPreferences.getInstance();
     packageInfo = await PackageInfo.fromPlatform();
 
-    AppDb appDb = AppDb(this);
-    db = Database(appDb, ContactsDao(appDb));
+    socket = Socket(this);
 
     socket = Socket(this);
 
@@ -45,21 +47,30 @@ class Globals {
     return this;
   }
 
-  Future<void> cleanUp() async {
-    logInfo('Cleaning up...');
-    await Future.wait<void>([
-      (() async {
-        socket.disconnect();
-        socket = null;
-      })(),
-      (() async {
-        await db.close();
-        db = null;
-      })(),
-      (() async {
-        await prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp);
-      })()
-    ]);
+  login(Keys keys) {
+    user = user.copyWith(keys: keys);
+
+    AppDb appDb = AppDb(this);
+    db = Database(appDb, ContactsDao(appDb));
+
+    socket = Socket(this)..connect();
+
+    isLoggedIn = true;
+  }
+
+  Future<void> logout() async {
+    logInfo('Logging out...');
+    await prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp);
+
+    await socket.close();
+    socket = null;
+
+    await db.close();
+    db = null;
+
+    user = user.copyWith(keys: null);
+
+    isLoggedIn = false;
   }
 }
 

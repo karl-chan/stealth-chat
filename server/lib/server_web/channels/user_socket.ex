@@ -1,6 +1,7 @@
 defmodule ServerWeb.UserSocket do
   use Phoenix.Socket
   alias ServerWeb.Plugs.AuthPlug
+  require Logger
 
   ## Channels
   channel "user:*", ServerWeb.UserChannel
@@ -18,6 +19,8 @@ defmodule ServerWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(params, socket, _connect_info) do
+    Logger.info("Socket connection params: " <> Poison.encode!(params))
+
     sig_user = params["sig-user"]
     sig_timestamp = params["sig-timestamp"]
     sig_hash = params["sig-hash"]
@@ -26,7 +29,7 @@ defmodule ServerWeb.UserSocket do
 
     try do
       AuthPlug.verify(sig_user, sig_timestamp, sig_hash, msg)
-    catch
+    rescue
       err ->
         {:error, err}
     else

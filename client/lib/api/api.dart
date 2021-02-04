@@ -28,7 +28,7 @@ class Api {
   static String _url(String endpoint) => '$host/api/$endpoint';
 
   static Map<String, String> _sign(
-      {Map<String, String> headers, dynamic body = ""}) {
+      {Map<String, String> headers, dynamic body = ''}) {
     Globals globals = Get.find();
     if (globals.user.id == null) {
       // no sign

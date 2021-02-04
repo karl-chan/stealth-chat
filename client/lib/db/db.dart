@@ -10,19 +10,12 @@ part 'db.g.dart';
 
 @UseMoor(tables: [Contacts], daos: [ContactsDao])
 class AppDb extends _$AppDb {
-  AppDb(Globals globals) : super(_openConnection(globals));
+  AppDb(Globals globals)
+      : super(EncryptedExecutor.inDatabaseFolder(
+            path: 'db.sqlite', password: globals.user.keys.secretKey));
 
   AppDb.forTesting(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;
-}
-
-LazyDatabase _openConnection(Globals globals) {
-  return LazyDatabase(() async {
-    String password = globals.user.keys.secretKey;
-
-    return EncryptedExecutor.inDatabaseFolder(
-        path: 'db.sqlite', password: password);
-  });
 }

@@ -13,12 +13,12 @@ defmodule ServerWeb.Plugs.AuthPlug do
 
     try do
       if sig_user == nil or sig_timestamp == nil or sig_hash == nil do
-        throw("Missing signature")
+        raise("Missing signature")
       end
 
       msg = "#{sig_timestamp}|#{body}"
       verify(sig_user, sig_timestamp, sig_hash, msg)
-    catch
+    rescue
       err ->
         conn |> put_status(:unauthorized) |> text(err) |> halt()
     else
@@ -28,7 +28,7 @@ defmodule ServerWeb.Plugs.AuthPlug do
 
   def verify(sig_user, sig_timestamp, sig_hash, msg) do
     if sig_user == nil or sig_timestamp == nil or sig_hash == nil do
-      throw("Missing signature")
+      raise("Missing signature")
     end
 
     timestamp =
@@ -39,8 +39,8 @@ defmodule ServerWeb.Plugs.AuthPlug do
 
     now = DateTime.utc_now()
 
-    if abs(DateTime.diff(now, timestamp)) > 60 do
-      throw("Timestamp too old: #{timestamp} compared to now: #{now}!")
+    if abs(DateTime.diff(now, timestamp)) > 3600 do
+      raise("Timestamp too old: #{timestamp} compared to now: #{now}!")
     end
 
     {:ok, public_key_pem} = UserCache.get_public_key(sig_user)
@@ -48,7 +48,7 @@ defmodule ServerWeb.Plugs.AuthPlug do
     {:ok, sig_valid} = ExPublicKey.verify(msg, Base.decode64!(sig_hash), public_key)
 
     if not sig_valid do
-      throw("Signature does not match!")
+      raise("Signature does not match!")
     end
   end
 end
