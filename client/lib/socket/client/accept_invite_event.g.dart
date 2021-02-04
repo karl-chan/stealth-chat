@@ -6,7 +6,6 @@ part of 'accept_invite_event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-// ignore: non_constant_identifier_names
 _$_AcceptInviteMessage _$_$_AcceptInviteMessageFromJson(
     Map<String, dynamic> json) {
   return _$_AcceptInviteMessage(
@@ -15,7 +14,6 @@ _$_AcceptInviteMessage _$_$_AcceptInviteMessageFromJson(
   );
 }
 
-// ignore: non_constant_identifier_names
 Map<String, dynamic> _$_$_AcceptInviteMessageToJson(
         _$_AcceptInviteMessage instance) =>
     <String, dynamic>{
