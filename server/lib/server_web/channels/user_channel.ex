@@ -54,8 +54,8 @@ defmodule ServerWeb.UserChannel do
 
   defp stream_messages(user_id, last_message_timestamp, socket) do
     # existing messages
-    Message.find(user_id, last_message_timestamp)
-    |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
+    existing_messages = Message.find(user_id, last_message_timestamp)
+    Enum.each(existing_messages, fn doc -> push(socket, doc["event"], doc["payload"]) end)
 
     # listen for new messages
     spawn(fn ->
