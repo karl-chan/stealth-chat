@@ -19,13 +19,13 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
 
   Future<void> addContact(
       String id, String name, RSAPublicKey publicKey) async {
-    await into(contacts).insertOnConflictUpdate(
+    return into(contacts).insertOnConflictUpdate(
         Contact(id: id, name: name, publicKey: publicKey.toPEM()));
   }
 
   Future<bool> exist(String id) async {
     final found = await (select(contacts)..where((c) => c.id.equals(id))).get();
-    return found.length > 0;
+    return found.isNotEmpty;
   }
 
   Stream<List<Contact>> listContacts() {

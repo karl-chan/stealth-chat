@@ -9,11 +9,11 @@ class Api {
   static final host = Get.find<Globals>().properties.get('server.host');
 
   static Future<http.Response> get(String endpoint,
-          {Map<String, String> headers: const {}}) =>
+          {Map<String, String> headers = const {}}) =>
       http.get(_url(endpoint), headers: _sign(headers: headers));
 
   static Future<http.Response> post(String endpoint,
-          {Map<String, String> headers: const {},
+          {Map<String, String> headers = const {},
           dynamic body,
           Encoding encoding}) =>
       http.post(_url(endpoint),
@@ -22,7 +22,7 @@ class Api {
           encoding: encoding);
 
   static Future<http.Response> delete(String endpoint,
-          {Map<String, String> headers: const {}}) =>
+          {Map<String, String> headers = const {}}) =>
       http.delete(_url(endpoint), headers: _sign(headers: headers));
 
   static String _url(String endpoint) => '$host/api/$endpoint';

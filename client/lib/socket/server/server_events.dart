@@ -35,7 +35,7 @@ class ServerEvent<T> {
             .where((message) => message.event.value == event)
             .map((message) {
           final payload = message.payload['data'];
-          logDebug('Server event name: $event payload: $payload');
+          logDebug('Server event: $event payload: $payload');
           return fromJson(payload);
         });
 }

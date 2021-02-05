@@ -10,7 +10,7 @@ void main() {
   });
 
   test('aes encrypt / decrypt', () {
-    final message = 'The quick brown fox jumps over the lazy dog.';
+    const message = 'The quick brown fox jumps over the lazy dog.';
     final encrypted = Aes.encrypt(message, keys);
     final decrypted = Aes.decrypt(encrypted, keys);
     expect(decrypted, equals(message));

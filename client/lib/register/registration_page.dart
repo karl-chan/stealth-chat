@@ -77,7 +77,9 @@ class RegistrationController extends GetxController {
 
     try {
       await UserApi.create(id, keys.publicKey);
+
       Auth.setUser(id, name, password, keys);
+      Auth.login(password);
 
       registrationErrorText.nil();
       isRegistering.value = false;
@@ -115,7 +117,7 @@ class RegistrationController extends GetxController {
           if (callback != null) {
             callback();
           } else {
-            Get.off(HomePage());
+            await Get.off(HomePage());
           }
         }
     }

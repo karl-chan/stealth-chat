@@ -13,7 +13,7 @@ class LoginController extends GetxController {
   loginAndRedirect(String password, Future<void> onLoginFailed()) async {
     bool success = Auth.login(password);
     if (success) {
-      Get.off(HomePage());
+      await Get.off(HomePage());
       if (callback != null) {
         callback();
       }
