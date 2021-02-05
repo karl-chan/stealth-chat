@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
@@ -9,7 +8,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:uni_links/uni_links.dart';
 
 void main() async {
-  runApp(Phoenix(child: MainApp()));
+  runApp(MainApp());
 }
 
 class MainApp extends StatefulWidget {
