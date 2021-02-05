@@ -1,5 +1,6 @@
-defmodule Server.Message do
+defmodule Server.Events.ServerEvents do
   use EnumType
+  require Logger
 
   @coll "messages"
 
@@ -8,12 +9,13 @@ defmodule Server.Message do
     value(INVITE_ACCEPTED, "INVITE_ACCEPTED")
   end
 
-  defenum ClientEvent do
-    value(ACCEPT_INVITE, "ACCEPT_INVITE")
-    value(ACK_LAST_MESSAGE_TIMESTAMP, "ACK_LAST_MESSAGE_TIMESTAMP")
-  end
-
   def insert(user_id, server_event, data) do
+    Logger.debug(
+      "Inserted message for user: #{user_id} event: #{server_event.value} payload: #{
+        Poison.encode!(data)
+      }"
+    )
+
     Mongo.insert_one(:mongo, @coll, %{
       "userId" => user_id,
       "event" => server_event.value,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
@@ -8,7 +9,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:uni_links/uni_links.dart';
 
 void main() async {
-  runApp(MainApp());
+  runApp(Phoenix(child: MainApp()));
 }
 
 class MainApp extends StatefulWidget {
@@ -50,7 +51,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         }
         return;
       case AppLifecycleState.resumed:
-        Get.offAll(BootScreen());
+        await Get.offAll(BootScreen());
         return;
       default:
     }
@@ -71,7 +72,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
         bootCallback = () async {
-          Get.to(AcceptInvitePage(appLink));
+          await Get.to(AcceptInvitePage(appLink));
         };
       }
     }
@@ -79,7 +80,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   Future<void> handleAppLinkOnWarmPause(Uri appLink) async {
     await handleAppLinkOnColdBoot(appLink);
-    Get.offAll(BootScreen(callback: bootCallback));
+    await Get.offAll(BootScreen(callback: bootCallback));
   }
 
   @override

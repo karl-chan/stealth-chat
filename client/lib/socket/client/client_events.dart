@@ -26,7 +26,7 @@ abstract class ClientEvent<T> {
 
   Push push(T t) {
     final payload = _toJson(t);
-    logDebug('Client event name: $_event payload: $payload');
+    logDebug('Client event: $_event payload: $payload');
     return _channel.push(_event, payload);
   }
 }

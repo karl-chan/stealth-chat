@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
+import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/socket/client/client_events.dart';
@@ -50,18 +52,26 @@ class Socket {
     socket.errorStream.listen((event) {
       Get.defaultDialog(
           title: 'Socket connection error',
-          content: Container(
-              height: Get.height * 0.7,
-              child: SingleChildScrollView(
-                  child: Text(event.stacktrace.toString()))));
+          content: Column(children: [
+            Icon(Icons.error, color: Colors.red, size: 50),
+            Text(event.error.toString())
+          ]),
+          textConfirm: 'Restart app',
+          confirmTextColor: Colors.white,
+          onConfirm: () async {
+            await close();
+            await Get.offAll(BootScreen());
+          });
     });
   }
 
   Future<void> close() async {
-    await client.ackLastMessageTimestamp
-        .push(AckLastMessageTimestampMessage(
-            lastMessageTimestamp: globals.lastMessageTimestamp))
-        .future;
+    if (client != null) {
+      await client.ackLastMessageTimestamp
+          .push(AckLastMessageTimestampMessage(
+              lastMessageTimestamp: globals.lastMessageTimestamp))
+          .future;
+    }
 
     socket.dispose();
     channel = null;
