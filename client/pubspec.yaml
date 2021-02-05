@@ -21,7 +21,6 @@ dependencies:
       path: extras/encryption 
   flutter:
     sdk: flutter
-  flutter_phoenix: 0.1.0
   get: 3.24.0
   gradient_widgets: 0.5.2
   html: 0.14.0 
