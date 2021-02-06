@@ -6,6 +6,7 @@ defmodule Server.Events.ServerEvents do
 
   defenum ServerEvent do
     value(ERROR, "ERROR")
+    value(HEARTBEAT, "HEARTBEAT")
     value(INVITE_ACCEPTED, "INVITE_ACCEPTED")
   end
 
@@ -27,10 +28,15 @@ defmodule Server.Events.ServerEvents do
   end
 
   def find(user_id, last_message_timestamp) do
-    Mongo.find(:mongo, @coll, %{
-      "userId" => user_id,
-      "payload.timestamp" => %{"$gt" => last_message_timestamp}
-    })
+    Mongo.find(
+      :mongo,
+      @coll,
+      %{
+        "userId" => user_id,
+        "payload.timestamp" => %{"$gt" => last_message_timestamp}
+      },
+      projection: %{_id: 0}
+    )
   end
 
   def delete(user_id, last_message_timestamp) do

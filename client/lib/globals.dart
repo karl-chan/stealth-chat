@@ -40,7 +40,7 @@ class Globals {
     user = User(
         id: prefs.getString(Prefs.USER_ID),
         name: prefs.getString(Prefs.USER_NAME));
-    lastMessageTimestamp = prefs.getInt(Prefs.LAST_MESSSAGE_TIMESTAMP);
+    lastMessageTimestamp = prefs.getInt(Prefs.LAST_MESSSAGE_TIMESTAMP) ?? 0;
 
     return this;
   }
