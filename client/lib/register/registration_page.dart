@@ -8,12 +8,7 @@ import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:uuid/uuid.dart';
 
-enum RegistrationStep {
-  SET_USERNAME,
-  SET_PASSWORD,
-  CONFIRM_PASSWORD,
-  REGISTRATION
-}
+enum RegistrationStep { SET_NAME, SET_PASSWORD, CONFIRM_PASSWORD, REGISTRATION }
 
 class RegistrationController extends GetxController {
   final String id = Uuid().v4();
@@ -22,24 +17,24 @@ class RegistrationController extends GetxController {
 
   RegistrationController(Function callback) : this.callback = callback;
 
-  Rx<RegistrationStep> step = RegistrationStep.SET_USERNAME.obs;
+  Rx<RegistrationStep> step = RegistrationStep.SET_NAME.obs;
   RxBool isRegistering = false.obs;
-  RxString setUsernameErrorText = RxString(null);
+  RxString setNameErrorText = RxString(null);
   RxString setPasswordErrorText = RxString(null);
   RxString confirmPasswordErrorText = RxString(null);
   RxString registrationErrorText = RxString(null);
 
-  var setUsernameController = TextEditingController();
+  var setNameController = TextEditingController();
   var setPasswordController = TextEditingController();
   var confirmPasswordController = TextEditingController();
 
-  Future<bool> runSetUsername() async {
-    final name = setUsernameController.text;
+  Future<bool> runSetName() async {
+    final name = setNameController.text;
     if (name.isBlank) {
-      setUsernameErrorText.value = 'Username must not be empty!';
+      setNameErrorText.value = 'Name must not be empty!';
       return false;
     } else {
-      setUsernameErrorText.nil();
+      setNameErrorText.nil();
       return true;
     }
   }
@@ -71,7 +66,7 @@ class RegistrationController extends GetxController {
   Future<bool> runRegistration() async {
     isRegistering.value = true;
 
-    final name = setUsernameController.text;
+    final name = setNameController.text;
     final password = setPasswordController.text;
     final keys = Keys.generate(id, password);
 
@@ -93,9 +88,9 @@ class RegistrationController extends GetxController {
 
   nextStep() async {
     switch (step.value) {
-      case RegistrationStep.SET_USERNAME:
-        final setUsernameSuccess = await runSetUsername();
-        if (setUsernameSuccess) {
+      case RegistrationStep.SET_NAME:
+        final setNameSuccess = await runSetName();
+        if (setNameSuccess) {
           step.value = RegistrationStep.SET_PASSWORD;
         }
         break;
@@ -125,7 +120,7 @@ class RegistrationController extends GetxController {
 
   prevStep() async {
     switch (step.value) {
-      case RegistrationStep.SET_USERNAME:
+      case RegistrationStep.SET_NAME:
         Get.back();
         return;
       default:
@@ -164,20 +159,21 @@ class RegistrationPage extends StatelessWidget {
         body: Obx(() => Stepper(
               steps: [
                 Step(
-                    title: const Text('Set username'),
+                    title: const Text('Enter a name'),
                     content: TextField(
-                      controller: c.setUsernameController,
-                      decoration: InputDecoration(
-                          errorText: c.setUsernameErrorText.value),
+                      controller: c.setNameController,
+                      decoration:
+                          InputDecoration(errorText: c.setNameErrorText.value),
                     ),
-                    isActive: c.isCurrentStep(RegistrationStep.SET_USERNAME),
-                    state: c.getStepState(RegistrationStep.SET_USERNAME)),
+                    isActive: c.isCurrentStep(RegistrationStep.SET_NAME),
+                    state: c.getStepState(RegistrationStep.SET_NAME)),
                 Step(
                     title: const Text('Set password'),
                     content: TextField(
                       controller: c.setPasswordController,
                       decoration: InputDecoration(
                           errorText: c.setPasswordErrorText.value),
+                      obscureText: true,
                     ),
                     isActive: c.isCurrentStep(RegistrationStep.SET_PASSWORD),
                     state: c.getStepState(RegistrationStep.SET_PASSWORD)),
@@ -187,6 +183,7 @@ class RegistrationPage extends StatelessWidget {
                       controller: c.confirmPasswordController,
                       decoration: InputDecoration(
                           errorText: c.confirmPasswordErrorText.value),
+                      obscureText: true,
                     ),
                     isActive:
                         c.isCurrentStep(RegistrationStep.CONFIRM_PASSWORD),

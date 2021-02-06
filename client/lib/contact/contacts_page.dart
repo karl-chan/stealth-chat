@@ -32,6 +32,10 @@ class ContactsPage extends StatelessWidget {
           icon: Icon(Icons.person_add),
           onPressed: () => Get.to(AddContactPage()),
         ),
+        IconButton(
+          icon: Icon(Icons.mail),
+          onPressed: () => Get.to(AddContactPage()),
+        ),
         PopupMenuButton<Function>(
           onSelected: (Function function) => function(),
           itemBuilder: (BuildContext context) {

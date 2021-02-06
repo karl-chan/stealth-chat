@@ -8,8 +8,8 @@ defmodule ServerWeb.UserChannel do
 
   @impl true
   def join("user:" <> user_id, %{"last_message_timestamp" => last_message_timestamp}, socket) do
-    if user_id == socket.assigns.user_id do
-      stream_server_events(user_id, last_message_timestamp, socket)
+    if authorize?(user_id, socket) do
+      send(self(), {:after_join, user_id, last_message_timestamp})
       Logger.info("User connected to channel: #{user_id}")
       {:ok, socket}
     else
@@ -29,6 +29,12 @@ defmodule ServerWeb.UserChannel do
     {:reply, res, socket}
   end
 
+  @impl true
+  def handle_info({:after_join, user_id, last_message_timestamp}, socket) do
+    stream_server_events(user_id, last_message_timestamp, socket)
+    {:noreply, socket}
+  end
+
   defp stream_server_events(user_id, last_message_timestamp, socket) do
     # existing messages
     existing_messages = ServerEvents.find(user_id, last_message_timestamp)
@@ -41,13 +47,26 @@ defmodule ServerWeb.UserChannel do
     # listen for new messages
     spawn(fn ->
       ServerEvents.stream(user_id, last_message_timestamp)
-      |> Enum.map(fn change ->
-        Logger.debug("Change stream event: #{Poison.encode!(change)}")
-        change
+      |> Enum.each(fn change ->
+        if change["operationType"] == "insert" do
+          doc = change["fullDocument"]
+          event = doc["event"]
+          payload = doc["payload"]
+
+          Logger.debug(
+            "Change stream event: #{Poison.encode!(event)} payload: #{Poison.encode!(payload)}"
+          )
+
+          push(socket, event, payload)
+        end
       end)
-      |> Enum.filter(fn change -> change["operationType"] == "insert" end)
-      |> Enum.map(fn change -> change["fullDocument"] end)
-      |> Enum.each(fn doc -> push(socket, doc["event"], doc["payload"]) end)
     end)
+
+    # send heartbeat
+    ServerEvents.insert(user_id, ServerEvents.ServerEvent.HEARTBEAT, %{"message" => "heartbeat"})
+  end
+
+  defp authorize?(user_id, socket) do
+    user_id == socket.assigns.user_id
   end
 end

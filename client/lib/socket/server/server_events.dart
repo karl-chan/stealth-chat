@@ -2,11 +2,13 @@ import 'package:async/async.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/server/error_event.dart';
+import 'package:stealth_chat/socket/server/heartbeat_event.dart';
 import 'package:stealth_chat/socket/server/invite_accepted_event.dart';
 import 'package:stealth_chat/util/logging.dart';
 
 class ServerEvents {
   ErrorEvent error;
+  HeartbeatEvent heartbeat;
   InviteAcceptedEvent inviteAccepted;
 
   ServerEvents(PhoenixChannel channel, Globals globals) {
@@ -19,6 +21,9 @@ class ServerEvents {
     });
 
     error = ErrorEvent(splitter.split());
+    heartbeat = HeartbeatEvent(splitter.split());
+    heartbeat.stream
+        .listen((message) => logDebug('Heartbeat: ' + message.toString()));
     inviteAccepted = InviteAcceptedEvent(splitter.split());
 
     splitter.close();
