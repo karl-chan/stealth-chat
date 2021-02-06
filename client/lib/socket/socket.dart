@@ -7,6 +7,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/socket/client/client_events.dart';
 import 'package:stealth_chat/socket/server/server_events.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class Socket {
@@ -40,6 +41,7 @@ class Socket {
       ..connect();
 
     socket.openStream.listen((event) async {
+      logDebug('Last message timestamp: ${globals.lastMessageTimestamp}');
       channel = socket.addChannel(
           topic: 'user:${globals.user.id}',
           parameters: {'last_message_timestamp': globals.lastMessageTimestamp})

@@ -15,10 +15,6 @@ defmodule Server.UserTest do
     assert {:error, "User test does not exist!"} == User.show("test")
   end
 
-  test "must not create test user" do
-    assert {:error, "Username test is reserved!"} == User.create("test", "public_key")
-  end
-
   test "fails to delete non-existent user" do
     assert {:error, "User test does not exist!"} == User.delete("test")
   end
