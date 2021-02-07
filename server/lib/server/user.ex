@@ -57,4 +57,17 @@ defmodule Server.User do
   defp already_exists(id) do
     show(id) != nil
   end
+
+  @dialyzer {:nowarn_function, create_index: 0}
+  def create_index() do
+    Logger.debug("Creating index for collection user...")
+
+    Mongo.create_indexes(:mongo, @coll, [
+      [
+        key: [id: 1],
+        name: "id_key",
+        unique: true
+      ]
+    ])
+  end
 end

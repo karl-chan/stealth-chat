@@ -25,7 +25,8 @@ defmodule Server.Events.ClientEvents do
           ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
             id: my_id,
             name: my_name,
-            publicKey: my_public_key_pem
+            publicKey: my_public_key_pem,
+            timestamp: System.os_time(:millisecond)
           })
 
           :ok
@@ -41,10 +42,10 @@ defmodule Server.Events.ClientEvents do
   defp parse_client_event(event, payload) do
     case event do
       "ACCEPT_INVITE" ->
-        {:ok, %AcceptInvite{their_id: payload["their_id"], my_name: payload["my_name"]}}
+        {:ok, %AcceptInvite{their_id: payload["theirId"], my_name: payload["myName"]}}
 
       "ACK_LAST_MESSAGE_TIMESTAMP" ->
-        {:ok, %AckLastMessageTimestamp{last_message_timestamp: payload["last_message_timestamp"]}}
+        {:ok, %AckLastMessageTimestamp{last_message_timestamp: payload["lastMessageTimestamp"]}}
 
       _ ->
         {:error, "Unrecognised client event: #{event} with payload: #{Poison.encode!(payload)}"}

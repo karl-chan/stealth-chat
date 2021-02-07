@@ -8,6 +8,7 @@ class Notifications extends Table {
   TextColumn get title => text()();
   TextColumn get subtitle => text()();
   TextColumn get body => text()();
+  DateTimeColumn get timestamp => dateTime()();
   BoolColumn get unread => boolean()();
 }
 
@@ -16,9 +17,14 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
     with _$NotificationsDaoMixin {
   NotificationsDao(AppDb db) : super(db);
 
-  Future<void> insert(String title, String subtitle, String body) async {
+  Future<void> insert(
+      String title, String subtitle, String body, int timestamp) async {
     return into(notifications).insert(NotificationsCompanion.insert(
-        title: title, subtitle: subtitle, body: body, unread: true));
+        title: title,
+        subtitle: subtitle,
+        body: body,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(timestamp),
+        unread: true));
   }
 
   Stream<List<Notification>> listNotifications() {

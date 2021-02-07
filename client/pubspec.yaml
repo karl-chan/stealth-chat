@@ -27,6 +27,7 @@ dependencies:
   html: 0.14.0 
   http: 0.12.1
   ini:
+  intl: 0.16.1
   json_serializable: 
   logging:
   moor: 3.4.0

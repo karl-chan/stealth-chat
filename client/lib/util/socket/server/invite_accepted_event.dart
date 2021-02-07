@@ -15,7 +15,8 @@ class InviteAcceptedEvent extends ServerEvent<InviteAcceptedMessage> {
           await globals.db.notifications.insert(
               '${message.name} accepted your invite!',
               '',
-              'You can now chat with ${message.name}!');
+              'You can now chat with ${message.name}!',
+              message.timestamp);
           await globals.db.contacts.addContact(message.id, message.name,
               RSAPublicKey.fromPEM(message.publicKey));
         });
@@ -24,7 +25,10 @@ class InviteAcceptedEvent extends ServerEvent<InviteAcceptedMessage> {
 @freezed
 abstract class InviteAcceptedMessage with _$InviteAcceptedMessage {
   const factory InviteAcceptedMessage(
-      {String id, String name, String publicKey}) = _InviteAcceptedMessage;
+      {String id,
+      String name,
+      String publicKey,
+      int timestamp}) = _InviteAcceptedMessage;
 
   factory InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =>
       _$InviteAcceptedMessageFromJson(json);

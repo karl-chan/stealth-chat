@@ -12,6 +12,7 @@ _$_InviteAcceptedMessage _$_$_InviteAcceptedMessageFromJson(
     id: json['id'] as String,
     name: json['name'] as String,
     publicKey: json['publicKey'] as String,
+    timestamp: json['timestamp'] as int,
   );
 }
 
@@ -21,4 +22,5 @@ Map<String, dynamic> _$_$_InviteAcceptedMessageToJson(
       'id': instance.id,
       'name': instance.name,
       'publicKey': instance.publicKey,
+      'timestamp': instance.timestamp,
     };

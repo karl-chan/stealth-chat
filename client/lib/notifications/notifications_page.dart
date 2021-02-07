@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Notification;
 import 'package:get/get.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/time.dart';
 
 class NotificationsController extends GetxController {
   final RxList<Notification> notifications;
@@ -41,11 +42,20 @@ class NotificationsPage extends StatelessWidget {
                             ? FontWeight.bold
                             : FontWeight.normal)),
                 subtitle: Text(notification.subtitle),
+                trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(Time.shortHumanFormat(notification.timestamp)),
+                      Text('')
+                    ]),
                 onTap: () async {
                   await Get.defaultDialog(
-                    title: notification.title,
-                    content: Text(notification.body),
-                  );
+                      title: notification.title,
+                      content: Text(notification.body),
+                      textConfirm: 'Dismiss',
+                      confirmTextColor: Colors.white,
+                      onConfirm: () => Get.back());
                   if (notification.unread) {
                     await globals.db.notifications.markAsRead(notification);
                   }
