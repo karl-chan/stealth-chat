@@ -53,7 +53,9 @@ defmodule ServerWeb.UserChannel do
           payload = doc["payload"]
 
           Logger.debug(
-            "Change stream event: #{Poison.encode!(event)} payload: #{Poison.encode!(payload)}"
+            "Change stream event for #{user_id}: #{Poison.encode!(event)} payload: #{
+              Poison.encode!(payload)
+            }"
           )
 
           push(socket, event, payload)

@@ -3,9 +3,12 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
 import 'package:stealth_chat/register/registration_page.dart';
 import 'package:stealth_chat/util/logging.dart';
+
+typedef BootDestination = Future<dynamic> Function();
 
 enum BootStatus {
   BOOTING,
@@ -14,10 +17,7 @@ enum BootStatus {
 }
 
 class BootController extends GetxController {
-  final Function callback;
   Rx<BootStatus> status = BootStatus.BOOTING.obs;
-
-  BootController({Function callback}) : this.callback = callback;
 
   boot() async {
     Globals globals;
@@ -39,25 +39,26 @@ class BootController extends GetxController {
 }
 
 class BootScreen extends StatelessWidget {
-  final Function callback;
+  final BootDestination destination;
 
-  BootScreen({Key key, Function callback})
-      : this.callback = callback,
+  BootScreen({Key key, BootDestination destination})
+      : this.destination = destination ?? (() => Get.off(HomePage())),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final BootController c = Get.put(BootController(callback: callback));
+    final BootController c = Get.put(BootController());
     c.boot();
 
     return Obx(() {
       switch (c.status.value) {
         case BootStatus.REDIRECT_TO_REGISTRATION_PAGE:
-          Future.microtask(() => Get.off(RegistrationPage(callback: callback)));
+          Future.microtask(
+              () => Get.off(RegistrationPage(destination: destination)));
           break;
 
         case BootStatus.REDIRECT_TO_LOGIN_PAGE:
-          Future.microtask(() => Get.off(LoginPage(callback: callback)));
+          Future.microtask(() => Get.off(LoginPage(destination: destination)));
           break;
 
         default:

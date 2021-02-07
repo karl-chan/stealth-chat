@@ -29,7 +29,7 @@ class ServerEvents {
 }
 
 typedef FromJson<T> = T Function(Map<String, dynamic> data);
-typedef ServerEventCallback<T> = void Function(T t);
+typedef ServerEventCallback<T> = Function(T t);
 
 class ServerEvent<T> {
   final Stream<T> stream;

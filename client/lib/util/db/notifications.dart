@@ -16,9 +16,9 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
     with _$NotificationsDaoMixin {
   NotificationsDao(AppDb db) : super(db);
 
-  Future<void> insert({String title, String subtitle, String body}) async {
-    NotificationsCompanion.insert(
-        title: title, subtitle: subtitle, body: body, unread: true);
+  Future<void> insert(String title, String subtitle, String body) async {
+    return into(notifications).insert(NotificationsCompanion.insert(
+        title: title, subtitle: subtitle, body: body, unread: true));
   }
 
   Stream<List<Notification>> listNotifications() {
@@ -29,5 +29,10 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
     return (select(notifications)..where((n) => n.unread))
         .watch()
         .map((ns) => ns.length);
+  }
+
+  Future<void> markAsRead(Notification notification) async {
+    return (update(notifications)..where((n) => n.id.equals(notification.id)))
+        .write(NotificationsCompanion(unread: Value(false)));
   }
 }
