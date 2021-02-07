@@ -12,7 +12,7 @@ class AcceptInviteEvent extends ClientEvent<AcceptInviteMessage> {
 
 @freezed
 abstract class AcceptInviteMessage with _$AcceptInviteMessage {
-  const factory AcceptInviteMessage({String their_id, String my_name}) =
+  const factory AcceptInviteMessage({String theirId, String myName}) =
       _AcceptInviteMessage;
 
   factory AcceptInviteMessage.fromJson(Map<String, dynamic> json) =>

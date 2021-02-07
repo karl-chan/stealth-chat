@@ -17,10 +17,10 @@ class _$AcceptInviteMessageTearOff {
   const _$AcceptInviteMessageTearOff();
 
 // ignore: unused_element
-  _AcceptInviteMessage call({String their_id, String my_name}) {
+  _AcceptInviteMessage call({String theirId, String myName}) {
     return _AcceptInviteMessage(
-      their_id: their_id,
-      my_name: my_name,
+      theirId: theirId,
+      myName: myName,
     );
   }
 
@@ -36,8 +36,8 @@ const $AcceptInviteMessage = _$AcceptInviteMessageTearOff();
 
 /// @nodoc
 mixin _$AcceptInviteMessage {
-  String get their_id;
-  String get my_name;
+  String get theirId;
+  String get myName;
 
   Map<String, dynamic> toJson();
   @JsonKey(ignore: true)
@@ -49,7 +49,7 @@ abstract class $AcceptInviteMessageCopyWith<$Res> {
   factory $AcceptInviteMessageCopyWith(
           AcceptInviteMessage value, $Res Function(AcceptInviteMessage) then) =
       _$AcceptInviteMessageCopyWithImpl<$Res>;
-  $Res call({String their_id, String my_name});
+  $Res call({String theirId, String myName});
 }
 
 /// @nodoc
@@ -63,12 +63,12 @@ class _$AcceptInviteMessageCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object their_id = freezed,
-    Object my_name = freezed,
+    Object theirId = freezed,
+    Object myName = freezed,
   }) {
     return _then(_value.copyWith(
-      their_id: their_id == freezed ? _value.their_id : their_id as String,
-      my_name: my_name == freezed ? _value.my_name : my_name as String,
+      theirId: theirId == freezed ? _value.theirId : theirId as String,
+      myName: myName == freezed ? _value.myName : myName as String,
     ));
   }
 }
@@ -80,7 +80,7 @@ abstract class _$AcceptInviteMessageCopyWith<$Res>
           $Res Function(_AcceptInviteMessage) then) =
       __$AcceptInviteMessageCopyWithImpl<$Res>;
   @override
-  $Res call({String their_id, String my_name});
+  $Res call({String theirId, String myName});
 }
 
 /// @nodoc
@@ -96,12 +96,12 @@ class __$AcceptInviteMessageCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object their_id = freezed,
-    Object my_name = freezed,
+    Object theirId = freezed,
+    Object myName = freezed,
   }) {
     return _then(_AcceptInviteMessage(
-      their_id: their_id == freezed ? _value.their_id : their_id as String,
-      my_name: my_name == freezed ? _value.my_name : my_name as String,
+      theirId: theirId == freezed ? _value.theirId : theirId as String,
+      myName: myName == freezed ? _value.myName : myName as String,
     ));
   }
 }
@@ -110,37 +110,37 @@ class __$AcceptInviteMessageCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_AcceptInviteMessage implements _AcceptInviteMessage {
-  const _$_AcceptInviteMessage({this.their_id, this.my_name});
+  const _$_AcceptInviteMessage({this.theirId, this.myName});
 
   factory _$_AcceptInviteMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_AcceptInviteMessageFromJson(json);
 
   @override
-  final String their_id;
+  final String theirId;
   @override
-  final String my_name;
+  final String myName;
 
   @override
   String toString() {
-    return 'AcceptInviteMessage(their_id: $their_id, my_name: $my_name)';
+    return 'AcceptInviteMessage(theirId: $theirId, myName: $myName)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _AcceptInviteMessage &&
-            (identical(other.their_id, their_id) ||
+            (identical(other.theirId, theirId) ||
                 const DeepCollectionEquality()
-                    .equals(other.their_id, their_id)) &&
-            (identical(other.my_name, my_name) ||
-                const DeepCollectionEquality().equals(other.my_name, my_name)));
+                    .equals(other.theirId, theirId)) &&
+            (identical(other.myName, myName) ||
+                const DeepCollectionEquality().equals(other.myName, myName)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(their_id) ^
-      const DeepCollectionEquality().hash(my_name);
+      const DeepCollectionEquality().hash(theirId) ^
+      const DeepCollectionEquality().hash(myName);
 
   @JsonKey(ignore: true)
   @override
@@ -155,16 +155,16 @@ class _$_AcceptInviteMessage implements _AcceptInviteMessage {
 }
 
 abstract class _AcceptInviteMessage implements AcceptInviteMessage {
-  const factory _AcceptInviteMessage({String their_id, String my_name}) =
+  const factory _AcceptInviteMessage({String theirId, String myName}) =
       _$_AcceptInviteMessage;
 
   factory _AcceptInviteMessage.fromJson(Map<String, dynamic> json) =
       _$_AcceptInviteMessage.fromJson;
 
   @override
-  String get their_id;
+  String get theirId;
   @override
-  String get my_name;
+  String get myName;
   @override
   @JsonKey(ignore: true)
   _$AcceptInviteMessageCopyWith<_AcceptInviteMessage> get copyWith;

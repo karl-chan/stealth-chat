@@ -249,18 +249,21 @@ class Notification extends DataClass implements Insertable<Notification> {
   final String title;
   final String subtitle;
   final String body;
+  final DateTime timestamp;
   final bool unread;
   Notification(
       {@required this.id,
       @required this.title,
       @required this.subtitle,
       @required this.body,
+      @required this.timestamp,
       @required this.unread});
   factory Notification.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     final boolType = db.typeSystem.forDartType<bool>();
     return Notification(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -269,6 +272,8 @@ class Notification extends DataClass implements Insertable<Notification> {
       subtitle: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}subtitle']),
       body: stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+      timestamp: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp']),
       unread:
           boolType.mapFromDatabaseResponse(data['${effectivePrefix}unread']),
     );
@@ -288,6 +293,9 @@ class Notification extends DataClass implements Insertable<Notification> {
     if (!nullToAbsent || body != null) {
       map['body'] = Variable<String>(body);
     }
+    if (!nullToAbsent || timestamp != null) {
+      map['timestamp'] = Variable<DateTime>(timestamp);
+    }
     if (!nullToAbsent || unread != null) {
       map['unread'] = Variable<bool>(unread);
     }
@@ -303,6 +311,9 @@ class Notification extends DataClass implements Insertable<Notification> {
           ? const Value.absent()
           : Value(subtitle),
       body: body == null && nullToAbsent ? const Value.absent() : Value(body),
+      timestamp: timestamp == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestamp),
       unread:
           unread == null && nullToAbsent ? const Value.absent() : Value(unread),
     );
@@ -316,6 +327,7 @@ class Notification extends DataClass implements Insertable<Notification> {
       title: serializer.fromJson<String>(json['title']),
       subtitle: serializer.fromJson<String>(json['subtitle']),
       body: serializer.fromJson<String>(json['body']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       unread: serializer.fromJson<bool>(json['unread']),
     );
   }
@@ -327,17 +339,24 @@ class Notification extends DataClass implements Insertable<Notification> {
       'title': serializer.toJson<String>(title),
       'subtitle': serializer.toJson<String>(subtitle),
       'body': serializer.toJson<String>(body),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
       'unread': serializer.toJson<bool>(unread),
     };
   }
 
   Notification copyWith(
-          {int id, String title, String subtitle, String body, bool unread}) =>
+          {int id,
+          String title,
+          String subtitle,
+          String body,
+          DateTime timestamp,
+          bool unread}) =>
       Notification(
         id: id ?? this.id,
         title: title ?? this.title,
         subtitle: subtitle ?? this.subtitle,
         body: body ?? this.body,
+        timestamp: timestamp ?? this.timestamp,
         unread: unread ?? this.unread,
       );
   @override
@@ -347,6 +366,7 @@ class Notification extends DataClass implements Insertable<Notification> {
           ..write('title: $title, ')
           ..write('subtitle: $subtitle, ')
           ..write('body: $body, ')
+          ..write('timestamp: $timestamp, ')
           ..write('unread: $unread')
           ..write(')'))
         .toString();
@@ -355,8 +375,12 @@ class Notification extends DataClass implements Insertable<Notification> {
   @override
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
-      $mrjc(title.hashCode,
-          $mrjc(subtitle.hashCode, $mrjc(body.hashCode, unread.hashCode)))));
+      $mrjc(
+          title.hashCode,
+          $mrjc(
+              subtitle.hashCode,
+              $mrjc(body.hashCode,
+                  $mrjc(timestamp.hashCode, unread.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -365,6 +389,7 @@ class Notification extends DataClass implements Insertable<Notification> {
           other.title == this.title &&
           other.subtitle == this.subtitle &&
           other.body == this.body &&
+          other.timestamp == this.timestamp &&
           other.unread == this.unread);
 }
 
@@ -373,12 +398,14 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
   final Value<String> title;
   final Value<String> subtitle;
   final Value<String> body;
+  final Value<DateTime> timestamp;
   final Value<bool> unread;
   const NotificationsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.subtitle = const Value.absent(),
     this.body = const Value.absent(),
+    this.timestamp = const Value.absent(),
     this.unread = const Value.absent(),
   });
   NotificationsCompanion.insert({
@@ -386,16 +413,19 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
     @required String title,
     @required String subtitle,
     @required String body,
+    @required DateTime timestamp,
     @required bool unread,
   })  : title = Value(title),
         subtitle = Value(subtitle),
         body = Value(body),
+        timestamp = Value(timestamp),
         unread = Value(unread);
   static Insertable<Notification> custom({
     Expression<int> id,
     Expression<String> title,
     Expression<String> subtitle,
     Expression<String> body,
+    Expression<DateTime> timestamp,
     Expression<bool> unread,
   }) {
     return RawValuesInsertable({
@@ -403,6 +433,7 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
       if (title != null) 'title': title,
       if (subtitle != null) 'subtitle': subtitle,
       if (body != null) 'body': body,
+      if (timestamp != null) 'timestamp': timestamp,
       if (unread != null) 'unread': unread,
     });
   }
@@ -412,12 +443,14 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
       Value<String> title,
       Value<String> subtitle,
       Value<String> body,
+      Value<DateTime> timestamp,
       Value<bool> unread}) {
     return NotificationsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
       body: body ?? this.body,
+      timestamp: timestamp ?? this.timestamp,
       unread: unread ?? this.unread,
     );
   }
@@ -437,6 +470,9 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
     if (body.present) {
       map['body'] = Variable<String>(body.value);
     }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
     if (unread.present) {
       map['unread'] = Variable<bool>(unread.value);
     }
@@ -450,6 +486,7 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
           ..write('title: $title, ')
           ..write('subtitle: $subtitle, ')
           ..write('body: $body, ')
+          ..write('timestamp: $timestamp, ')
           ..write('unread: $unread')
           ..write(')'))
         .toString();
@@ -506,6 +543,18 @@ class $NotificationsTable extends Notifications
     );
   }
 
+  final VerificationMeta _timestampMeta = const VerificationMeta('timestamp');
+  GeneratedDateTimeColumn _timestamp;
+  @override
+  GeneratedDateTimeColumn get timestamp => _timestamp ??= _constructTimestamp();
+  GeneratedDateTimeColumn _constructTimestamp() {
+    return GeneratedDateTimeColumn(
+      'timestamp',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _unreadMeta = const VerificationMeta('unread');
   GeneratedBoolColumn _unread;
   @override
@@ -519,7 +568,8 @@ class $NotificationsTable extends Notifications
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, title, subtitle, body, unread];
+  List<GeneratedColumn> get $columns =>
+      [id, title, subtitle, body, timestamp, unread];
   @override
   $NotificationsTable get asDslTable => this;
   @override
@@ -551,6 +601,12 @@ class $NotificationsTable extends Notifications
           _bodyMeta, body.isAcceptableOrUnknown(data['body'], _bodyMeta));
     } else if (isInserting) {
       context.missing(_bodyMeta);
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(_timestampMeta,
+          timestamp.isAcceptableOrUnknown(data['timestamp'], _timestampMeta));
+    } else if (isInserting) {
+      context.missing(_timestampMeta);
     }
     if (data.containsKey('unread')) {
       context.handle(_unreadMeta,

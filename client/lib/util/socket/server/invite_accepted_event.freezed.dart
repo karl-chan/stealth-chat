@@ -18,11 +18,13 @@ class _$InviteAcceptedMessageTearOff {
   const _$InviteAcceptedMessageTearOff();
 
 // ignore: unused_element
-  _InviteAcceptedMessage call({String id, String name, String publicKey}) {
+  _InviteAcceptedMessage call(
+      {String id, String name, String publicKey, int timestamp}) {
     return _InviteAcceptedMessage(
       id: id,
       name: name,
       publicKey: publicKey,
+      timestamp: timestamp,
     );
   }
 
@@ -41,6 +43,7 @@ mixin _$InviteAcceptedMessage {
   String get id;
   String get name;
   String get publicKey;
+  int get timestamp;
 
   Map<String, dynamic> toJson();
   @JsonKey(ignore: true)
@@ -52,7 +55,7 @@ abstract class $InviteAcceptedMessageCopyWith<$Res> {
   factory $InviteAcceptedMessageCopyWith(InviteAcceptedMessage value,
           $Res Function(InviteAcceptedMessage) then) =
       _$InviteAcceptedMessageCopyWithImpl<$Res>;
-  $Res call({String id, String name, String publicKey});
+  $Res call({String id, String name, String publicKey, int timestamp});
 }
 
 /// @nodoc
@@ -69,11 +72,13 @@ class _$InviteAcceptedMessageCopyWithImpl<$Res>
     Object id = freezed,
     Object name = freezed,
     Object publicKey = freezed,
+    Object timestamp = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed ? _value.id : id as String,
       name: name == freezed ? _value.name : name as String,
       publicKey: publicKey == freezed ? _value.publicKey : publicKey as String,
+      timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
 }
@@ -85,7 +90,7 @@ abstract class _$InviteAcceptedMessageCopyWith<$Res>
           $Res Function(_InviteAcceptedMessage) then) =
       __$InviteAcceptedMessageCopyWithImpl<$Res>;
   @override
-  $Res call({String id, String name, String publicKey});
+  $Res call({String id, String name, String publicKey, int timestamp});
 }
 
 /// @nodoc
@@ -104,11 +109,13 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
     Object id = freezed,
     Object name = freezed,
     Object publicKey = freezed,
+    Object timestamp = freezed,
   }) {
     return _then(_InviteAcceptedMessage(
       id: id == freezed ? _value.id : id as String,
       name: name == freezed ? _value.name : name as String,
       publicKey: publicKey == freezed ? _value.publicKey : publicKey as String,
+      timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
 }
@@ -117,7 +124,8 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
-  const _$_InviteAcceptedMessage({this.id, this.name, this.publicKey});
+  const _$_InviteAcceptedMessage(
+      {this.id, this.name, this.publicKey, this.timestamp});
 
   factory _$_InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_InviteAcceptedMessageFromJson(json);
@@ -128,10 +136,12 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
   final String name;
   @override
   final String publicKey;
+  @override
+  final int timestamp;
 
   @override
   String toString() {
-    return 'InviteAcceptedMessage(id: $id, name: $name, publicKey: $publicKey)';
+    return 'InviteAcceptedMessage(id: $id, name: $name, publicKey: $publicKey, timestamp: $timestamp)';
   }
 
   @override
@@ -144,7 +154,10 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.publicKey, publicKey) ||
                 const DeepCollectionEquality()
-                    .equals(other.publicKey, publicKey)));
+                    .equals(other.publicKey, publicKey)) &&
+            (identical(other.timestamp, timestamp) ||
+                const DeepCollectionEquality()
+                    .equals(other.timestamp, timestamp)));
   }
 
   @override
@@ -152,7 +165,8 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(publicKey);
+      const DeepCollectionEquality().hash(publicKey) ^
+      const DeepCollectionEquality().hash(timestamp);
 
   @JsonKey(ignore: true)
   @override
@@ -168,7 +182,10 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
 
 abstract class _InviteAcceptedMessage implements InviteAcceptedMessage {
   const factory _InviteAcceptedMessage(
-      {String id, String name, String publicKey}) = _$_InviteAcceptedMessage;
+      {String id,
+      String name,
+      String publicKey,
+      int timestamp}) = _$_InviteAcceptedMessage;
 
   factory _InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =
       _$_InviteAcceptedMessage.fromJson;
@@ -179,6 +196,8 @@ abstract class _InviteAcceptedMessage implements InviteAcceptedMessage {
   String get name;
   @override
   String get publicKey;
+  @override
+  int get timestamp;
   @override
   @JsonKey(ignore: true)
   _$InviteAcceptedMessageCopyWith<_InviteAcceptedMessage> get copyWith;

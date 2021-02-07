@@ -10,16 +10,10 @@ defmodule Server.Events.ServerEvents do
     defstruct [:message]
   end
 
-  defmodule Heartbeat do
-    @derive [Poison.Encoder]
-    @enforce_keys [:message]
-    defstruct [:message]
-  end
-
   defmodule InviteAccepted do
     @derive [Poison.Encoder]
-    @enforce_keys [:id, :name, :publicKey]
-    defstruct [:id, :name, :publicKey]
+    @enforce_keys [:id, :name, :publicKey, :timestamp]
+    defstruct [:id, :name, :publicKey, :timestamp]
   end
 
   def insert(user_id, server_event) do
@@ -79,6 +73,8 @@ defmodule Server.Events.ServerEvents do
 
   @dialyzer {:nowarn_function, create_index: 0}
   def create_index() do
+    Logger.debug("Creating index for collection messages...")
+
     Mongo.create_indexes(:mongo, @coll, [
       [
         key: ["payload.timestamp": 1],

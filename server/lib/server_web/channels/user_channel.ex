@@ -62,9 +62,6 @@ defmodule ServerWeb.UserChannel do
         end
       end)
     end)
-
-    # send heartbeat
-    ServerEvents.insert(user_id, %ServerEvents.Heartbeat{message: "heartbeat"})
   end
 
   defp authorize?(user_id, socket) do
