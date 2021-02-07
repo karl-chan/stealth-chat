@@ -8,7 +8,9 @@ class NotificationsController extends GetxController {
 
   NotificationsController(Globals globals)
       : this.notifications = List<Notification>().obs
-          ..bindStream(globals.db.notifications.listNotifications());
+          ..bindStream(globals.db.notifications
+              .listNotifications()
+              .map((notifications) => notifications.reversed.toList()));
 }
 
 class NotificationsPage extends StatelessWidget {
@@ -33,7 +35,11 @@ class NotificationsPage extends StatelessWidget {
             final notification = c.notifications.elementAt(index);
 
             return ListTile(
-                title: Text(notification.title),
+                title: Text(notification.title,
+                    style: TextStyle(
+                        fontWeight: notification.unread
+                            ? FontWeight.bold
+                            : FontWeight.normal)),
                 subtitle: Text(notification.subtitle),
                 onTap: () async {
                   await Get.defaultDialog(

@@ -16,9 +16,9 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
     with _$NotificationsDaoMixin {
   NotificationsDao(AppDb db) : super(db);
 
-  Future<void> insert({String title, String subtitle, String body}) async {
-    NotificationsCompanion.insert(
-        title: title, subtitle: subtitle, body: body, unread: true);
+  Future<void> insert(String title, String subtitle, String body) async {
+    return into(notifications).insert(NotificationsCompanion.insert(
+        title: title, subtitle: subtitle, body: body, unread: true));
   }
 
   Stream<List<Notification>> listNotifications() {
