@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
-import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/util/api/user_api.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
@@ -13,9 +13,10 @@ enum RegistrationStep { SET_NAME, SET_PASSWORD, CONFIRM_PASSWORD, REGISTRATION }
 class RegistrationController extends GetxController {
   final String id = Uuid().v4();
   final Globals globals = Get.find();
-  final Function callback;
+  final BootDestination destination;
 
-  RegistrationController(Function callback) : this.callback = callback;
+  RegistrationController(BootDestination destination)
+      : this.destination = destination;
 
   Rx<RegistrationStep> step = RegistrationStep.SET_NAME.obs;
   RxBool isRegistering = false.obs;
@@ -109,11 +110,7 @@ class RegistrationController extends GetxController {
       case RegistrationStep.REGISTRATION:
         final registrationSuccess = await runRegistration();
         if (registrationSuccess) {
-          if (callback != null) {
-            callback();
-          } else {
-            await Get.off(HomePage());
-          }
+          await destination();
         }
     }
   }
@@ -144,15 +141,15 @@ class RegistrationController extends GetxController {
 }
 
 class RegistrationPage extends StatelessWidget {
-  final Function callback;
+  final BootDestination destination;
 
-  RegistrationPage({Key key, Function callback})
-      : this.callback = callback,
+  RegistrationPage({Key key, BootDestination destination})
+      : this.destination = destination,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(RegistrationController(callback));
+    final c = Get.put(RegistrationController(destination));
 
     return Scaffold(
         appBar: AppBar(title: Text('Register')),

@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get/get.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart' as http;
+import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
 
 part 'dictionary_page.freezed.dart';
@@ -13,7 +14,7 @@ class DictionaryController extends LoginController {
   RxBool isSearching = false.obs;
   Rx<Search> currSearch = Rx(null);
 
-  DictionaryController(Function callback) : super(callback);
+  DictionaryController(BootDestination destination) : super(destination);
 
   void performSearch() async {
     isSearching.value = true;
@@ -43,15 +44,15 @@ class DictionaryController extends LoginController {
 }
 
 class DictionaryPage extends LoginPage {
-  final Function callback;
+  final BootDestination destination;
 
-  DictionaryPage({Key key, Function callback})
-      : this.callback = callback,
+  DictionaryPage({Key key, BootDestination destination})
+      : this.destination = destination,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DictionaryController c = Get.put(DictionaryController(callback));
+    DictionaryController c = Get.put(DictionaryController(destination));
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,

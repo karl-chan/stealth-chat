@@ -30,4 +30,9 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
         .watch()
         .map((ns) => ns.length);
   }
+
+  Future<void> markAsRead(Notification notification) async {
+    return (update(notifications)..where((n) => n.id.equals(notification.id)))
+        .write(NotificationsCompanion(unread: Value(false)));
+  }
 }

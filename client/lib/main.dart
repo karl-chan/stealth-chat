@@ -19,7 +19,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   StreamSubscription _sub;
-  Function bootCallback;
+  BootDestination destination;
 
   @override
   void initState() {
@@ -70,16 +70,14 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> handleAppLinkOnColdBoot(Uri appLink) async {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
-        bootCallback = () async {
-          await Get.to(AcceptInvitePage(appLink));
-        };
+        destination = () => Get.off(AcceptInvitePage(appLink));
       }
     }
   }
 
   Future<void> handleAppLinkOnWarmPause(Uri appLink) async {
     await handleAppLinkOnColdBoot(appLink);
-    await Get.offAll(BootScreen(callback: bootCallback));
+    await Get.offAll(BootScreen(destination: destination));
   }
 
   @override
@@ -102,7 +100,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BootScreen(callback: bootCallback),
+      home: BootScreen(destination: destination),
     );
   }
 }

@@ -51,8 +51,8 @@ class Socket {
       client = ClientEvents(channel);
     });
 
-    socket.errorStream.listen((event) {
-      Get.defaultDialog(
+    socket.errorStream.listen((event) async {
+      await Get.defaultDialog(
           title: 'Socket connection error',
           content: Column(children: [
             Icon(Icons.error, color: Colors.red, size: 50),

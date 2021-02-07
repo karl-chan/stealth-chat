@@ -35,10 +35,15 @@ class NotificationsPage extends StatelessWidget {
             return ListTile(
                 title: Text(notification.title),
                 subtitle: Text(notification.subtitle),
-                onTap: () => Get.defaultDialog(
-                      title: notification.title,
-                      content: Text(notification.body),
-                    ));
+                onTap: () async {
+                  await Get.defaultDialog(
+                    title: notification.title,
+                    content: Text(notification.body),
+                  );
+                  if (notification.unread) {
+                    await globals.db.notifications.markAsRead(notification);
+                  }
+                });
           },
           separatorBuilder: (BuildContext context, int index) =>
               const Divider(),
