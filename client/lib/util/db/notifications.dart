@@ -27,6 +27,12 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
         unread: true));
   }
 
+  Future<void> remove(List<Notification> ns) async {
+    return (delete(notifications)
+          ..where((n) => n.id.isIn(ns.map((n2) => n2.id))))
+        .go();
+  }
+
   Stream<List<Notification>> listNotifications() {
     return (select(notifications)).watch();
   }
