@@ -1,6 +1,6 @@
 import 'package:crypton/crypton.dart';
 import 'package:moor/moor.dart';
-import 'package:stealth_chat/db/db.dart';
+import 'package:stealth_chat/util/db/db.dart';
 
 part 'contacts.g.dart';
 

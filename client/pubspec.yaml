@@ -12,6 +12,7 @@ environment:
 
 dependencies:
   async: 
+  badges: 1.1.6
   characters:
   crypton: 1.1.3
   cupertino_icons: 0.1.3

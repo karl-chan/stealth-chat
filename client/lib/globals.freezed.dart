@@ -14,10 +14,12 @@ class _$DatabaseTearOff {
   const _$DatabaseTearOff();
 
 // ignore: unused_element
-  _Database call(AppDb app, ContactsDao contacts) {
+  _Database call(
+      AppDb app, ContactsDao contacts, NotificationsDao notifications) {
     return _Database(
       app,
       contacts,
+      notifications,
     );
   }
 }
@@ -30,6 +32,7 @@ const $Database = _$DatabaseTearOff();
 mixin _$Database {
   AppDb get app;
   ContactsDao get contacts;
+  NotificationsDao get notifications;
 
   @JsonKey(ignore: true)
   $DatabaseCopyWith<Database> get copyWith;
@@ -39,7 +42,7 @@ mixin _$Database {
 abstract class $DatabaseCopyWith<$Res> {
   factory $DatabaseCopyWith(Database value, $Res Function(Database) then) =
       _$DatabaseCopyWithImpl<$Res>;
-  $Res call({AppDb app, ContactsDao contacts});
+  $Res call({AppDb app, ContactsDao contacts, NotificationsDao notifications});
 }
 
 /// @nodoc
@@ -54,10 +57,14 @@ class _$DatabaseCopyWithImpl<$Res> implements $DatabaseCopyWith<$Res> {
   $Res call({
     Object app = freezed,
     Object contacts = freezed,
+    Object notifications = freezed,
   }) {
     return _then(_value.copyWith(
       app: app == freezed ? _value.app : app as AppDb,
       contacts: contacts == freezed ? _value.contacts : contacts as ContactsDao,
+      notifications: notifications == freezed
+          ? _value.notifications
+          : notifications as NotificationsDao,
     ));
   }
 }
@@ -67,7 +74,7 @@ abstract class _$DatabaseCopyWith<$Res> implements $DatabaseCopyWith<$Res> {
   factory _$DatabaseCopyWith(_Database value, $Res Function(_Database) then) =
       __$DatabaseCopyWithImpl<$Res>;
   @override
-  $Res call({AppDb app, ContactsDao contacts});
+  $Res call({AppDb app, ContactsDao contacts, NotificationsDao notifications});
 }
 
 /// @nodoc
@@ -83,29 +90,36 @@ class __$DatabaseCopyWithImpl<$Res> extends _$DatabaseCopyWithImpl<$Res>
   $Res call({
     Object app = freezed,
     Object contacts = freezed,
+    Object notifications = freezed,
   }) {
     return _then(_Database(
       app == freezed ? _value.app : app as AppDb,
       contacts == freezed ? _value.contacts : contacts as ContactsDao,
+      notifications == freezed
+          ? _value.notifications
+          : notifications as NotificationsDao,
     ));
   }
 }
 
 /// @nodoc
 class _$_Database extends _Database {
-  const _$_Database(this.app, this.contacts)
+  const _$_Database(this.app, this.contacts, this.notifications)
       : assert(app != null),
         assert(contacts != null),
+        assert(notifications != null),
         super._();
 
   @override
   final AppDb app;
   @override
   final ContactsDao contacts;
+  @override
+  final NotificationsDao notifications;
 
   @override
   String toString() {
-    return 'Database(app: $app, contacts: $contacts)';
+    return 'Database(app: $app, contacts: $contacts, notifications: $notifications)';
   }
 
   @override
@@ -116,14 +130,18 @@ class _$_Database extends _Database {
                 const DeepCollectionEquality().equals(other.app, app)) &&
             (identical(other.contacts, contacts) ||
                 const DeepCollectionEquality()
-                    .equals(other.contacts, contacts)));
+                    .equals(other.contacts, contacts)) &&
+            (identical(other.notifications, notifications) ||
+                const DeepCollectionEquality()
+                    .equals(other.notifications, notifications)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(app) ^
-      const DeepCollectionEquality().hash(contacts);
+      const DeepCollectionEquality().hash(contacts) ^
+      const DeepCollectionEquality().hash(notifications);
 
   @JsonKey(ignore: true)
   @override
@@ -133,12 +151,16 @@ class _$_Database extends _Database {
 
 abstract class _Database extends Database {
   const _Database._() : super._();
-  const factory _Database(AppDb app, ContactsDao contacts) = _$_Database;
+  const factory _Database(
+          AppDb app, ContactsDao contacts, NotificationsDao notifications) =
+      _$_Database;
 
   @override
   AppDb get app;
   @override
   ContactsDao get contacts;
+  @override
+  NotificationsDao get notifications;
   @override
   @JsonKey(ignore: true)
   _$DatabaseCopyWith<_Database> get copyWith;

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
-import 'package:stealth_chat/socket/client/client_events.dart';
+import 'package:stealth_chat/util/socket/client/client_events.dart';
 
 part 'ack_last_message_timestamp_channel.freezed.dart';
 part 'ack_last_message_timestamp_channel.g.dart';

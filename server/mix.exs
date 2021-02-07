@@ -50,6 +50,7 @@ defmodule Server.MixProject do
       {:mock, "~> 0.3.6", only: :test},
       {:mongodb_driver, "~> 0.7.1"},
       {:plug_cowboy, "~> 2.0"},
+      {:recase, "~> 0.5"},
       {:tesla, "~> 1.4.0"}
     ]
   end

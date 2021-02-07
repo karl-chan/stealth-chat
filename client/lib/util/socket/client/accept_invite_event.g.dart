@@ -9,14 +9,14 @@ part of 'accept_invite_event.dart';
 _$_AcceptInviteMessage _$_$_AcceptInviteMessageFromJson(
     Map<String, dynamic> json) {
   return _$_AcceptInviteMessage(
-    id: json['id'] as String,
-    name: json['name'] as String,
+    their_id: json['their_id'] as String,
+    my_name: json['my_name'] as String,
   );
 }
 
 Map<String, dynamic> _$_$_AcceptInviteMessageToJson(
         _$_AcceptInviteMessage instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
+      'their_id': instance.their_id,
+      'my_name': instance.my_name,
     };

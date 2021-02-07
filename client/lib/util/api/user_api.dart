@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crypton/crypton.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:stealth_chat/api/api.dart';
+import 'package:stealth_chat/util/api/api.dart';
 
 part 'user_api.freezed.dart';
 part 'user_api.g.dart';
