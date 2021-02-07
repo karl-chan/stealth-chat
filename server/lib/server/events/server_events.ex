@@ -6,22 +6,25 @@ defmodule Server.Events.ServerEvents do
 
   defmodule Error do
     @derive [Poison.Encoder]
+    @enforce_keys [:message]
     defstruct [:message]
   end
 
   defmodule Heartbeat do
     @derive [Poison.Encoder]
+    @enforce_keys [:message]
     defstruct [:message]
   end
 
   defmodule InviteAccepted do
     @derive [Poison.Encoder]
+    @enforce_keys [:id, :name]
     defstruct [:id, :name]
   end
 
   def insert(user_id, server_event) do
-    event = server_event.__struct__
-    data = server_event
+    event = server_event.__struct__ |> Module.split() |> List.last() |> Recase.to_constant()
+    data = server_event |> Map.from_struct()
 
     Logger.debug(
       "Inserted message for user: #{user_id} event: #{event} payload: #{Poison.encode!(data)}"
@@ -47,6 +50,7 @@ defmodule Server.Events.ServerEvents do
       },
       projection: %{_id: 0}
     )
+    |> Enum.to_list()
   end
 
   def delete(user_id, last_message_timestamp) do

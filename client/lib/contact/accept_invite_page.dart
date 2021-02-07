@@ -2,13 +2,13 @@ import 'package:crypton/crypton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:stealth_chat/api/user_api.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/home/home_page.dart';
-import 'package:stealth_chat/socket/client/accept_invite_event.dart';
+import 'package:stealth_chat/util/api/user_api.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
+import 'package:stealth_chat/util/socket/client/accept_invite_event.dart';
 
 class AcceptInviteController extends GetxController {
   final Globals globals;

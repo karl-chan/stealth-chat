@@ -2,34 +2,47 @@ defmodule Server.Events.ClientEvents do
   use EnumType
   alias Server.Events.ServerEvents
 
-  defenum ClientEvent do
-    value(ACCEPT_INVITE, "ACCEPT_INVITE")
-    value(ACK_LAST_MESSAGE_TIMESTAMP, "ACK_LAST_MESSAGE_TIMESTAMP")
+  defmodule AcceptInvite do
+    @enforce_keys [:their_id, :my_name]
+    defstruct [:their_id, :my_name]
   end
 
-  def handle(client_event, payload, socket) do
+  defmodule AckLastMessageTimestamp do
+    @enforce_keys [:last_message_timestamp]
+    defstruct [:last_message_timestamp]
+  end
+
+  def handle(event, payload, socket) do
     user_id = socket.assigns[:user_id]
 
-    case {ClientEvent.from(client_event), payload} do
-      {ClientEvent.ACCEPT_INVITE, %{"their_id" => their_id, "my_name" => my_name}} ->
-        ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
-          id: user_id,
-          name: my_name
-        })
+    with {:ok, client_event} <- parse_client_event(event, payload) do
+      case client_event do
+        %AcceptInvite{their_id: their_id, my_name: my_name} ->
+          ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
+            id: user_id,
+            name: my_name
+          })
 
-        :ok
+          :ok
 
-      {ClientEvent.ACK_LAST_MESSAGE_TIMESTAMP,
-       %{"last_message_timestamp" => last_message_timestamp}} ->
-        ServerEvents.delete(user_id, last_message_timestamp)
+        %AckLastMessageTimestamp{last_message_timestamp: last_message_timestamp} ->
+          ServerEvents.delete(user_id, last_message_timestamp)
 
-        :ok
+          :ok
+      end
+    end
+  end
+
+  defp parse_client_event(event, payload) do
+    case event do
+      "ACCEPT_INVITE" ->
+        {:ok, %AcceptInvite{their_id: payload["their_id"], my_name: payload["my_name"]}}
+
+      "ACK_LAST_MESSAGE_TIMESTAMP" ->
+        {:ok, %AckLastMessageTimestamp{last_message_timestamp: payload["last_message_timestamp"]}}
 
       _ ->
-        error_message =
-          "Unrecognised client event: #{client_event} with payload: #{Poison.encode!(payload)}"
-
-        {:error, error_message}
+        {:error, "Unrecognised client event: #{event} with payload: #{Poison.encode!(payload)}"}
     end
   end
 end

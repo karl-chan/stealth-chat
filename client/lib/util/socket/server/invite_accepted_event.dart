@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
-import 'package:stealth_chat/socket/server/server_events.dart';
+import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 part 'invite_accepted_event.freezed.dart';
 part 'invite_accepted_event.g.dart';

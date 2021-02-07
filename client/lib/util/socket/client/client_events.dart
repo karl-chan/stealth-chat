@@ -1,7 +1,7 @@
 import 'package:phoenix_socket/phoenix_socket.dart';
-import 'package:stealth_chat/socket/client/accept_invite_event.dart';
-import 'package:stealth_chat/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/util/logging.dart';
+import 'package:stealth_chat/util/socket/client/accept_invite_event.dart';
+import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
 
 class ClientEvents {
   final AcceptInviteEvent acceptInvite;

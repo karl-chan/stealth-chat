@@ -249,16 +249,19 @@ class Notification extends DataClass implements Insertable<Notification> {
   final String title;
   final String subtitle;
   final String body;
+  final bool unread;
   Notification(
       {@required this.id,
       @required this.title,
       @required this.subtitle,
-      @required this.body});
+      @required this.body,
+      @required this.unread});
   factory Notification.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final boolType = db.typeSystem.forDartType<bool>();
     return Notification(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
@@ -266,6 +269,8 @@ class Notification extends DataClass implements Insertable<Notification> {
       subtitle: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}subtitle']),
       body: stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+      unread:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}unread']),
     );
   }
   @override
@@ -283,6 +288,9 @@ class Notification extends DataClass implements Insertable<Notification> {
     if (!nullToAbsent || body != null) {
       map['body'] = Variable<String>(body);
     }
+    if (!nullToAbsent || unread != null) {
+      map['unread'] = Variable<bool>(unread);
+    }
     return map;
   }
 
@@ -295,6 +303,8 @@ class Notification extends DataClass implements Insertable<Notification> {
           ? const Value.absent()
           : Value(subtitle),
       body: body == null && nullToAbsent ? const Value.absent() : Value(body),
+      unread:
+          unread == null && nullToAbsent ? const Value.absent() : Value(unread),
     );
   }
 
@@ -306,6 +316,7 @@ class Notification extends DataClass implements Insertable<Notification> {
       title: serializer.fromJson<String>(json['title']),
       subtitle: serializer.fromJson<String>(json['subtitle']),
       body: serializer.fromJson<String>(json['body']),
+      unread: serializer.fromJson<bool>(json['unread']),
     );
   }
   @override
@@ -316,15 +327,18 @@ class Notification extends DataClass implements Insertable<Notification> {
       'title': serializer.toJson<String>(title),
       'subtitle': serializer.toJson<String>(subtitle),
       'body': serializer.toJson<String>(body),
+      'unread': serializer.toJson<bool>(unread),
     };
   }
 
-  Notification copyWith({int id, String title, String subtitle, String body}) =>
+  Notification copyWith(
+          {int id, String title, String subtitle, String body, bool unread}) =>
       Notification(
         id: id ?? this.id,
         title: title ?? this.title,
         subtitle: subtitle ?? this.subtitle,
         body: body ?? this.body,
+        unread: unread ?? this.unread,
       );
   @override
   String toString() {
@@ -332,14 +346,17 @@ class Notification extends DataClass implements Insertable<Notification> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('subtitle: $subtitle, ')
-          ..write('body: $body')
+          ..write('body: $body, ')
+          ..write('unread: $unread')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(title.hashCode, $mrjc(subtitle.hashCode, body.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(title.hashCode,
+          $mrjc(subtitle.hashCode, $mrjc(body.hashCode, unread.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -347,7 +364,8 @@ class Notification extends DataClass implements Insertable<Notification> {
           other.id == this.id &&
           other.title == this.title &&
           other.subtitle == this.subtitle &&
-          other.body == this.body);
+          other.body == this.body &&
+          other.unread == this.unread);
 }
 
 class NotificationsCompanion extends UpdateCompanion<Notification> {
@@ -355,31 +373,37 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
   final Value<String> title;
   final Value<String> subtitle;
   final Value<String> body;
+  final Value<bool> unread;
   const NotificationsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.subtitle = const Value.absent(),
     this.body = const Value.absent(),
+    this.unread = const Value.absent(),
   });
   NotificationsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
     @required String subtitle,
     @required String body,
+    @required bool unread,
   })  : title = Value(title),
         subtitle = Value(subtitle),
-        body = Value(body);
+        body = Value(body),
+        unread = Value(unread);
   static Insertable<Notification> custom({
     Expression<int> id,
     Expression<String> title,
     Expression<String> subtitle,
     Expression<String> body,
+    Expression<bool> unread,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (subtitle != null) 'subtitle': subtitle,
       if (body != null) 'body': body,
+      if (unread != null) 'unread': unread,
     });
   }
 
@@ -387,12 +411,14 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
       {Value<int> id,
       Value<String> title,
       Value<String> subtitle,
-      Value<String> body}) {
+      Value<String> body,
+      Value<bool> unread}) {
     return NotificationsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
       body: body ?? this.body,
+      unread: unread ?? this.unread,
     );
   }
 
@@ -411,6 +437,9 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
     if (body.present) {
       map['body'] = Variable<String>(body.value);
     }
+    if (unread.present) {
+      map['unread'] = Variable<bool>(unread.value);
+    }
     return map;
   }
 
@@ -420,7 +449,8 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('subtitle: $subtitle, ')
-          ..write('body: $body')
+          ..write('body: $body, ')
+          ..write('unread: $unread')
           ..write(')'))
         .toString();
   }
@@ -476,8 +506,20 @@ class $NotificationsTable extends Notifications
     );
   }
 
+  final VerificationMeta _unreadMeta = const VerificationMeta('unread');
+  GeneratedBoolColumn _unread;
   @override
-  List<GeneratedColumn> get $columns => [id, title, subtitle, body];
+  GeneratedBoolColumn get unread => _unread ??= _constructUnread();
+  GeneratedBoolColumn _constructUnread() {
+    return GeneratedBoolColumn(
+      'unread',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, title, subtitle, body, unread];
   @override
   $NotificationsTable get asDslTable => this;
   @override
@@ -509,6 +551,12 @@ class $NotificationsTable extends Notifications
           _bodyMeta, body.isAcceptableOrUnknown(data['body'], _bodyMeta));
     } else if (isInserting) {
       context.missing(_bodyMeta);
+    }
+    if (data.containsKey('unread')) {
+      context.handle(_unreadMeta,
+          unread.isAcceptableOrUnknown(data['unread'], _unreadMeta));
+    } else if (isInserting) {
+      context.missing(_unreadMeta);
     }
     return context;
   }

@@ -23,9 +23,8 @@ defmodule ServerWeb.UserChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   @impl true
-  def handle_in(client_event, payload, socket) do
-    Logger.info("Received client event: #{client_event}")
-    res = ClientEvents.handle(client_event, payload, socket)
+  def handle_in(event, payload, socket) do
+    res = ClientEvents.handle(event, payload, socket)
     {:reply, res, socket}
   end
 

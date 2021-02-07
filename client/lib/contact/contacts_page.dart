@@ -4,18 +4,22 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
-import 'package:stealth_chat/db/db.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
+import 'package:stealth_chat/util/db/db.dart';
 
 enum Menu { addContact, settings }
 
 class ContactsController extends GetxController {
   final RxList<Contact> contacts;
+  final RxInt numUnreadNotifications;
 
   ContactsController(Globals globals)
       : this.contacts = List<Contact>().obs
-          ..bindStream(globals.db.contacts.listContacts());
+          ..bindStream(globals.db.contacts.listContacts()),
+        this.numUnreadNotifications = 0.obs
+          ..bindStream(globals.db.notifications.countUnreadNotifications());
 }
 
 class ContactsPage extends StatelessWidget {
@@ -29,19 +33,24 @@ class ContactsPage extends StatelessWidget {
     final appBar = AppBar(
       title: const Text('Contacts'),
       actions: [
-        IconButton(
-          icon: Icon(Icons.person_add),
-          onPressed: () => Get.to(AddContactPage()),
-        ),
-        IconButton(
-          icon: Badge(
-              badgeContent: Text(
-                '1',
-                style: TextStyle(color: Colors.white),
-              ),
-              child: Icon(Icons.mail)),
-          onPressed: () => Get.to(AddContactPage()),
-        ),
+        Tooltip(
+            message: 'Add contact',
+            child: IconButton(
+              icon: Icon(Icons.person_add),
+              onPressed: () => Get.to(AddContactPage()),
+            )),
+        Tooltip(
+            message: 'View notifications',
+            child: IconButton(
+              icon: Obx(() => Badge(
+                  badgeContent: Text(
+                    c.numUnreadNotifications.value.toString(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  showBadge: c.numUnreadNotifications > 0,
+                  child: Icon(Icons.notifications))),
+              onPressed: () => Get.to(NotificationsPage()),
+            )),
         PopupMenuButton<Function>(
           onSelected: (Function function) => function(),
           itemBuilder: (BuildContext context) {
@@ -59,7 +68,7 @@ class ContactsPage extends StatelessWidget {
         style: TextStyle(color: Colors.grey, fontSize: 24),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
-            'You have no contacts.',
+            'You have no contacts',
           ),
           SizedBox(height: 20),
           Row(
@@ -70,7 +79,7 @@ class ContactsPage extends StatelessWidget {
                 Icons.person_add,
                 color: Colors.green,
               ),
-              Text(' to start.')
+              Text(' to add')
             ],
           )
         ]));

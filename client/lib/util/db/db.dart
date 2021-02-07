@@ -1,9 +1,9 @@
 import 'package:encrypted_moor/encrypted_moor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moor/moor.dart';
-import 'package:stealth_chat/db/contacts.dart';
-import 'package:stealth_chat/db/notifications.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/util/db/contacts.dart';
+import 'package:stealth_chat/util/db/notifications.dart';
 
 part 'db.g.dart';
 
