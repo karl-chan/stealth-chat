@@ -18,9 +18,10 @@ class _$InviteAcceptedMessageTearOff {
   const _$InviteAcceptedMessageTearOff();
 
 // ignore: unused_element
-  _InviteAcceptedMessage call({String message}) {
+  _InviteAcceptedMessage call({String id, String name}) {
     return _InviteAcceptedMessage(
-      message: message,
+      id: id,
+      name: name,
     );
   }
 
@@ -36,7 +37,8 @@ const $InviteAcceptedMessage = _$InviteAcceptedMessageTearOff();
 
 /// @nodoc
 mixin _$InviteAcceptedMessage {
-  String get message;
+  String get id;
+  String get name;
 
   Map<String, dynamic> toJson();
   @JsonKey(ignore: true)
@@ -48,7 +50,7 @@ abstract class $InviteAcceptedMessageCopyWith<$Res> {
   factory $InviteAcceptedMessageCopyWith(InviteAcceptedMessage value,
           $Res Function(InviteAcceptedMessage) then) =
       _$InviteAcceptedMessageCopyWithImpl<$Res>;
-  $Res call({String message});
+  $Res call({String id, String name});
 }
 
 /// @nodoc
@@ -62,10 +64,12 @@ class _$InviteAcceptedMessageCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object message = freezed,
+    Object id = freezed,
+    Object name = freezed,
   }) {
     return _then(_value.copyWith(
-      message: message == freezed ? _value.message : message as String,
+      id: id == freezed ? _value.id : id as String,
+      name: name == freezed ? _value.name : name as String,
     ));
   }
 }
@@ -77,7 +81,7 @@ abstract class _$InviteAcceptedMessageCopyWith<$Res>
           $Res Function(_InviteAcceptedMessage) then) =
       __$InviteAcceptedMessageCopyWithImpl<$Res>;
   @override
-  $Res call({String message});
+  $Res call({String id, String name});
 }
 
 /// @nodoc
@@ -93,10 +97,12 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object message = freezed,
+    Object id = freezed,
+    Object name = freezed,
   }) {
     return _then(_InviteAcceptedMessage(
-      message: message == freezed ? _value.message : message as String,
+      id: id == freezed ? _value.id : id as String,
+      name: name == freezed ? _value.name : name as String,
     ));
   }
 }
@@ -105,30 +111,36 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
-  const _$_InviteAcceptedMessage({this.message});
+  const _$_InviteAcceptedMessage({this.id, this.name});
 
   factory _$_InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_InviteAcceptedMessageFromJson(json);
 
   @override
-  final String message;
+  final String id;
+  @override
+  final String name;
 
   @override
   String toString() {
-    return 'InviteAcceptedMessage(message: $message)';
+    return 'InviteAcceptedMessage(id: $id, name: $name)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _InviteAcceptedMessage &&
-            (identical(other.message, message) ||
-                const DeepCollectionEquality().equals(other.message, message)));
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(message);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name);
 
   @JsonKey(ignore: true)
   @override
@@ -143,14 +155,16 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
 }
 
 abstract class _InviteAcceptedMessage implements InviteAcceptedMessage {
-  const factory _InviteAcceptedMessage({String message}) =
+  const factory _InviteAcceptedMessage({String id, String name}) =
       _$_InviteAcceptedMessage;
 
   factory _InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =
       _$_InviteAcceptedMessage.fromJson;
 
   @override
-  String get message;
+  String get id;
+  @override
+  String get name;
   @override
   @JsonKey(ignore: true)
   _$InviteAcceptedMessageCopyWith<_InviteAcceptedMessage> get copyWith;

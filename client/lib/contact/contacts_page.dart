@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
@@ -33,7 +34,12 @@ class ContactsPage extends StatelessWidget {
           onPressed: () => Get.to(AddContactPage()),
         ),
         IconButton(
-          icon: Icon(Icons.mail),
+          icon: Badge(
+              badgeContent: Text(
+                '1',
+                style: TextStyle(color: Colors.white),
+              ),
+              child: Icon(Icons.mail)),
           onPressed: () => Get.to(AddContactPage()),
         ),
         PopupMenuButton<Function>(

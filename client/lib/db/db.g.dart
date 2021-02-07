@@ -244,14 +244,303 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
   }
 }
 
+class Notification extends DataClass implements Insertable<Notification> {
+  final int id;
+  final String title;
+  final String subtitle;
+  final String body;
+  Notification(
+      {@required this.id,
+      @required this.title,
+      @required this.subtitle,
+      @required this.body});
+  factory Notification.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Notification(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      title:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
+      subtitle: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}subtitle']),
+      body: stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || subtitle != null) {
+      map['subtitle'] = Variable<String>(subtitle);
+    }
+    if (!nullToAbsent || body != null) {
+      map['body'] = Variable<String>(body);
+    }
+    return map;
+  }
+
+  NotificationsCompanion toCompanion(bool nullToAbsent) {
+    return NotificationsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      subtitle: subtitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subtitle),
+      body: body == null && nullToAbsent ? const Value.absent() : Value(body),
+    );
+  }
+
+  factory Notification.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Notification(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      subtitle: serializer.fromJson<String>(json['subtitle']),
+      body: serializer.fromJson<String>(json['body']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
+      'subtitle': serializer.toJson<String>(subtitle),
+      'body': serializer.toJson<String>(body),
+    };
+  }
+
+  Notification copyWith({int id, String title, String subtitle, String body}) =>
+      Notification(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        subtitle: subtitle ?? this.subtitle,
+        body: body ?? this.body,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Notification(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('subtitle: $subtitle, ')
+          ..write('body: $body')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(title.hashCode, $mrjc(subtitle.hashCode, body.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Notification &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.subtitle == this.subtitle &&
+          other.body == this.body);
+}
+
+class NotificationsCompanion extends UpdateCompanion<Notification> {
+  final Value<int> id;
+  final Value<String> title;
+  final Value<String> subtitle;
+  final Value<String> body;
+  const NotificationsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.subtitle = const Value.absent(),
+    this.body = const Value.absent(),
+  });
+  NotificationsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String title,
+    @required String subtitle,
+    @required String body,
+  })  : title = Value(title),
+        subtitle = Value(subtitle),
+        body = Value(body);
+  static Insertable<Notification> custom({
+    Expression<int> id,
+    Expression<String> title,
+    Expression<String> subtitle,
+    Expression<String> body,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (subtitle != null) 'subtitle': subtitle,
+      if (body != null) 'body': body,
+    });
+  }
+
+  NotificationsCompanion copyWith(
+      {Value<int> id,
+      Value<String> title,
+      Value<String> subtitle,
+      Value<String> body}) {
+    return NotificationsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      body: body ?? this.body,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (subtitle.present) {
+      map['subtitle'] = Variable<String>(subtitle.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('subtitle: $subtitle, ')
+          ..write('body: $body')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationsTable extends Notifications
+    with TableInfo<$NotificationsTable, Notification> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $NotificationsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _titleMeta = const VerificationMeta('title');
+  GeneratedTextColumn _title;
+  @override
+  GeneratedTextColumn get title => _title ??= _constructTitle();
+  GeneratedTextColumn _constructTitle() {
+    return GeneratedTextColumn(
+      'title',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _subtitleMeta = const VerificationMeta('subtitle');
+  GeneratedTextColumn _subtitle;
+  @override
+  GeneratedTextColumn get subtitle => _subtitle ??= _constructSubtitle();
+  GeneratedTextColumn _constructSubtitle() {
+    return GeneratedTextColumn(
+      'subtitle',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _bodyMeta = const VerificationMeta('body');
+  GeneratedTextColumn _body;
+  @override
+  GeneratedTextColumn get body => _body ??= _constructBody();
+  GeneratedTextColumn _constructBody() {
+    return GeneratedTextColumn(
+      'body',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, title, subtitle, body];
+  @override
+  $NotificationsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'notifications';
+  @override
+  final String actualTableName = 'notifications';
+  @override
+  VerificationContext validateIntegrity(Insertable<Notification> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('subtitle')) {
+      context.handle(_subtitleMeta,
+          subtitle.isAcceptableOrUnknown(data['subtitle'], _subtitleMeta));
+    } else if (isInserting) {
+      context.missing(_subtitleMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+          _bodyMeta, body.isAcceptableOrUnknown(data['body'], _bodyMeta));
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Notification map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Notification.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $NotificationsTable createAlias(String alias) {
+    return $NotificationsTable(_db, alias);
+  }
+}
+
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ContactsTable _contacts;
   $ContactsTable get contacts => _contacts ??= $ContactsTable(this);
+  $NotificationsTable _notifications;
+  $NotificationsTable get notifications =>
+      _notifications ??= $NotificationsTable(this);
   ContactsDao _contactsDao;
   ContactsDao get contactsDao => _contactsDao ??= ContactsDao(this as AppDb);
+  NotificationsDao _notificationsDao;
+  NotificationsDao get notificationsDao =>
+      _notificationsDao ??= NotificationsDao(this as AppDb);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [contacts];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [contacts, notifications];
 }

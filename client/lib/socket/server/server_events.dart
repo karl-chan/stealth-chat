@@ -22,25 +22,29 @@ class ServerEvents {
 
     error = ErrorEvent(splitter.split());
     heartbeat = HeartbeatEvent(splitter.split());
-    heartbeat.stream
-        .listen((message) => logDebug('Heartbeat: ' + message.toString()));
-    inviteAccepted = InviteAcceptedEvent(splitter.split());
+    inviteAccepted = InviteAcceptedEvent(splitter.split(), globals);
 
     splitter.close();
   }
 }
 
 typedef FromJson<T> = T Function(Map<String, dynamic> data);
+typedef ServerEventCallback<T> = void Function(T t);
 
 class ServerEvent<T> {
   final Stream<T> stream;
 
-  ServerEvent(Stream<Message> messages, String event, FromJson<T> fromJson)
+  ServerEvent(Stream<Message> messages, String event, FromJson<T> fromJson,
+      {ServerEventCallback<T> callback})
       : this.stream = messages
             .where((message) => message.event.value == event)
             .map((message) {
           final payload = message.payload['data'];
           logDebug('Server event: $event payload: $payload');
           return fromJson(payload);
-        });
+        }) {
+    if (callback != null) {
+      stream.listen(callback);
+    }
+  }
 }

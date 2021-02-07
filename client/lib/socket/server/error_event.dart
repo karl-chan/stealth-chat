@@ -6,8 +6,10 @@ part 'error_event.freezed.dart';
 part 'error_event.g.dart';
 
 class ErrorEvent extends ServerEvent<ErrorMessage> {
-  ErrorEvent(Stream<Message> messages)
-      : super(messages, 'ERROR', (data) => ErrorMessage.fromJson(data));
+  ErrorEvent(Stream<Message> messages,
+      {ServerEventCallback<ErrorMessage> callback})
+      : super(messages, 'ERROR', (data) => ErrorMessage.fromJson(data),
+            callback: callback);
 }
 
 @freezed

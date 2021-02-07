@@ -1,5 +1,10 @@
 include: package:pedantic/analysis_options.1.8.0.yaml
 
+analyzer:
+  exclude:
+    - lib/**/*.freezed.dart
+    - lib/**/*.g.dart
+
 linter:
   rules:      
     - prefer_const_declarations

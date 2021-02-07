@@ -4,22 +4,32 @@ defmodule Server.Events.ServerEvents do
 
   @coll "messages"
 
-  defenum ServerEvent do
-    value(ERROR, "ERROR")
-    value(HEARTBEAT, "HEARTBEAT")
-    value(INVITE_ACCEPTED, "INVITE_ACCEPTED")
+  defmodule Error do
+    @derive [Poison.Encoder]
+    defstruct [:message]
   end
 
-  def insert(user_id, server_event, data) do
+  defmodule Heartbeat do
+    @derive [Poison.Encoder]
+    defstruct [:message]
+  end
+
+  defmodule InviteAccepted do
+    @derive [Poison.Encoder]
+    defstruct [:id, :name]
+  end
+
+  def insert(user_id, server_event) do
+    event = server_event.__struct__
+    data = server_event
+
     Logger.debug(
-      "Inserted message for user: #{user_id} event: #{server_event.value} payload: #{
-        Poison.encode!(data)
-      }"
+      "Inserted message for user: #{user_id} event: #{event} payload: #{Poison.encode!(data)}"
     )
 
     Mongo.insert_one(:mongo, @coll, %{
       "userId" => user_id,
-      "event" => server_event.value,
+      "event" => event,
       "payload" => %{
         "data" => data,
         "timestamp" => System.os_time(:nanosecond)

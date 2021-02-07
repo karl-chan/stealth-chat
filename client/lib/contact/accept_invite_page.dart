@@ -73,7 +73,7 @@ class AcceptInviteController extends GetxController {
   void accept() async {
     // notify server
     globals.socket.client.acceptInvite
-        .push(AcceptInviteMessage(id: id, name: name.value));
+        .push(AcceptInviteMessage(their_id: id, my_name: globals.user.name));
 
     // add to contacts
     await globals.db.contacts.addContact(id, name.value, publicKey);

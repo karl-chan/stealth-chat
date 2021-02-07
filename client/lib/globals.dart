@@ -3,6 +3,7 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stealth_chat/db/contacts.dart';
 import 'package:stealth_chat/db/db.dart';
+import 'package:stealth_chat/db/notifications.dart';
 import 'package:stealth_chat/socket/socket.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/properties.dart';
@@ -49,7 +50,7 @@ class Globals {
     user = user.copyWith(keys: keys);
 
     AppDb appDb = AppDb(this);
-    db = Database(appDb, ContactsDao(appDb));
+    db = Database(appDb, ContactsDao(appDb), NotificationsDao(appDb));
 
     socket = Socket(this)..connect();
 
@@ -90,7 +91,9 @@ class Prefs {
 @freezed
 abstract class Database implements _$Database {
   const Database._();
-  const factory Database(AppDb app, ContactsDao contacts) = _Database;
+  const factory Database(
+          AppDb app, ContactsDao contacts, NotificationsDao notifications) =
+      _Database;
 
   Future<void> close() async {
     logInfo('Closing database...');

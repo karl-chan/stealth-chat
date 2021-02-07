@@ -11,10 +11,10 @@ defmodule Server.Events.ClientEvents do
     user_id = socket.assigns[:user_id]
 
     case {ClientEvent.from(client_event), payload} do
-      {ClientEvent.ACCEPT_INVITE, %{"id" => id, "name" => name}} ->
-        ServerEvents.insert(id, ServerEvent.INVITE_ACCEPTED, %{
-          "id" => user_id,
-          "name" => name
+      {ClientEvent.ACCEPT_INVITE, %{"their_id" => their_id, "my_name" => my_name}} ->
+        ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
+          id: user_id,
+          name: my_name
         })
 
         :ok
