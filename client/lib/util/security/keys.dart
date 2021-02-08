@@ -23,6 +23,10 @@ abstract class Keys with _$Keys {
 
   static final scrypt = PassCrypt.scrypt(cpu: 2048);
 
+  static String randomSecretKey() {
+    return CryptKey().genFortuna(len: 32);
+  }
+
   static String computeSecretKey(String userId, String password) {
     return scrypt.hash(salt: userId, inp: password);
   }

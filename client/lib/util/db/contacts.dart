@@ -1,4 +1,3 @@
-import 'package:crypton/crypton.dart';
 import 'package:moor/moor.dart';
 import 'package:stealth_chat/util/db/db.dart';
 
@@ -7,7 +6,7 @@ part 'contacts.g.dart';
 class Contacts extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get publicKey => text()();
+  TextColumn get chatSecretKey => text()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -17,10 +16,9 @@ class Contacts extends Table {
 class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   ContactsDao(AppDb db) : super(db);
 
-  Future<void> addContact(
-      String id, String name, RSAPublicKey publicKey) async {
+  Future<void> addContact(String id, String name, String chatSecretKey) async {
     return into(contacts).insertOnConflictUpdate(
-        Contact(id: id, name: name, publicKey: publicKey.toPEM()));
+        Contact(id: id, name: name, chatSecretKey: chatSecretKey));
   }
 
   Future<bool> exist(String id) async {

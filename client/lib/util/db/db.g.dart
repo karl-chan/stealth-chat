@@ -10,8 +10,9 @@ part of 'db.dart';
 class Contact extends DataClass implements Insertable<Contact> {
   final String id;
   final String name;
-  final String publicKey;
-  Contact({@required this.id, @required this.name, @required this.publicKey});
+  final String chatSecretKey;
+  Contact(
+      {@required this.id, @required this.name, @required this.chatSecretKey});
   factory Contact.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -19,8 +20,8 @@ class Contact extends DataClass implements Insertable<Contact> {
     return Contact(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      publicKey: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}public_key']),
+      chatSecretKey: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}chat_secret_key']),
     );
   }
   @override
@@ -32,8 +33,8 @@ class Contact extends DataClass implements Insertable<Contact> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
-    if (!nullToAbsent || publicKey != null) {
-      map['public_key'] = Variable<String>(publicKey);
+    if (!nullToAbsent || chatSecretKey != null) {
+      map['chat_secret_key'] = Variable<String>(chatSecretKey);
     }
     return map;
   }
@@ -42,9 +43,9 @@ class Contact extends DataClass implements Insertable<Contact> {
     return ContactsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      publicKey: publicKey == null && nullToAbsent
+      chatSecretKey: chatSecretKey == null && nullToAbsent
           ? const Value.absent()
-          : Value(publicKey),
+          : Value(chatSecretKey),
     );
   }
 
@@ -54,7 +55,7 @@ class Contact extends DataClass implements Insertable<Contact> {
     return Contact(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      publicKey: serializer.fromJson<String>(json['publicKey']),
+      chatSecretKey: serializer.fromJson<String>(json['chatSecretKey']),
     );
   }
   @override
@@ -63,71 +64,71 @@ class Contact extends DataClass implements Insertable<Contact> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
-      'publicKey': serializer.toJson<String>(publicKey),
+      'chatSecretKey': serializer.toJson<String>(chatSecretKey),
     };
   }
 
-  Contact copyWith({String id, String name, String publicKey}) => Contact(
+  Contact copyWith({String id, String name, String chatSecretKey}) => Contact(
         id: id ?? this.id,
         name: name ?? this.name,
-        publicKey: publicKey ?? this.publicKey,
+        chatSecretKey: chatSecretKey ?? this.chatSecretKey,
       );
   @override
   String toString() {
     return (StringBuffer('Contact(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('publicKey: $publicKey')
+          ..write('chatSecretKey: $chatSecretKey')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, publicKey.hashCode)));
+      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, chatSecretKey.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Contact &&
           other.id == this.id &&
           other.name == this.name &&
-          other.publicKey == this.publicKey);
+          other.chatSecretKey == this.chatSecretKey);
 }
 
 class ContactsCompanion extends UpdateCompanion<Contact> {
   final Value<String> id;
   final Value<String> name;
-  final Value<String> publicKey;
+  final Value<String> chatSecretKey;
   const ContactsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.publicKey = const Value.absent(),
+    this.chatSecretKey = const Value.absent(),
   });
   ContactsCompanion.insert({
     @required String id,
     @required String name,
-    @required String publicKey,
+    @required String chatSecretKey,
   })  : id = Value(id),
         name = Value(name),
-        publicKey = Value(publicKey);
+        chatSecretKey = Value(chatSecretKey);
   static Insertable<Contact> custom({
     Expression<String> id,
     Expression<String> name,
-    Expression<String> publicKey,
+    Expression<String> chatSecretKey,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (publicKey != null) 'public_key': publicKey,
+      if (chatSecretKey != null) 'chat_secret_key': chatSecretKey,
     });
   }
 
   ContactsCompanion copyWith(
-      {Value<String> id, Value<String> name, Value<String> publicKey}) {
+      {Value<String> id, Value<String> name, Value<String> chatSecretKey}) {
     return ContactsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      publicKey: publicKey ?? this.publicKey,
+      chatSecretKey: chatSecretKey ?? this.chatSecretKey,
     );
   }
 
@@ -140,8 +141,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (publicKey.present) {
-      map['public_key'] = Variable<String>(publicKey.value);
+    if (chatSecretKey.present) {
+      map['chat_secret_key'] = Variable<String>(chatSecretKey.value);
     }
     return map;
   }
@@ -151,7 +152,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     return (StringBuffer('ContactsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('publicKey: $publicKey')
+          ..write('chatSecretKey: $chatSecretKey')
           ..write(')'))
         .toString();
   }
@@ -185,20 +186,22 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     );
   }
 
-  final VerificationMeta _publicKeyMeta = const VerificationMeta('publicKey');
-  GeneratedTextColumn _publicKey;
+  final VerificationMeta _chatSecretKeyMeta =
+      const VerificationMeta('chatSecretKey');
+  GeneratedTextColumn _chatSecretKey;
   @override
-  GeneratedTextColumn get publicKey => _publicKey ??= _constructPublicKey();
-  GeneratedTextColumn _constructPublicKey() {
+  GeneratedTextColumn get chatSecretKey =>
+      _chatSecretKey ??= _constructChatSecretKey();
+  GeneratedTextColumn _constructChatSecretKey() {
     return GeneratedTextColumn(
-      'public_key',
+      'chat_secret_key',
       $tableName,
       false,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, name, publicKey];
+  List<GeneratedColumn> get $columns => [id, name, chatSecretKey];
   @override
   $ContactsTable get asDslTable => this;
   @override
@@ -221,11 +224,13 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('public_key')) {
-      context.handle(_publicKeyMeta,
-          publicKey.isAcceptableOrUnknown(data['public_key'], _publicKeyMeta));
+    if (data.containsKey('chat_secret_key')) {
+      context.handle(
+          _chatSecretKeyMeta,
+          chatSecretKey.isAcceptableOrUnknown(
+              data['chat_secret_key'], _chatSecretKeyMeta));
     } else if (isInserting) {
-      context.missing(_publicKeyMeta);
+      context.missing(_chatSecretKeyMeta);
     }
     return context;
   }

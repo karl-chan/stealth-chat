@@ -12,8 +12,8 @@ defmodule Server.Events.ServerEvents do
 
   defmodule InviteAccepted do
     @derive [Poison.Encoder]
-    @enforce_keys [:id, :name, :publicKey, :timestamp]
-    defstruct [:id, :name, :publicKey, :timestamp]
+    @enforce_keys [:id, :name, :encryptedChatSecretKey, :timestamp]
+    defstruct [:id, :name, :encryptedChatSecretKey, :timestamp]
   end
 
   def insert(user_id, server_event) do

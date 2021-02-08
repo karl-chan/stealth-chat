@@ -12,4 +12,12 @@ class Rsa {
     return keys.publicKey
         .verifySHA256Signature(utf8.encode(message), base64.decode(signature));
   }
+
+  static String encrypt(String message, Keys keys) {
+    return keys.publicKey.encrypt(message);
+  }
+
+  static String decrypt(String message, Keys keys) {
+    return keys.privateKey.decrypt(message);
+  }
 }
