@@ -34,8 +34,6 @@ class Globals {
     prefs = await SharedPreferences.getInstance();
     packageInfo = await PackageInfo.fromPlatform();
 
-    socket = Socket(this);
-
     properties = await Properties.init();
 
     user = User(
@@ -61,11 +59,15 @@ class Globals {
     logInfo('Logging out...');
     await prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp);
 
-    await socket.close();
-    socket = null;
+    if (socket != null) {
+      await socket.close();
+      socket = null;
+    }
 
-    await db.close();
-    db = null;
+    if (db != null) {
+      await db.close();
+      db = null;
+    }
 
     user = user.copyWith(keys: null);
 

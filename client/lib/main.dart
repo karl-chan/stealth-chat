@@ -50,7 +50,8 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         }
         return;
       case AppLifecycleState.resumed:
-        await Get.offAll(BootScreen());
+        await Get.offAll(BootScreen(destination: destination));
+        destination = null;
         return;
       default:
     }
@@ -77,7 +78,6 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   Future<void> handleAppLinkOnWarmPause(Uri appLink) async {
     await handleAppLinkOnColdBoot(appLink);
-    await Get.offAll(BootScreen(destination: destination));
   }
 
   @override
