@@ -1,11 +1,10 @@
 defmodule Server.Events.ClientEvents do
   use EnumType
   alias Server.Events.ServerEvents
-  alias Server.Caches.UserCache
 
   defmodule AcceptInvite do
-    @enforce_keys [:their_id, :my_name]
-    defstruct [:their_id, :my_name]
+    @enforce_keys [:their_id, :my_name, :encrypted_chat_secret_key]
+    defstruct [:their_id, :my_name, :encrypted_chat_secret_key]
   end
 
   defmodule AckLastMessageTimestamp do
@@ -18,14 +17,15 @@ defmodule Server.Events.ClientEvents do
 
     with {:ok, client_event} <- parse_client_event(event, payload) do
       case client_event do
-        %AcceptInvite{their_id: their_id, my_name: my_name} ->
-          my_id = user_id
-          {:ok, my_public_key_pem} = UserCache.get_public_key(my_id)
-
+        %AcceptInvite{
+          their_id: their_id,
+          my_name: my_name,
+          encrypted_chat_secret_key: encrypted_chat_secret_key
+        } ->
           ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
-            id: my_id,
+            id: user_id,
             name: my_name,
-            publicKey: my_public_key_pem,
+            encryptedChatSecretKey: encrypted_chat_secret_key,
             timestamp: System.os_time(:millisecond)
           })
 
@@ -42,7 +42,12 @@ defmodule Server.Events.ClientEvents do
   defp parse_client_event(event, payload) do
     case event do
       "ACCEPT_INVITE" ->
-        {:ok, %AcceptInvite{their_id: payload["theirId"], my_name: payload["myName"]}}
+        {:ok,
+         %AcceptInvite{
+           their_id: payload["theirId"],
+           my_name: payload["myName"],
+           encrypted_chat_secret_key: payload["encryptedChatSecretKey"]
+         }}
 
       "ACK_LAST_MESSAGE_TIMESTAMP" ->
         {:ok, %AckLastMessageTimestamp{last_message_timestamp: payload["lastMessageTimestamp"]}}

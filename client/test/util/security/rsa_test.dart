@@ -15,4 +15,11 @@ void main() {
     final success = Rsa.verify(message, signature, keys);
     expect(success, isTrue);
   });
+
+  test('rsa encrypt / decrypt', () {
+    const message = 'The quick brown fox jumps over the lazy dog.';
+    final encrypted = Rsa.encrypt(message, keys);
+    final success = Rsa.decrypt(encrypted, keys);
+    expect(success, equals(message));
+  });
 }

@@ -71,12 +71,20 @@ class AcceptInviteController extends GetxController {
   }
 
   void accept() async {
+    // generate chat secret key
+    String chatSecretKey = Keys.randomSecretKey();
+    String encryptedChatSecretKey =
+        Rsa.encrypt(chatSecretKey, Keys(publicKey: publicKey));
+
     // notify server
-    globals.socket.client.acceptInvite
-        .push(AcceptInviteMessage(theirId: id, myName: globals.user.name));
+    globals.socket.client.acceptInvite.push(AcceptInviteMessage(
+        theirId: id,
+        myName: globals.user.name,
+        encryptedChatSecretKey: encryptedChatSecretKey));
 
     // add to contacts
-    await globals.db.contacts.addContact(id, name.value, publicKey);
+    await globals.db.contacts
+        .addContact(id, name.value, encryptedChatSecretKey);
 
     finish();
     Get.snackbar('Done!', 'Added $name to my contacts.',

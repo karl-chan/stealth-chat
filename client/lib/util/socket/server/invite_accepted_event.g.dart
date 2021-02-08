@@ -11,7 +11,7 @@ _$_InviteAcceptedMessage _$_$_InviteAcceptedMessageFromJson(
   return _$_InviteAcceptedMessage(
     id: json['id'] as String,
     name: json['name'] as String,
-    publicKey: json['publicKey'] as String,
+    encryptedChatSecretKey: json['encryptedChatSecretKey'] as String,
     timestamp: json['timestamp'] as int,
   );
 }
@@ -21,6 +21,6 @@ Map<String, dynamic> _$_$_InviteAcceptedMessageToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'publicKey': instance.publicKey,
+      'encryptedChatSecretKey': instance.encryptedChatSecretKey,
       'timestamp': instance.timestamp,
     };

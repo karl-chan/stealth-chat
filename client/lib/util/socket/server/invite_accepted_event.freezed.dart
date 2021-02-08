@@ -19,11 +19,11 @@ class _$InviteAcceptedMessageTearOff {
 
 // ignore: unused_element
   _InviteAcceptedMessage call(
-      {String id, String name, String publicKey, int timestamp}) {
+      {String id, String name, String encryptedChatSecretKey, int timestamp}) {
     return _InviteAcceptedMessage(
       id: id,
       name: name,
-      publicKey: publicKey,
+      encryptedChatSecretKey: encryptedChatSecretKey,
       timestamp: timestamp,
     );
   }
@@ -42,7 +42,7 @@ const $InviteAcceptedMessage = _$InviteAcceptedMessageTearOff();
 mixin _$InviteAcceptedMessage {
   String get id;
   String get name;
-  String get publicKey;
+  String get encryptedChatSecretKey;
   int get timestamp;
 
   Map<String, dynamic> toJson();
@@ -55,7 +55,8 @@ abstract class $InviteAcceptedMessageCopyWith<$Res> {
   factory $InviteAcceptedMessageCopyWith(InviteAcceptedMessage value,
           $Res Function(InviteAcceptedMessage) then) =
       _$InviteAcceptedMessageCopyWithImpl<$Res>;
-  $Res call({String id, String name, String publicKey, int timestamp});
+  $Res call(
+      {String id, String name, String encryptedChatSecretKey, int timestamp});
 }
 
 /// @nodoc
@@ -71,13 +72,15 @@ class _$InviteAcceptedMessageCopyWithImpl<$Res>
   $Res call({
     Object id = freezed,
     Object name = freezed,
-    Object publicKey = freezed,
+    Object encryptedChatSecretKey = freezed,
     Object timestamp = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed ? _value.id : id as String,
       name: name == freezed ? _value.name : name as String,
-      publicKey: publicKey == freezed ? _value.publicKey : publicKey as String,
+      encryptedChatSecretKey: encryptedChatSecretKey == freezed
+          ? _value.encryptedChatSecretKey
+          : encryptedChatSecretKey as String,
       timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
@@ -90,7 +93,8 @@ abstract class _$InviteAcceptedMessageCopyWith<$Res>
           $Res Function(_InviteAcceptedMessage) then) =
       __$InviteAcceptedMessageCopyWithImpl<$Res>;
   @override
-  $Res call({String id, String name, String publicKey, int timestamp});
+  $Res call(
+      {String id, String name, String encryptedChatSecretKey, int timestamp});
 }
 
 /// @nodoc
@@ -108,13 +112,15 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
   $Res call({
     Object id = freezed,
     Object name = freezed,
-    Object publicKey = freezed,
+    Object encryptedChatSecretKey = freezed,
     Object timestamp = freezed,
   }) {
     return _then(_InviteAcceptedMessage(
       id: id == freezed ? _value.id : id as String,
       name: name == freezed ? _value.name : name as String,
-      publicKey: publicKey == freezed ? _value.publicKey : publicKey as String,
+      encryptedChatSecretKey: encryptedChatSecretKey == freezed
+          ? _value.encryptedChatSecretKey
+          : encryptedChatSecretKey as String,
       timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
@@ -125,7 +131,7 @@ class __$InviteAcceptedMessageCopyWithImpl<$Res>
 /// @nodoc
 class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
   const _$_InviteAcceptedMessage(
-      {this.id, this.name, this.publicKey, this.timestamp});
+      {this.id, this.name, this.encryptedChatSecretKey, this.timestamp});
 
   factory _$_InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_InviteAcceptedMessageFromJson(json);
@@ -135,13 +141,13 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
   @override
   final String name;
   @override
-  final String publicKey;
+  final String encryptedChatSecretKey;
   @override
   final int timestamp;
 
   @override
   String toString() {
-    return 'InviteAcceptedMessage(id: $id, name: $name, publicKey: $publicKey, timestamp: $timestamp)';
+    return 'InviteAcceptedMessage(id: $id, name: $name, encryptedChatSecretKey: $encryptedChatSecretKey, timestamp: $timestamp)';
   }
 
   @override
@@ -152,9 +158,9 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
                 const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.publicKey, publicKey) ||
-                const DeepCollectionEquality()
-                    .equals(other.publicKey, publicKey)) &&
+            (identical(other.encryptedChatSecretKey, encryptedChatSecretKey) ||
+                const DeepCollectionEquality().equals(
+                    other.encryptedChatSecretKey, encryptedChatSecretKey)) &&
             (identical(other.timestamp, timestamp) ||
                 const DeepCollectionEquality()
                     .equals(other.timestamp, timestamp)));
@@ -165,7 +171,7 @@ class _$_InviteAcceptedMessage implements _InviteAcceptedMessage {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(publicKey) ^
+      const DeepCollectionEquality().hash(encryptedChatSecretKey) ^
       const DeepCollectionEquality().hash(timestamp);
 
   @JsonKey(ignore: true)
@@ -184,7 +190,7 @@ abstract class _InviteAcceptedMessage implements InviteAcceptedMessage {
   const factory _InviteAcceptedMessage(
       {String id,
       String name,
-      String publicKey,
+      String encryptedChatSecretKey,
       int timestamp}) = _$_InviteAcceptedMessage;
 
   factory _InviteAcceptedMessage.fromJson(Map<String, dynamic> json) =
@@ -195,7 +201,7 @@ abstract class _InviteAcceptedMessage implements InviteAcceptedMessage {
   @override
   String get name;
   @override
-  String get publicKey;
+  String get encryptedChatSecretKey;
   @override
   int get timestamp;
   @override
