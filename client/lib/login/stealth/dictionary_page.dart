@@ -17,10 +17,10 @@ class DictionaryController extends LoginController {
 
   DictionaryController() : super();
 
-  void performSearch(BootDestination destination) async {
+  void performSearch(BootConfig boot) async {
     isSearching.value = true;
     String term = searchTermController.text;
-    await loginAndRedirect(term, destination, () async {
+    await loginAndRedirect(term, boot, () async {
       // login failed
       currSearch.value = (await searchDictionary(term));
       isSearching.value = false;
@@ -45,15 +45,15 @@ class DictionaryController extends LoginController {
 }
 
 class DictionaryPage extends LoginPage {
-  final BootDestination destination;
+  final BootConfig boot;
 
-  DictionaryPage({Key key, BootDestination destination})
-      : this.destination = destination,
-        super(key: key);
+  DictionaryPage(BootConfig boot, {Key key})
+      : this.boot = boot,
+        super(boot, key: key);
 
   @override
   Widget build(BuildContext context) {
-    logDebug('Dictionary page: ' + (destination == null).toString());
+    logDebug('Dictionary page: ' + (boot.destination == null).toString());
     DictionaryController c = Get.put(DictionaryController());
 
     final jumbotron = Row(
@@ -83,8 +83,7 @@ class DictionaryPage extends LoginPage {
         decoration: InputDecoration(labelText: 'Enter a term'),
       ),
       Obx(() => MaterialButton(
-            onPressed:
-                c.isSearching.value ? null : () => c.performSearch(destination),
+            onPressed: c.isSearching.value ? null : () => c.performSearch(boot),
             color: Colors.teal,
             disabledColor: Colors.teal.shade300,
             textColor: Colors.white,

@@ -8,12 +8,14 @@ import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 
 class LoginController extends GetxController {
-  loginAndRedirect(String password, BootDestination destination,
-      Future<void> onLoginFailed()) async {
+  loginAndRedirect(
+      String password, BootConfig boot, Future<void> onLoginFailed()) async {
     bool success = Auth.login(password);
     if (success) {
-      logDebug('Login controller:' + (destination == null).toString());
-      destination != null ? await destination() : await Get.off(HomePage());
+      logDebug('Login controller:' + (boot.destination == null).toString());
+      boot.destination != null
+          ? await boot.destination()
+          : await Get.off(HomePage());
     } else {
       await onLoginFailed();
     }
@@ -21,14 +23,14 @@ class LoginController extends GetxController {
 }
 
 class LoginPage extends StatelessWidget {
-  final BootDestination destination;
+  final BootConfig boot;
 
-  LoginPage({Key key, BootDestination destination})
-      : this.destination = destination,
+  LoginPage(BootConfig boot, {Key key})
+      : this.boot = boot,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return DictionaryPage(destination: destination);
+    return DictionaryPage(boot);
   }
 }

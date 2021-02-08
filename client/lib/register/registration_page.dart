@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/util/api/user_api.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
@@ -13,10 +14,9 @@ enum RegistrationStep { SET_NAME, SET_PASSWORD, CONFIRM_PASSWORD, REGISTRATION }
 class RegistrationController extends GetxController {
   final String id = Uuid().v4();
   final Globals globals = Get.find();
-  final BootDestination destination;
+  final BootConfig boot;
 
-  RegistrationController(BootDestination destination)
-      : this.destination = destination;
+  RegistrationController(BootConfig boot) : this.boot = boot;
 
   Rx<RegistrationStep> step = RegistrationStep.SET_NAME.obs;
   RxBool isRegistering = false.obs;
@@ -110,7 +110,9 @@ class RegistrationController extends GetxController {
       case RegistrationStep.REGISTRATION:
         final registrationSuccess = await runRegistration();
         if (registrationSuccess) {
-          await destination();
+          boot.destination != null
+              ? await boot.destination()
+              : await Get.off(HomePage());
         }
     }
   }
@@ -141,15 +143,15 @@ class RegistrationController extends GetxController {
 }
 
 class RegistrationPage extends StatelessWidget {
-  final BootDestination destination;
+  final BootConfig boot;
 
-  RegistrationPage({Key key, BootDestination destination})
-      : this.destination = destination,
+  RegistrationPage(BootConfig boot, {Key key})
+      : this.boot = boot,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(RegistrationController(destination));
+    final c = Get.put(RegistrationController(boot));
 
     return Scaffold(
         appBar: AppBar(title: Text('Register')),
