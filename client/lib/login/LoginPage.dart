@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
+import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/login/stealth/dictionary_page.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 
 class LoginController extends GetxController {
-  final BootDestination destination;
-
-  LoginController(BootDestination destination) : this.destination = destination;
-
-  loginAndRedirect(String password, Future<void> onLoginFailed()) async {
+  loginAndRedirect(String password, BootDestination destination,
+      Future<void> onLoginFailed()) async {
     bool success = Auth.login(password);
     if (success) {
-      await destination();
+      logDebug('Login controller:' + (destination == null).toString());
+      destination != null ? await destination() : await Get.off(HomePage());
     } else {
       await onLoginFailed();
     }

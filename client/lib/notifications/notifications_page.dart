@@ -45,7 +45,7 @@ class NotificationsController extends GetxController {
   void openNotification(Notification notification) async {
     await Get.defaultDialog(
         title: notification.title,
-        content: Text(notification.body),
+        middleText: notification.body,
         textConfirm: 'Dismiss',
         confirmTextColor: Colors.white,
         onConfirm: () => Get.back());
@@ -57,7 +57,7 @@ class NotificationsController extends GetxController {
   void deleteNotifications() async {
     await Get.defaultDialog(
         title: 'Confirm delete',
-        content: Text('Are you sure to delete the selected notifications?'),
+        middleText: 'Are you sure to delete the selected notifications?',
         confirm: TextButton(
             onPressed: () async {
               await globals.db.notifications.remove(this.selected.toList());

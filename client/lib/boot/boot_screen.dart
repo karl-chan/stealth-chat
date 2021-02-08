@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:stealth_chat/globals.dart';
-import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
 import 'package:stealth_chat/register/registration_page.dart';
 import 'package:stealth_chat/util/logging.dart';
@@ -42,11 +41,12 @@ class BootScreen extends StatelessWidget {
   final BootDestination destination;
 
   BootScreen({Key key, BootDestination destination})
-      : this.destination = destination ?? (() => Get.off(HomePage())),
+      : this.destination = destination,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    logDebug('Boot screen:' + (destination == null).toString());
     final BootController c = Get.put(BootController());
     c.boot();
 

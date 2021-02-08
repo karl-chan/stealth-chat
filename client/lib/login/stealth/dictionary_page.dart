@@ -6,6 +6,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart' as http;
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 part 'dictionary_page.freezed.dart';
 
@@ -14,12 +15,12 @@ class DictionaryController extends LoginController {
   RxBool isSearching = false.obs;
   Rx<Search> currSearch = Rx(null);
 
-  DictionaryController(BootDestination destination) : super(destination);
+  DictionaryController() : super();
 
-  void performSearch() async {
+  void performSearch(BootDestination destination) async {
     isSearching.value = true;
     String term = searchTermController.text;
-    await loginAndRedirect(term, () async {
+    await loginAndRedirect(term, destination, () async {
       // login failed
       currSearch.value = (await searchDictionary(term));
       isSearching.value = false;
@@ -52,7 +53,8 @@ class DictionaryPage extends LoginPage {
 
   @override
   Widget build(BuildContext context) {
-    DictionaryController c = Get.put(DictionaryController(destination));
+    logDebug('Dictionary page: ' + (destination == null).toString());
+    DictionaryController c = Get.put(DictionaryController());
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +83,8 @@ class DictionaryPage extends LoginPage {
         decoration: InputDecoration(labelText: 'Enter a term'),
       ),
       Obx(() => MaterialButton(
-            onPressed: c.isSearching.value ? null : c.performSearch,
+            onPressed:
+                c.isSearching.value ? null : () => c.performSearch(destination),
             color: Colors.teal,
             disabledColor: Colors.teal.shade300,
             textColor: Colors.white,
