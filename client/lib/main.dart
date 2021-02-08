@@ -19,13 +19,15 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   StreamSubscription _sub;
-  BootDestination destination;
+  bool isColdBoot = true;
+  BootConfig boot = BootConfig();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    registerAppLinkHandlers();
+    registerAppLinkHandlers().then((_) {
+      WidgetsBinding.instance.addObserver(this);
+    });
   }
 
   @override
@@ -41,6 +43,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
+        isColdBoot = false;
         if (Get.isRegistered<Globals>()) {
           Globals globals = Get.find();
           if (globals.isLoggedIn) {
@@ -50,8 +53,10 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         }
         return;
       case AppLifecycleState.resumed:
-        await Get.offAll(BootScreen(destination: destination));
-        destination = null;
+        await Get.offAll(BootScreen(boot));
+        if (!isColdBoot) {
+          boot = BootConfig();
+        }
         return;
       default:
     }
@@ -71,7 +76,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> handleAppLinkOnColdBoot(Uri appLink) async {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
-        destination = () => Get.off(AcceptInvitePage(appLink));
+        boot.destination = () => Get.off(AcceptInvitePage(appLink));
       }
     }
   }
@@ -100,7 +105,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BootScreen(destination: destination),
+      home: BootScreen(boot),
     );
   }
 }

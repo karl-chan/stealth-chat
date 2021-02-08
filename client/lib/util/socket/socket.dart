@@ -62,7 +62,7 @@ class Socket {
           confirmTextColor: Colors.white,
           onConfirm: () async {
             await close();
-            await Get.offAll(BootScreen());
+            await Get.offAll(BootScreen(BootConfig()));
           });
     });
   }

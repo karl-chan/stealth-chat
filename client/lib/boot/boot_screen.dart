@@ -7,12 +7,14 @@ import 'package:stealth_chat/login/LoginPage.dart';
 import 'package:stealth_chat/register/registration_page.dart';
 import 'package:stealth_chat/util/logging.dart';
 
-typedef BootDestination = Future<dynamic> Function();
-
 enum BootStatus {
   BOOTING,
   REDIRECT_TO_REGISTRATION_PAGE,
   REDIRECT_TO_LOGIN_PAGE
+}
+
+class BootConfig {
+  Future<dynamic> Function() destination;
 }
 
 class BootController extends GetxController {
@@ -38,27 +40,26 @@ class BootController extends GetxController {
 }
 
 class BootScreen extends StatelessWidget {
-  final BootDestination destination;
+  final BootConfig boot;
 
-  BootScreen({Key key, BootDestination destination})
-      : this.destination = destination,
+  BootScreen(BootConfig boot, {Key key})
+      : this.boot = boot,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    logDebug('Boot screen:' + (destination == null).toString());
+    logDebug('Boot screen:' + (boot.destination == null).toString());
     final BootController c = Get.put(BootController());
     c.boot();
 
     return Obx(() {
       switch (c.status.value) {
         case BootStatus.REDIRECT_TO_REGISTRATION_PAGE:
-          Future.microtask(
-              () => Get.off(RegistrationPage(destination: destination)));
+          Future.microtask(() => Get.off(RegistrationPage(boot)));
           break;
 
         case BootStatus.REDIRECT_TO_LOGIN_PAGE:
-          Future.microtask(() => Get.off(LoginPage(destination: destination)));
+          Future.microtask(() => Get.off(LoginPage(boot)));
           break;
 
         default:
