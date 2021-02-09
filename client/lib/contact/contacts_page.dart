@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stealth_chat/chat/chat_page.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/notifications/notifications_page.dart';
@@ -88,16 +89,22 @@ class ContactsPage extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           itemCount: c.contacts.length,
           itemBuilder: (BuildContext context, int index) {
-            final name = c.contacts.elementAt(index).name;
+            final contact = c.contacts.elementAt(index);
             return ListTile(
                 leading: CircleAvatar(
-                    child: Text(name.characters.elementAt(0).toUpperCase())),
-                title: Text(name),
+                  child: Text(
+                    contact.name.characters.elementAt(0).toUpperCase(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Color(contact.color),
+                ),
+                title: Text(contact.name),
                 subtitle: Text('Last message'),
                 trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [Text('Last seen'), Text('12:00 AM')]));
+                    children: [Text('Last seen'), Text('12:00 AM')]),
+                onTap: () => Get.to(ChatPage(contact)));
           },
           separatorBuilder: (BuildContext context, int index) =>
               const Divider(),

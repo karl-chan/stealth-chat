@@ -2,14 +2,17 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/socket/client/accept_invite_event.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
+import 'package:stealth_chat/util/socket/client/send_chat_event.dart';
 
 class ClientEvents {
   final AcceptInviteEvent acceptInvite;
   final AckLastMessageTimestampEvent ackLastMessageTimestamp;
+  final SendChatEvent sendChat;
 
   ClientEvents(PhoenixChannel channel)
       : this.acceptInvite = AcceptInviteEvent(channel),
-        this.ackLastMessageTimestamp = AckLastMessageTimestampEvent(channel);
+        this.ackLastMessageTimestamp = AckLastMessageTimestampEvent(channel),
+        this.sendChat = SendChatEvent(channel);
 }
 
 typedef ToJson<T> = Map<String, dynamic> Function(T t);

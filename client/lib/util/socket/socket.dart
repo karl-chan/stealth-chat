@@ -75,7 +75,10 @@ class Socket {
           .future;
     }
 
-    socket.dispose();
+    if (socket != null) {
+      socket.dispose();
+    }
+
     channel = null;
     socket = null;
   }

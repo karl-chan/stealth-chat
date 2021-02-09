@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart' hide Notification;
 import 'package:get/get.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
-import 'package:stealth_chat/util/time.dart';
 
 class NotificationsController extends GetxController {
   final RxList<Notification> notifications;
@@ -106,7 +106,7 @@ class NotificationsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(Time.shortHumanFormat(notification.timestamp)),
+                        Text(DateTimeFormatter.formatShort(notification.timestamp)),
                         Text('')
                       ]),
                   onTap: () => c.isMultiSelectMode.value
