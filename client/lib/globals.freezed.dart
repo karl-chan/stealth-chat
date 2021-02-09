@@ -14,10 +14,11 @@ class _$DatabaseTearOff {
   const _$DatabaseTearOff();
 
 // ignore: unused_element
-  _Database call(
-      AppDb app, ContactsDao contacts, NotificationsDao notifications) {
+  _Database call(AppDb app, ChatMessagesDao chatMessages, ContactsDao contacts,
+      NotificationsDao notifications) {
     return _Database(
       app,
+      chatMessages,
       contacts,
       notifications,
     );
@@ -31,6 +32,7 @@ const $Database = _$DatabaseTearOff();
 /// @nodoc
 mixin _$Database {
   AppDb get app;
+  ChatMessagesDao get chatMessages;
   ContactsDao get contacts;
   NotificationsDao get notifications;
 
@@ -42,7 +44,11 @@ mixin _$Database {
 abstract class $DatabaseCopyWith<$Res> {
   factory $DatabaseCopyWith(Database value, $Res Function(Database) then) =
       _$DatabaseCopyWithImpl<$Res>;
-  $Res call({AppDb app, ContactsDao contacts, NotificationsDao notifications});
+  $Res call(
+      {AppDb app,
+      ChatMessagesDao chatMessages,
+      ContactsDao contacts,
+      NotificationsDao notifications});
 }
 
 /// @nodoc
@@ -56,11 +62,15 @@ class _$DatabaseCopyWithImpl<$Res> implements $DatabaseCopyWith<$Res> {
   @override
   $Res call({
     Object app = freezed,
+    Object chatMessages = freezed,
     Object contacts = freezed,
     Object notifications = freezed,
   }) {
     return _then(_value.copyWith(
       app: app == freezed ? _value.app : app as AppDb,
+      chatMessages: chatMessages == freezed
+          ? _value.chatMessages
+          : chatMessages as ChatMessagesDao,
       contacts: contacts == freezed ? _value.contacts : contacts as ContactsDao,
       notifications: notifications == freezed
           ? _value.notifications
@@ -74,7 +84,11 @@ abstract class _$DatabaseCopyWith<$Res> implements $DatabaseCopyWith<$Res> {
   factory _$DatabaseCopyWith(_Database value, $Res Function(_Database) then) =
       __$DatabaseCopyWithImpl<$Res>;
   @override
-  $Res call({AppDb app, ContactsDao contacts, NotificationsDao notifications});
+  $Res call(
+      {AppDb app,
+      ChatMessagesDao chatMessages,
+      ContactsDao contacts,
+      NotificationsDao notifications});
 }
 
 /// @nodoc
@@ -89,11 +103,15 @@ class __$DatabaseCopyWithImpl<$Res> extends _$DatabaseCopyWithImpl<$Res>
   @override
   $Res call({
     Object app = freezed,
+    Object chatMessages = freezed,
     Object contacts = freezed,
     Object notifications = freezed,
   }) {
     return _then(_Database(
       app == freezed ? _value.app : app as AppDb,
+      chatMessages == freezed
+          ? _value.chatMessages
+          : chatMessages as ChatMessagesDao,
       contacts == freezed ? _value.contacts : contacts as ContactsDao,
       notifications == freezed
           ? _value.notifications
@@ -104,8 +122,10 @@ class __$DatabaseCopyWithImpl<$Res> extends _$DatabaseCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_Database extends _Database {
-  const _$_Database(this.app, this.contacts, this.notifications)
+  const _$_Database(
+      this.app, this.chatMessages, this.contacts, this.notifications)
       : assert(app != null),
+        assert(chatMessages != null),
         assert(contacts != null),
         assert(notifications != null),
         super._();
@@ -113,13 +133,15 @@ class _$_Database extends _Database {
   @override
   final AppDb app;
   @override
+  final ChatMessagesDao chatMessages;
+  @override
   final ContactsDao contacts;
   @override
   final NotificationsDao notifications;
 
   @override
   String toString() {
-    return 'Database(app: $app, contacts: $contacts, notifications: $notifications)';
+    return 'Database(app: $app, chatMessages: $chatMessages, contacts: $contacts, notifications: $notifications)';
   }
 
   @override
@@ -128,6 +150,9 @@ class _$_Database extends _Database {
         (other is _Database &&
             (identical(other.app, app) ||
                 const DeepCollectionEquality().equals(other.app, app)) &&
+            (identical(other.chatMessages, chatMessages) ||
+                const DeepCollectionEquality()
+                    .equals(other.chatMessages, chatMessages)) &&
             (identical(other.contacts, contacts) ||
                 const DeepCollectionEquality()
                     .equals(other.contacts, contacts)) &&
@@ -140,6 +165,7 @@ class _$_Database extends _Database {
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(app) ^
+      const DeepCollectionEquality().hash(chatMessages) ^
       const DeepCollectionEquality().hash(contacts) ^
       const DeepCollectionEquality().hash(notifications);
 
@@ -151,12 +177,13 @@ class _$_Database extends _Database {
 
 abstract class _Database extends Database {
   const _Database._() : super._();
-  const factory _Database(
-          AppDb app, ContactsDao contacts, NotificationsDao notifications) =
-      _$_Database;
+  const factory _Database(AppDb app, ChatMessagesDao chatMessages,
+      ContactsDao contacts, NotificationsDao notifications) = _$_Database;
 
   @override
   AppDb get app;
+  @override
+  ChatMessagesDao get chatMessages;
   @override
   ContactsDao get contacts;
   @override

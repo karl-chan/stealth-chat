@@ -4,10 +4,12 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/socket/server/error_event.dart';
 import 'package:stealth_chat/util/socket/server/invite_accepted_event.dart';
+import 'package:stealth_chat/util/socket/server/receive_chat_event.dart';
 
 class ServerEvents {
   ErrorEvent error;
   InviteAcceptedEvent inviteAccepted;
+  ReceiveChatEvent receiveChat;
 
   ServerEvents(PhoenixChannel channel, Globals globals) {
     final splitter = StreamSplitter(channel.messages);
@@ -20,6 +22,7 @@ class ServerEvents {
 
     error = ErrorEvent(splitter.split());
     inviteAccepted = InviteAcceptedEvent(splitter.split(), globals);
+    receiveChat = ReceiveChatEvent(splitter.split(), globals);
 
     splitter.close();
   }

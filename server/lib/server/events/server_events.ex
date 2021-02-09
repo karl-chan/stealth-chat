@@ -16,6 +16,12 @@ defmodule Server.Events.ServerEvents do
     defstruct [:id, :name, :encryptedChatSecretKey, :timestamp]
   end
 
+  defmodule ReceiveChat do
+    @derive [Poison.Encoder]
+    @enforce_keys [:contactId, :message, :timestamp]
+    defstruct [:contactId, :message, :timestamp]
+  end
+
   def insert(user_id, server_event) do
     event = server_event.__struct__ |> Module.split() |> List.last() |> Recase.to_constant()
     data = server_event |> Map.from_struct()

@@ -12,7 +12,7 @@ class Notifications extends Table {
   BoolColumn get unread => boolean()();
 }
 
-@UseDao(tables: [Notifications], include: {'notifications.moor'})
+@UseDao(tables: [Notifications])
 class NotificationsDao extends DatabaseAccessor<AppDb>
     with _$NotificationsDaoMixin {
   NotificationsDao(AppDb db) : super(db);

@@ -12,8 +12,8 @@ part 'dictionary_page.freezed.dart';
 
 class DictionaryController extends LoginController {
   final searchTermController = TextEditingController();
-  RxBool isSearching = false.obs;
-  Rx<Search> currSearch = Rx(null);
+  final RxBool isSearching = false.obs;
+  final Rx<Search> currSearch = Rx(null);
 
   DictionaryController() : super();
 

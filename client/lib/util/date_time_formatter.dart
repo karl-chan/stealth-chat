@@ -1,12 +1,16 @@
 import 'package:intl/intl.dart';
 
-class Time {
-  static String shortHumanFormat(DateTime dt) {
+class DateTimeFormatter {
+  static String formatTime(DateTime dt) {
+    return DateFormat.jm().format(dt);
+  }
+
+  static String formatShort(DateTime dt) {
     DateTime now = DateTime.now();
     bool isToday = _ymdEquals(dt, now);
 
     if (isToday) {
-      return DateFormat.jm().format(dt);
+      return formatTime(dt);
     }
 
     bool isYesterday = _ymdEquals(dt, now.subtract(Duration(days: 1)));
