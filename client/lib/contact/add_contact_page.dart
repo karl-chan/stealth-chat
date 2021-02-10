@@ -72,13 +72,8 @@ class AddContactPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Padding(
-                  padding: EdgeInsets.all(10),
-                  child: ViaMessageTab(globals, c)),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: AcceptInviteTab(globals, c),
-              )
+              ViaMessageTab(globals, c).paddingAll(10),
+              AcceptInviteTab(globals, c).paddingAll(10)
             ],
           ),
         ));

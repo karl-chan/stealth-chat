@@ -1,0 +1,3 @@
+import 'lib/util/db/notifications.dart';
+
+CREATE INDEX unread_index ON notifications(unread);
