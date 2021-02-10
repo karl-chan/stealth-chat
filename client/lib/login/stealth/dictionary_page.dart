@@ -64,15 +64,13 @@ class DictionaryPage extends LoginPage {
           size: 48,
           color: Colors.blueGrey.shade800,
         ),
-        Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Dictionary',
-              style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey.shade800),
-            ))
+        Text(
+          'Dictionary',
+          style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey.shade800),
+        ).paddingAll(10)
       ],
     );
 
