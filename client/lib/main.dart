@@ -11,6 +11,16 @@ void main() async {
   runApp(MainApp());
 }
 
+void exit() async {
+  if (Get.isRegistered<Globals>()) {
+    Globals globals = Get.find();
+    if (globals.isLoggedIn) {
+      await globals.logout();
+    }
+    await Get.delete<Globals>();
+  }
+}
+
 class MainApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
@@ -44,13 +54,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.inactive:
         isColdBoot = false;
-        if (Get.isRegistered<Globals>()) {
-          Globals globals = Get.find();
-          if (globals.isLoggedIn) {
-            await globals.logout();
-          }
-          await Get.delete<Globals>();
-        }
+        await exit();
         return;
       case AppLifecycleState.resumed:
         await Get.offAll(BootScreen(boot));

@@ -15,27 +15,35 @@ class ChatController extends GetxController {
   final Contact contact;
   final RxList<ChatMessage> chatMessages;
   final Rx<Color> themeColour;
-  final RxString inputMessage = ''.obs;
+  final RxBool canSend = false.obs;
   final Rx<Uint8List> inputAttachment = Rx(null);
+  final TextEditingController inputMessageController = TextEditingController();
 
   ChatController(Contact contact, Globals globals)
       : this.globals = globals,
         this.contact = contact,
         this.chatMessages = List<ChatMessage>().obs
           ..bindStream(globals.db.chatMessages.listChatMessages(contact)),
-        this.themeColour = Color(contact.color).obs;
+        this.themeColour = Color(contact.color).obs {
+    inputMessageController.addListener(() {
+      canSend.value = inputMessageController.text.isNotEmpty;
+    });
+  }
 
   void sendMessage() async {
-    String message = inputMessage.value;
+    String message = inputMessageController.text;
     AesMessage aes =
         Aes.encrypt(message, Keys(secretKey: contact.chatSecretKey));
     DateTime now = DateTime.now();
+
     globals.socket.client.sendChat.push(SendChatMessage(
         contactId: contact.id,
         encrypted: aes.encrypted,
         iv: aes.iv,
         timestamp: now.millisecondsSinceEpoch));
     await globals.db.chatMessages.insertMessage(contact.id, true, message, now);
+
+    inputMessageController.clear();
   }
 }
 
@@ -83,12 +91,26 @@ class ChatPage extends StatelessWidget {
                       color: message.isSelf
                           ? Colors.grey.shade200
                           : c.themeColour.value,
-                      child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(children: [messageText, timestamp]))));
+                      child: Column(children: [messageText, timestamp])
+                          .paddingAll(10)));
             },
             separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(height: 0);
+              ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);
+              ChatMessage message = c.chatMessages.elementAt(index);
+              if (prevMessage.timestamp.day != message.timestamp.day) {
+                return Center(
+                    child: Card(
+                            elevation: 2,
+                            color: Colors.lightBlueAccent.shade100,
+                            child: Text(
+                              DateTimeFormatter.formatDateShort(
+                                  message.timestamp),
+                              style: TextStyle(color: Colors.grey.shade700),
+                            ).paddingSymmetric(vertical: 5, horizontal: 10))
+                        .marginSymmetric(vertical: 20));
+              } else {
+                return SizedBox(height: 0);
+              }
             },
             itemCount: c.chatMessages.length,
             reverse: true,
@@ -99,9 +121,9 @@ class ChatPage extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
+                controller: c.inputMessageController,
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(hintText: 'Enter a message'),
-                onChanged: (input) => c.inputMessage.value = input,
                 minLines: 1,
                 maxLines: 5,
               ),
@@ -109,9 +131,9 @@ class ChatPage extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.send,
-                color: c.themeColour.value,
               ),
-              onPressed: c.inputMessage.isEmpty ? null : c.sendMessage,
+              color: c.themeColour.value,
+              onPressed: c.canSend.value ? c.sendMessage : null,
             ),
           ],
         ));

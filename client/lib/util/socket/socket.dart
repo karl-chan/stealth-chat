@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/main.dart' show exit;
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
@@ -15,6 +16,7 @@ class Socket {
 
   PhoenixSocket socket;
   PhoenixChannel channel;
+  bool errorFlag = false;
 
   ServerEvents server;
   ClientEvents client;
@@ -41,6 +43,7 @@ class Socket {
       ..connect();
 
     socket.openStream.listen((event) async {
+      errorFlag = false;
       logDebug('Last message timestamp: ${globals.lastMessageTimestamp}');
       channel = socket.addChannel(
           topic: 'user:${globals.user.id}',
@@ -52,23 +55,25 @@ class Socket {
     });
 
     socket.errorStream.listen((event) async {
+      errorFlag = true;
       await Get.defaultDialog(
           title: 'Socket connection error',
           content: Column(children: [
             Icon(Icons.error, color: Colors.red, size: 50),
             Text(event.error.toString())
           ]),
+          barrierDismissible: false,
           textConfirm: 'Restart app',
           confirmTextColor: Colors.white,
           onConfirm: () async {
-            await close();
+            await exit();
             await Get.offAll(BootScreen(BootConfig()));
           });
     });
   }
 
   Future<void> close() async {
-    if (client != null) {
+    if (client != null && !errorFlag) {
       await client.ackLastMessageTimestamp
           .push(AckLastMessageTimestampMessage(
               lastMessageTimestamp: globals.lastMessageTimestamp))
