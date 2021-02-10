@@ -14,7 +14,8 @@ class SendChatEvent extends ClientEvent<SendChatMessage> {
 abstract class SendChatMessage with _$SendChatMessage {
   const factory SendChatMessage({
     String contactId,
-    String message,
+    String encrypted,
+    String iv,
     int timestamp,
   }) = _SendChatMessage;
 

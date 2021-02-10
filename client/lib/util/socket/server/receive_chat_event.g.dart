@@ -10,7 +10,8 @@ _$_ReceiveChatMessage _$_$_ReceiveChatMessageFromJson(
     Map<String, dynamic> json) {
   return _$_ReceiveChatMessage(
     contactId: json['contactId'] as String,
-    message: json['message'] as String,
+    encrypted: json['encrypted'] as String,
+    iv: json['iv'] as String,
     timestamp: json['timestamp'] as int,
   );
 }
@@ -19,6 +20,7 @@ Map<String, dynamic> _$_$_ReceiveChatMessageToJson(
         _$_ReceiveChatMessage instance) =>
     <String, dynamic>{
       'contactId': instance.contactId,
-      'message': instance.message,
+      'encrypted': instance.encrypted,
+      'iv': instance.iv,
       'timestamp': instance.timestamp,
     };

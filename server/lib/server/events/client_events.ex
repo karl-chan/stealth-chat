@@ -13,8 +13,8 @@ defmodule Server.Events.ClientEvents do
   end
 
   defmodule SendChat do
-    @enforce_keys [:contactId, :message, :timestamp]
-    defstruct [:contactId, :message, :timestamp]
+    @enforce_keys [:contactId, :encrypted, :iv, :timestamp]
+    defstruct [:contactId, :encrypted, :iv, :timestamp]
   end
 
   def handle(event, payload, socket) do
@@ -37,10 +37,11 @@ defmodule Server.Events.ClientEvents do
         %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
           ServerEvents.delete(user_id, last_message_timestamp)
 
-        %SendChat{contactId: contact_id, message: message, timestamp: timestamp} ->
+        %SendChat{contactId: contact_id, encrypted: encrypted, iv: iv, timestamp: timestamp} ->
           ServerEvents.insert(contact_id, %ServerEvents.ReceiveChat{
             contactId: user_id,
-            message: message,
+            encrypted: encrypted,
+            iv: iv,
             timestamp: timestamp
           })
       end
@@ -67,7 +68,8 @@ defmodule Server.Events.ClientEvents do
           :ok,
           %SendChat{
             contactId: payload["contactId"],
-            message: payload["message"],
+            encrypted: payload["encrypted"],
+            iv: payload["iv"],
             timestamp: payload["timestamp"]
           }
         }
