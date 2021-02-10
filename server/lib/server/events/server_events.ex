@@ -18,8 +18,8 @@ defmodule Server.Events.ServerEvents do
 
   defmodule ReceiveChat do
     @derive [Poison.Encoder]
-    @enforce_keys [:contactId, :message, :timestamp]
-    defstruct [:contactId, :message, :timestamp]
+    @enforce_keys [:contactId, :encrypted, :iv, :timestamp]
+    defstruct [:contactId, :encrypted, :iv, :timestamp]
   end
 
   def insert(user_id, server_event) do

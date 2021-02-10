@@ -27,8 +27,12 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   }
 
   Future<bool> exist(String id) async {
-    final found = await (select(contacts)..where((c) => c.id.equals(id))).get();
-    return found.isNotEmpty;
+    final contact = getContact(id);
+    return contact != null;
+  }
+
+  Future<Contact> getContact(String id) async {
+    return (select(contacts)..where((c) => c.id.equals(id))).getSingle();
   }
 
   Stream<List<Contact>> listContacts() {

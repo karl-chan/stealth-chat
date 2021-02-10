@@ -6,6 +6,8 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/security/aes.dart';
+import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_event.dart';
 
 class ChatController extends GetxController {
@@ -25,10 +27,13 @@ class ChatController extends GetxController {
 
   void sendMessage() async {
     String message = inputMessage.value;
+    AesMessage aes =
+        Aes.encrypt(message, Keys(secretKey: contact.chatSecretKey));
     DateTime now = DateTime.now();
     globals.socket.client.sendChat.push(SendChatMessage(
         contactId: contact.id,
-        message: message,
+        encrypted: aes.encrypted,
+        iv: aes.iv,
         timestamp: now.millisecondsSinceEpoch));
     await globals.db.chatMessages.insertMessage(contact.id, true, message, now);
   }

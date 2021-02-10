@@ -17,10 +17,12 @@ class _$ReceiveChatMessageTearOff {
   const _$ReceiveChatMessageTearOff();
 
 // ignore: unused_element
-  _ReceiveChatMessage call({String contactId, String message, int timestamp}) {
+  _ReceiveChatMessage call(
+      {String contactId, String encrypted, String iv, int timestamp}) {
     return _ReceiveChatMessage(
       contactId: contactId,
-      message: message,
+      encrypted: encrypted,
+      iv: iv,
       timestamp: timestamp,
     );
   }
@@ -38,7 +40,8 @@ const $ReceiveChatMessage = _$ReceiveChatMessageTearOff();
 /// @nodoc
 mixin _$ReceiveChatMessage {
   String get contactId;
-  String get message;
+  String get encrypted;
+  String get iv;
   int get timestamp;
 
   Map<String, dynamic> toJson();
@@ -51,7 +54,7 @@ abstract class $ReceiveChatMessageCopyWith<$Res> {
   factory $ReceiveChatMessageCopyWith(
           ReceiveChatMessage value, $Res Function(ReceiveChatMessage) then) =
       _$ReceiveChatMessageCopyWithImpl<$Res>;
-  $Res call({String contactId, String message, int timestamp});
+  $Res call({String contactId, String encrypted, String iv, int timestamp});
 }
 
 /// @nodoc
@@ -66,12 +69,14 @@ class _$ReceiveChatMessageCopyWithImpl<$Res>
   @override
   $Res call({
     Object contactId = freezed,
-    Object message = freezed,
+    Object encrypted = freezed,
+    Object iv = freezed,
     Object timestamp = freezed,
   }) {
     return _then(_value.copyWith(
       contactId: contactId == freezed ? _value.contactId : contactId as String,
-      message: message == freezed ? _value.message : message as String,
+      encrypted: encrypted == freezed ? _value.encrypted : encrypted as String,
+      iv: iv == freezed ? _value.iv : iv as String,
       timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
@@ -84,7 +89,7 @@ abstract class _$ReceiveChatMessageCopyWith<$Res>
           _ReceiveChatMessage value, $Res Function(_ReceiveChatMessage) then) =
       __$ReceiveChatMessageCopyWithImpl<$Res>;
   @override
-  $Res call({String contactId, String message, int timestamp});
+  $Res call({String contactId, String encrypted, String iv, int timestamp});
 }
 
 /// @nodoc
@@ -101,12 +106,14 @@ class __$ReceiveChatMessageCopyWithImpl<$Res>
   @override
   $Res call({
     Object contactId = freezed,
-    Object message = freezed,
+    Object encrypted = freezed,
+    Object iv = freezed,
     Object timestamp = freezed,
   }) {
     return _then(_ReceiveChatMessage(
       contactId: contactId == freezed ? _value.contactId : contactId as String,
-      message: message == freezed ? _value.message : message as String,
+      encrypted: encrypted == freezed ? _value.encrypted : encrypted as String,
+      iv: iv == freezed ? _value.iv : iv as String,
       timestamp: timestamp == freezed ? _value.timestamp : timestamp as int,
     ));
   }
@@ -116,7 +123,8 @@ class __$ReceiveChatMessageCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_ReceiveChatMessage implements _ReceiveChatMessage {
-  const _$_ReceiveChatMessage({this.contactId, this.message, this.timestamp});
+  const _$_ReceiveChatMessage(
+      {this.contactId, this.encrypted, this.iv, this.timestamp});
 
   factory _$_ReceiveChatMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_ReceiveChatMessageFromJson(json);
@@ -124,13 +132,15 @@ class _$_ReceiveChatMessage implements _ReceiveChatMessage {
   @override
   final String contactId;
   @override
-  final String message;
+  final String encrypted;
+  @override
+  final String iv;
   @override
   final int timestamp;
 
   @override
   String toString() {
-    return 'ReceiveChatMessage(contactId: $contactId, message: $message, timestamp: $timestamp)';
+    return 'ReceiveChatMessage(contactId: $contactId, encrypted: $encrypted, iv: $iv, timestamp: $timestamp)';
   }
 
   @override
@@ -140,9 +150,11 @@ class _$_ReceiveChatMessage implements _ReceiveChatMessage {
             (identical(other.contactId, contactId) ||
                 const DeepCollectionEquality()
                     .equals(other.contactId, contactId)) &&
-            (identical(other.message, message) ||
+            (identical(other.encrypted, encrypted) ||
                 const DeepCollectionEquality()
-                    .equals(other.message, message)) &&
+                    .equals(other.encrypted, encrypted)) &&
+            (identical(other.iv, iv) ||
+                const DeepCollectionEquality().equals(other.iv, iv)) &&
             (identical(other.timestamp, timestamp) ||
                 const DeepCollectionEquality()
                     .equals(other.timestamp, timestamp)));
@@ -152,7 +164,8 @@ class _$_ReceiveChatMessage implements _ReceiveChatMessage {
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(contactId) ^
-      const DeepCollectionEquality().hash(message) ^
+      const DeepCollectionEquality().hash(encrypted) ^
+      const DeepCollectionEquality().hash(iv) ^
       const DeepCollectionEquality().hash(timestamp);
 
   @JsonKey(ignore: true)
@@ -169,7 +182,8 @@ class _$_ReceiveChatMessage implements _ReceiveChatMessage {
 abstract class _ReceiveChatMessage implements ReceiveChatMessage {
   const factory _ReceiveChatMessage(
       {String contactId,
-      String message,
+      String encrypted,
+      String iv,
       int timestamp}) = _$_ReceiveChatMessage;
 
   factory _ReceiveChatMessage.fromJson(Map<String, dynamic> json) =
@@ -178,7 +192,9 @@ abstract class _ReceiveChatMessage implements ReceiveChatMessage {
   @override
   String get contactId;
   @override
-  String get message;
+  String get encrypted;
+  @override
+  String get iv;
   @override
   int get timestamp;
   @override

@@ -83,8 +83,7 @@ class AcceptInviteController extends GetxController {
         encryptedChatSecretKey: encryptedChatSecretKey));
 
     // add to contacts
-    await globals.db.contacts
-        .addContact(id, name.value, encryptedChatSecretKey);
+    await globals.db.contacts.addContact(id, name.value, chatSecretKey);
 
     finish();
     Get.snackbar('Done!', 'Added $name to my contacts.',

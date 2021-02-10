@@ -9,7 +9,8 @@ part of 'send_chat_event.dart';
 _$_SendChatMessage _$_$_SendChatMessageFromJson(Map<String, dynamic> json) {
   return _$_SendChatMessage(
     contactId: json['contactId'] as String,
-    message: json['message'] as String,
+    encrypted: json['encrypted'] as String,
+    iv: json['iv'] as String,
     timestamp: json['timestamp'] as int,
   );
 }
@@ -17,6 +18,7 @@ _$_SendChatMessage _$_$_SendChatMessageFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$_$_SendChatMessageToJson(_$_SendChatMessage instance) =>
     <String, dynamic>{
       'contactId': instance.contactId,
-      'message': instance.message,
+      'encrypted': instance.encrypted,
+      'iv': instance.iv,
       'timestamp': instance.timestamp,
     };
