@@ -46,6 +46,8 @@ class Globals {
   }
 
   login(Keys keys) {
+    assert(!isLoggedIn, 'Already logged in!');
+
     user = user.copyWith(keys: keys);
 
     AppDb appDb = AppDb(this);
@@ -60,6 +62,7 @@ class Globals {
   Future<void> logout() async {
     logInfo('Logging out...');
     await prefs.setInt(Prefs.LAST_MESSSAGE_TIMESTAMP, lastMessageTimestamp);
+    logDebug('Saved last message timestamp: $lastMessageTimestamp');
 
     if (socket != null) {
       await socket.close();
