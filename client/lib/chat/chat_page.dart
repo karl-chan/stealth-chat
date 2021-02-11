@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
 import 'package:stealth_chat/chat/message_card.dart';
@@ -24,6 +26,7 @@ class ChatController extends GetxController {
 
   final RxBool isMultiSelectMode;
   final RxSet<ChatMessage> selected;
+  final RxBool showEmojiKeyboard;
 
   ChatController(Contact contact, Globals globals)
       : this.globals = globals,
@@ -32,7 +35,8 @@ class ChatController extends GetxController {
           ..bindStream(globals.db.chatMessages.listChatMessages(contact)),
         this.themeColour = Color(contact.color).obs,
         this.isMultiSelectMode = false.obs,
-        this.selected = Set<ChatMessage>().obs {
+        this.selected = Set<ChatMessage>().obs,
+        this.showEmojiKeyboard = false.obs {
     inputMessageController.addListener(() {
       canSend.value = inputMessageController.text.isNotEmpty;
     });
@@ -116,6 +120,27 @@ class ChatController extends GetxController {
           child: Text('No', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.red),
         ));
+  }
+
+  Widget getEmojiKeyboard() {
+    return EmojiPicker(
+        rows: 4,
+        columns: 9,
+        onEmojiSelected: (emoji, category) {
+          int baseIdx =
+              max(0, this.inputMessageController.selection.baseOffset);
+          int endIdx =
+              max(0, this.inputMessageController.selection.extentOffset);
+          String prefix =
+              this.inputMessageController.text.substring(0, baseIdx) +
+                  emoji.emoji;
+          String text =
+              prefix + this.inputMessageController.text.substring(endIdx);
+          this.inputMessageController.value = TextEditingValue(
+              text: text,
+              selection: TextSelection.fromPosition(
+                  TextPosition(offset: prefix.length)));
+        });
   }
 }
 
@@ -215,6 +240,13 @@ class ChatPage extends StatelessWidget {
               ),
             ),
             IconButton(
+                icon: Icon(
+                  Icons.emoji_emotions_outlined,
+                ),
+                onPressed: () {
+                  c.showEmojiKeyboard.toggle();
+                }),
+            IconButton(
               icon: Icon(
                 Icons.send,
               ),
@@ -241,6 +273,10 @@ class ChatPage extends StatelessWidget {
                     c.isMultiSelectMode.value ? multiSelectModeAppBar : appBar,
                 body: Column(children: [
                   Expanded(child: chatPanel),
+                  Divider(),
+                  c.showEmojiKeyboard.value
+                      ? c.getEmojiKeyboard()
+                      : SizedBox(width: 0, height: 0),
                   SafeArea(child: inputPanel)
                 ])))));
   }
