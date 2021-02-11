@@ -16,6 +16,10 @@ class DateTimeFormatter {
     return DateFormat.yMd().format(dt);
   }
 
+  static String formatDateLong(DateTime dt) {
+    return DateFormat('EEEE, dd MMMM yyyy h:mm:ss a').format(dt);
+  }
+
   static String formatTime(DateTime dt) {
     return DateFormat.jm().format(dt);
   }
