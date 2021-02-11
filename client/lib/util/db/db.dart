@@ -16,7 +16,9 @@ part 'db.g.dart';
 class AppDb extends _$AppDb {
   AppDb(Globals globals)
       : super(EncryptedExecutor.inDatabaseFolder(
-            path: 'db.sqlite', password: globals.user.keys.secretKey));
+            path: 'db.sqlite',
+            password: globals.user.keys.secretKey,
+            logStatements: true));
 
   AppDb.forTesting(QueryExecutor e) : super(e);
 

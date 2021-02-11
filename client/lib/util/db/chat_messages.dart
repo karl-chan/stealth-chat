@@ -27,7 +27,11 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
   ChatMessagesDao(AppDb db) : super(db);
 
   Future<void> insertMessage(
-      String contactId, bool isSelf, String message, DateTime timestamp) async {
+    String contactId,
+    bool isSelf,
+    String message,
+    DateTime timestamp,
+  ) async {
     return into(chatMessages).insertOnConflictUpdate(
         ChatMessagesCompanion.insert(
             contactId: contactId,
@@ -36,10 +40,59 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
             timestamp: timestamp));
   }
 
+  Future<void> updateSent(
+      String contactId, DateTime timestamp, DateTime sentTimestamp) async {
+    return (update(chatMessages)
+          ..where((m) =>
+              m.contactId.equals(contactId) & m.timestamp.equals(timestamp)))
+        .write(ChatMessagesCompanion(
+      sentTimestamp: Value(sentTimestamp),
+    ));
+  }
+
+  Future<void> updateDelivered(
+      String contactId, DateTime timestamp, DateTime deliveredTimestamp) async {
+    return (update(chatMessages)
+          ..where((m) =>
+              m.contactId.equals(contactId) & m.timestamp.equals(timestamp)))
+        .write(ChatMessagesCompanion(
+      deliveredTimestamp: Value(deliveredTimestamp),
+    ));
+  }
+
+  Future<void> updateRead(
+      String contactId, DateTime timestamp, DateTime readTimestamp) async {
+    return (update(chatMessages)
+          ..where((m) =>
+              m.contactId.equals(contactId) & m.timestamp.equals(timestamp)))
+        .write(ChatMessagesCompanion(
+      readTimestamp: Value(readTimestamp),
+    ));
+  }
+
+  Future<void> updateReadMulti(String contactId, List<DateTime> timestamps,
+      DateTime readTimestamp) async {
+    if (timestamps.isEmpty) {
+      return; // short-circuit optimisation
+    }
+    return (update(chatMessages)
+          ..where((m) =>
+              m.contactId.equals(contactId) & m.timestamp.isIn(timestamps)))
+        .write(ChatMessagesCompanion(
+      readTimestamp: Value(readTimestamp),
+    ));
+  }
+
   Stream<List<ChatMessage>> listChatMessages(Contact contact) {
     return (select(chatMessages)
           ..where((m) => m.contactId.equals(contact.id))
           ..orderBy([(m) => OrderingTerm.desc(m.timestamp)]))
         .watch();
+  }
+
+  Future<void> deleteMessages(List<ChatMessage> messages) async {
+    return (delete(chatMessages)
+          ..where((m) => m.timestamp.isIn(messages.map((m2) => m2.timestamp))))
+        .go();
   }
 }

@@ -17,6 +17,11 @@ defmodule Server.Events.ClientEvents do
     defstruct [:contactId, :encrypted, :iv, :timestamp]
   end
 
+  defmodule SendChatUpdate do
+    @enforce_keys [:contactId, :timestamp, :event, :eventTimestamp]
+    defstruct [:contactId, :timestamp, :event, :eventTimestamp]
+  end
+
   def handle(event, payload, socket) do
     user_id = socket.assigns[:user_id]
 
@@ -43,6 +48,26 @@ defmodule Server.Events.ClientEvents do
             encrypted: encrypted,
             iv: iv,
             timestamp: timestamp
+          })
+
+          ServerEvents.insert(user_id, %ServerEvents.ReceiveChatUpdate{
+            contactId: contact_id,
+            timestamp: timestamp,
+            event: "sent",
+            eventTimestamp: System.os_time(:millisecond)
+          })
+
+        %SendChatUpdate{
+          contactId: contact_id,
+          timestamp: timestamp,
+          event: event,
+          eventTimestamp: eventTimestamp
+        } ->
+          ServerEvents.insert(contact_id, %ServerEvents.ReceiveChatUpdate{
+            contactId: user_id,
+            timestamp: timestamp,
+            event: event,
+            eventTimestamp: eventTimestamp
           })
       end
 
@@ -71,6 +96,17 @@ defmodule Server.Events.ClientEvents do
             encrypted: payload["encrypted"],
             iv: payload["iv"],
             timestamp: payload["timestamp"]
+          }
+        }
+
+      "SEND_CHAT_UPDATE" ->
+        {
+          :ok,
+          %SendChatUpdate{
+            contactId: payload["contactId"],
+            timestamp: payload["timestamp"],
+            event: payload["event"],
+            eventTimestamp: payload["eventTimestamp"]
           }
         }
 

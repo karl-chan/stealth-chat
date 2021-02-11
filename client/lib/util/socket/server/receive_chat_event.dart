@@ -4,6 +4,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
+import 'package:stealth_chat/util/socket/client/send_chat_update_event.dart';
 import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 part 'receive_chat_event.freezed.dart';
@@ -19,11 +20,18 @@ class ReceiveChatEvent extends ServerEvent<ReceiveChatMessage> {
           String messageText = Aes.decrypt(
               AesMessage(encrypted: message.encrypted, iv: message.iv),
               Keys(secretKey: contact.chatSecretKey));
+
           await globals.db.chatMessages.insertMessage(
               message.contactId,
               false,
               messageText,
               DateTime.fromMillisecondsSinceEpoch(message.timestamp));
+
+          await globals.socket.client.sendChatUpdate.push(SendChatUpdateMessage(
+              contactId: message.contactId,
+              timestamp: message.timestamp,
+              event: 'delivered',
+              eventTimestamp: DateTime.now().millisecondsSinceEpoch));
         });
 }
 
