@@ -7,6 +7,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class AddContactController extends GetxController {
+  final Globals globals;
   final TextEditingController personalMessageController;
   final Uri inviteLink;
 
@@ -14,7 +15,8 @@ class AddContactController extends GetxController {
   RxString renderedMessage = ''.obs;
 
   AddContactController(Globals globals)
-      : this.personalMessageController =
+      : this.globals = globals,
+        this.personalMessageController =
             TextEditingController(text: 'Hi, this is ${globals.user.name}!'),
         this.inviteLink = generateInviteLink(globals) {
     updateRenderedMessage();
@@ -48,7 +50,8 @@ $inviteLink''';
   }
 
   void sendInvite() {
-    Share.share(renderedMessage.value);
+    Share.share(renderedMessage.value,
+        subject: 'Invite from ${globals.user.name}');
   }
 }
 
@@ -58,7 +61,6 @@ class AddContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-
     AddContactController c = Get.put(AddContactController(globals));
 
     return DefaultTabController(
