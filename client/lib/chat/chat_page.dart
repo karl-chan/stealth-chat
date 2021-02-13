@@ -28,6 +28,8 @@ class ChatController extends GetxController {
   final RxSet<ChatMessage> selected;
   final RxBool showEmojiKeyboard;
 
+  Worker markAsReadWorker;
+
   ChatController(Contact contact, Globals globals)
       : this.globals = globals,
         this.contact = contact,
@@ -40,7 +42,13 @@ class ChatController extends GetxController {
     inputMessageController.addListener(() {
       canSend.value = inputMessageController.text.isNotEmpty;
     });
-    ever(chatMessages, markIncomingMessagesAsRead);
+    markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
+  }
+
+  @override
+  void onClose() {
+    this.markAsReadWorker.dispose();
+    super.onClose();
   }
 
   void sendMessage() async {
@@ -49,12 +57,14 @@ class ChatController extends GetxController {
         Aes.encrypt(message, Keys(secretKey: contact.chatSecretKey));
     DateTime now = DateTime.now();
 
-    globals.socket.client.sendChat.push(SendChatMessage(
-        contactId: contact.id,
-        encrypted: aes.encrypted,
-        iv: aes.iv,
-        timestamp: now.millisecondsSinceEpoch));
-    await globals.db.chatMessages.insertMessage(contact.id, true, message, now);
+    await Future.wait([
+      globals.socket.client.sendChat.push(SendChatMessage(
+          contactId: contact.id,
+          encrypted: aes.encrypted,
+          iv: aes.iv,
+          timestamp: now.millisecondsSinceEpoch)),
+      globals.db.chatMessages.insertMessage(contact.id, true, message, now)
+    ]);
 
     inputMessageController.clear();
   }
@@ -203,7 +213,7 @@ class ChatPage extends StatelessWidget {
                             ? c.toggleSelect(message)
                             : null,
                         onLongPress: () => c.enterMultiSelectMode(message),
-                      ))));
+                      )).marginSymmetric(horizontal: 5)));
             },
             separatorBuilder: (BuildContext context, int index) {
               ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);
