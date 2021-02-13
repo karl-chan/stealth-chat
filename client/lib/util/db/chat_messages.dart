@@ -21,7 +21,18 @@ class ChatMessages extends Table {
   Set<Column> get primaryKey => {contactId, timestamp};
 }
 
-@UseDao(tables: [ChatMessages])
+@UseDao(tables: [
+  ChatMessages
+], queries: {
+  'listLastMessages': '''
+      SELECT c.* FROM chat_messages AS c
+      INNER JOIN
+        (SELECT contact_id, MAX(timestamp) AS max_timestamp
+        FROM chat_messages
+        GROUP BY contact_id) AS c2
+      WHERE c.contact_id = c2.contact_id
+      AND   c.timestamp = c2.max_timestamp'''
+})
 class ChatMessagesDao extends DatabaseAccessor<AppDb>
     with _$ChatMessagesDaoMixin {
   ChatMessagesDao(AppDb db) : super(db);
@@ -83,9 +94,9 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
     ));
   }
 
-  Stream<List<ChatMessage>> listChatMessages(Contact contact) {
+  Stream<List<ChatMessage>> listChatMessages(String contactId) {
     return (select(chatMessages)
-          ..where((m) => m.contactId.equals(contact.id))
+          ..where((m) => m.contactId.equals(contactId))
           ..orderBy([(m) => OrderingTerm.desc(m.timestamp)]))
         .watch();
   }

@@ -28,8 +28,14 @@ defmodule Server.Events.ServerEvents do
     defstruct [:contactId, :timestamp, :event, :eventTimestamp]
   end
 
+  defmodule ReceiveStatus do
+    @derive [Poison.Encoder]
+    @enforce_keys [:contactId, :online, :lastSeen]
+    defstruct [:contactId, :online, :lastSeen]
+  end
+
   def insert(user_id, server_event) do
-    event = server_event.__struct__ |> Module.split() |> List.last() |> Recase.to_constant()
+    event = get_event_name(server_event)
     data = server_event |> Map.from_struct()
 
     Logger.debug(
@@ -94,5 +100,16 @@ defmodule Server.Events.ServerEvents do
         unique: true
       ]
     ])
+  end
+
+  def invalidateStatus(user_id) do
+    Mongo.delete_many(:mongo, @coll, %{
+      "event" => get_event_name(%ReceiveStatus{contactId: nil, online: nil, lastSeen: nil}),
+      "payload.data.contactId" => user_id
+    })
+  end
+
+  defp get_event_name(server_event) do
+    server_event.__struct__ |> Module.split() |> List.last() |> Recase.to_constant()
   end
 end
