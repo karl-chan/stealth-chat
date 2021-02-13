@@ -89,24 +89,28 @@ defmodule Server.Events.ServerEvents do
     )
   end
 
+  def invalidateStatus(user_id) do
+    Mongo.delete_many(:mongo, @coll, %{
+      "event" => get_event_name(%ReceiveStatus{contactId: nil, online: nil, lastSeen: nil}),
+      "payload.data.contactId" => user_id
+    })
+  end
+
   @dialyzer {:nowarn_function, create_index: 0}
   def create_index() do
     Logger.debug("Creating index for collection messages...")
 
     Mongo.create_indexes(:mongo, @coll, [
       [
-        key: ["payload.timestamp": 1],
-        name: "timestamp_key",
+        key: [userId: 1, "payload.timestamp": 1],
+        name: "userId_timestamp_key",
         unique: true
+      ],
+      [
+        key: [event: 1, "payload.data.contactId": 1],
+        name: "invalidate_status_key"
       ]
     ])
-  end
-
-  def invalidateStatus(user_id) do
-    Mongo.delete_many(:mongo, @coll, %{
-      "event" => get_event_name(%ReceiveStatus{contactId: nil, online: nil, lastSeen: nil}),
-      "payload.data.contactId" => user_id
-    })
   end
 
   defp get_event_name(server_event) do
