@@ -38,9 +38,12 @@ class NotificationsDao extends DatabaseAccessor<AppDb>
   }
 
   Stream<int> countUnreadNotifications() {
-    return (select(notifications)..where((n) => n.unread))
-        .watch()
-        .map((ns) => ns.length);
+    final count = notifications.id.count();
+    return (selectOnly(notifications)
+          ..addColumns([count])
+          ..where(notifications.unread.equals(true)))
+        .map((row) => row.read(count))
+        .watchSingle();
   }
 
   Future<void> markAsRead(Notification notification) async {

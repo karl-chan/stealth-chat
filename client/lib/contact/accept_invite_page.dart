@@ -14,7 +14,7 @@ class AcceptInviteController extends GetxController {
   final Globals globals;
 
   final String id;
-  final String timestamp;
+  final int timestamp;
   final String signature;
   RSAPublicKey publicKey;
 
@@ -25,15 +25,14 @@ class AcceptInviteController extends GetxController {
       : this.globals = globals,
         this.id = applink.queryParameters['id'],
         this.name = applink.queryParameters['name'].obs,
-        this.timestamp = applink.queryParameters['ts'],
+        this.timestamp = int.parse(applink.queryParameters['ts']),
         this.signature = applink.queryParameters['sig'] {
     validateId();
     validateSignature();
   }
 
-  bool hasExpired(String timestamp) {
-    final signatureTime =
-        DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+  bool hasExpired(int timestamp) {
+    final signatureTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     return DateTime.now().difference(signatureTime).inDays > 1;
   }
 
@@ -76,14 +75,18 @@ class AcceptInviteController extends GetxController {
     String encryptedChatSecretKey =
         Rsa.encrypt(chatSecretKey, Keys(publicKey: publicKey));
 
-    // notify server
-    globals.socket.client.acceptInvite.push(AcceptInviteMessage(
-        theirId: id,
-        myName: globals.user.name,
-        encryptedChatSecretKey: encryptedChatSecretKey));
+    await Future.wait([
+      // notify server
+      globals.socket.client.acceptInvite.push(AcceptInviteMessage(
+          theirId: id,
+          myName: globals.user.name,
+          encryptedChatSecretKey: encryptedChatSecretKey,
+          timestamp: DateTime.now().millisecondsSinceEpoch)),
 
-    // add to contacts
-    await globals.db.contacts.addContact(id, name.value, chatSecretKey);
+      // add to contacts
+      globals.db.contacts.addContact(id, name.value, chatSecretKey,
+          DateTime.fromMillisecondsSinceEpoch(timestamp))
+    ]);
 
     finish();
     Get.snackbar('Done!', 'Added $name to my contacts.',

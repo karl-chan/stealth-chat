@@ -9,6 +9,7 @@ import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/util/socket/client/client_events.dart';
+import 'package:stealth_chat/util/socket/client/send_status_event.dart';
 import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 class Socket {
@@ -52,6 +53,8 @@ class Socket {
 
       server = ServerEvents(channel, globals);
       client = ClientEvents(channel);
+
+      await broadcastStatus(online: true);
     });
 
     socket.errorStream.listen((event) async {
@@ -72,12 +75,21 @@ class Socket {
     });
   }
 
+  Future<void> broadcastStatus({bool online}) {
+    return globals.db.contacts.getContactIds().then((contactIds) =>
+        client.sendStatus.push(SendStatusMessage(
+            contactIds: contactIds,
+            online: online,
+            lastSeen: DateTime.now().millisecondsSinceEpoch)));
+  }
+
   Future<void> close() async {
     if (client != null && !errorFlag) {
-      await client.ackLastMessageTimestamp
-          .push(AckLastMessageTimestampMessage(
-              lastMessageTimestamp: globals.lastMessageTimestamp))
-          .future;
+      await Future.wait<dynamic>([
+        client.ackLastMessageTimestamp.push(AckLastMessageTimestampMessage(
+            lastMessageTimestamp: globals.lastMessageTimestamp)),
+        broadcastStatus(online: false)
+      ]);
     }
 
     if (socket != null) {

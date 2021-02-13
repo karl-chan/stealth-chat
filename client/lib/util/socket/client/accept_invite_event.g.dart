@@ -12,6 +12,7 @@ _$_AcceptInviteMessage _$_$_AcceptInviteMessageFromJson(
     theirId: json['theirId'] as String,
     myName: json['myName'] as String,
     encryptedChatSecretKey: json['encryptedChatSecretKey'] as String,
+    timestamp: json['timestamp'] as int,
   );
 }
 
@@ -21,4 +22,5 @@ Map<String, dynamic> _$_$_AcceptInviteMessageToJson(
       'theirId': instance.theirId,
       'myName': instance.myName,
       'encryptedChatSecretKey': instance.encryptedChatSecretKey,
+      'timestamp': instance.timestamp,
     };

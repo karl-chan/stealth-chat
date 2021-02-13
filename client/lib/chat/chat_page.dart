@@ -17,7 +17,7 @@ import 'package:tinycolor/tinycolor.dart';
 
 class ChatController extends GetxController {
   final Globals globals;
-  final Contact contact;
+  final Rx<Contact> contact;
   final RxList<ChatMessage> chatMessages;
   final Rx<Color> themeColour;
   final RxBool canSend = false.obs;
@@ -28,35 +28,48 @@ class ChatController extends GetxController {
   final RxSet<ChatMessage> selected;
   final RxBool showEmojiKeyboard;
 
+  Worker markAsReadWorker;
+
   ChatController(Contact contact, Globals globals)
       : this.globals = globals,
-        this.contact = contact,
+        this.contact = contact.obs
+          ..bindStream(globals.db.contacts.watchContact(contact.id)),
         this.chatMessages = List<ChatMessage>().obs
-          ..bindStream(globals.db.chatMessages.listChatMessages(contact)),
-        this.themeColour = Color(contact.color).obs,
+          ..bindStream(globals.db.chatMessages.listChatMessages(contact.id)),
+        // ignore: unnecessary_cast
+        this.themeColour = (Colors.green as Color).obs,
         this.isMultiSelectMode = false.obs,
         this.selected = Set<ChatMessage>().obs,
         this.showEmojiKeyboard = false.obs {
+    themeColour.bindStream(this.contact.stream.map((c) => Color(c.color)));
     inputMessageController.addListener(() {
       canSend.value = inputMessageController.text.isNotEmpty;
     });
-    ever(chatMessages, markIncomingMessagesAsRead);
+    markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
+  }
+
+  @override
+  void onClose() {
+    this.markAsReadWorker.dispose();
+    super.onClose();
   }
 
   void sendMessage() async {
     String message = inputMessageController.text;
+    inputMessageController.clear();
+
     AesMessage aes =
-        Aes.encrypt(message, Keys(secretKey: contact.chatSecretKey));
+        Aes.encrypt(message, Keys(secretKey: contact.value.chatSecretKey));
     DateTime now = DateTime.now();
 
-    globals.socket.client.sendChat.push(SendChatMessage(
-        contactId: contact.id,
+    await globals.db.chatMessages
+        .insertMessage(contact.value.id, true, message, now);
+
+    await globals.socket.client.sendChat.push(SendChatMessage(
+        contactId: contact.value.id,
         encrypted: aes.encrypted,
         iv: aes.iv,
         timestamp: now.millisecondsSinceEpoch));
-    await globals.db.chatMessages.insertMessage(contact.id, true, message, now);
-
-    inputMessageController.clear();
   }
 
   Future<void> markIncomingMessagesAsRead(List<ChatMessage> value) async {
@@ -67,10 +80,10 @@ class ChatController extends GetxController {
         .map((m) => m.timestamp)
         .toList();
     await globals.db.chatMessages
-        .updateReadMulti(contact.id, timestamps, readTimestamp);
-    timestamps.forEach((timestamp) async {
+        .updateReadMulti(contact.value.id, timestamps, readTimestamp);
+    await Future.forEach(timestamps, (timestamp) async {
       await globals.socket.client.sendChatUpdate.push(SendChatUpdateMessage(
-          contactId: contact.id,
+          contactId: contact.value.id,
           timestamp: timestamp.millisecondsSinceEpoch,
           event: 'read',
           eventTimestamp: readTimestamp.millisecondsSinceEpoch));
@@ -157,7 +170,14 @@ class ChatPage extends StatelessWidget {
     ChatController c = Get.put(ChatController(contact, globals));
 
     final appBar = AppBar(
-      title: Text(contact.name),
+      title: Column(children: [
+        Text(c.contact.value.name),
+        Text(
+            c.contact.value.online
+                ? 'Online'
+                : 'Last seen ${DateTimeFormatter.formatShort(c.contact.value.lastSeen)}',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200))
+      ]),
     );
     final multiSelectModeAppBar = AppBar(
       title: Obx(() => Text('${c.selected.length} selected')),
@@ -203,7 +223,7 @@ class ChatPage extends StatelessWidget {
                             ? c.toggleSelect(message)
                             : null,
                         onLongPress: () => c.enterMultiSelectMode(message),
-                      ))));
+                      )).marginSymmetric(horizontal: 5)));
             },
             separatorBuilder: (BuildContext context, int index) {
               ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);

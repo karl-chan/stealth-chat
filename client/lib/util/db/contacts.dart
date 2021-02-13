@@ -12,6 +12,8 @@ class Contacts extends Table {
       integer().withDefault(const Constant(ConstColours.GREEN_700))();
   BlobColumn get avatar => blob().nullable()();
   BlobColumn get wallpaper => blob().nullable()();
+  BoolColumn get online => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get lastSeen => dateTime()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -21,9 +23,10 @@ class Contacts extends Table {
 class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   ContactsDao(AppDb db) : super(db);
 
-  Future<void> addContact(String id, String name, String chatSecretKey) async {
+  Future<void> addContact(
+      String id, String name, String chatSecretKey, DateTime lastSeen) async {
     return into(contacts).insertOnConflictUpdate(ContactsCompanion.insert(
-        id: id, name: name, chatSecretKey: chatSecretKey));
+        id: id, name: name, chatSecretKey: chatSecretKey, lastSeen: lastSeen));
   }
 
   Future<bool> exist(String id) async {
@@ -35,7 +38,22 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
     return (select(contacts)..where((c) => c.id.equals(id))).getSingle();
   }
 
+  Stream<Contact> watchContact(String id) {
+    return (select(contacts)..where((c) => c.id.equals(id))).watchSingle();
+  }
+
+  Future<List<String>> getContactIds() async {
+    return (selectOnly(contacts)..addColumns([contacts.id]))
+        .map((c) => c.read(contacts.id))
+        .get();
+  }
+
   Stream<List<Contact>> listContacts() {
     return (select(contacts)).watch();
+  }
+
+  Future<void> updateStatus(String id, bool online, DateTime lastSeen) {
+    return (update(contacts)..where((c) => c.id.equals(id))).write(
+        ContactsCompanion(online: Value(online), lastSeen: Value(lastSeen)));
   }
 }

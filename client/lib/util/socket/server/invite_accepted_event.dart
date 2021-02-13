@@ -17,8 +17,11 @@ class InviteAcceptedEvent extends ServerEvent<InviteAcceptedMessage> {
               '',
               'You can now chat with ${message.name}!',
               message.timestamp);
-          await globals.db.contacts.addContact(message.id, message.name,
-              Rsa.decrypt(message.encryptedChatSecretKey, globals.user.keys));
+          await globals.db.contacts.addContact(
+              message.id,
+              message.name,
+              Rsa.decrypt(message.encryptedChatSecretKey, globals.user.keys),
+              DateTime.fromMillisecondsSinceEpoch(message.timestamp));
         });
 }
 

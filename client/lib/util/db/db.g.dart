@@ -622,19 +622,25 @@ class Contact extends DataClass implements Insertable<Contact> {
   final int color;
   final Uint8List avatar;
   final Uint8List wallpaper;
+  final bool online;
+  final DateTime lastSeen;
   Contact(
       {@required this.id,
       @required this.name,
       @required this.chatSecretKey,
       @required this.color,
       this.avatar,
-      this.wallpaper});
+      this.wallpaper,
+      @required this.online,
+      @required this.lastSeen});
   factory Contact.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     final intType = db.typeSystem.forDartType<int>();
     final uint8ListType = db.typeSystem.forDartType<Uint8List>();
+    final boolType = db.typeSystem.forDartType<bool>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     return Contact(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
@@ -645,6 +651,10 @@ class Contact extends DataClass implements Insertable<Contact> {
           .mapFromDatabaseResponse(data['${effectivePrefix}avatar']),
       wallpaper: uint8ListType
           .mapFromDatabaseResponse(data['${effectivePrefix}wallpaper']),
+      online:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}online']),
+      lastSeen: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}last_seen']),
     );
   }
   @override
@@ -668,6 +678,12 @@ class Contact extends DataClass implements Insertable<Contact> {
     if (!nullToAbsent || wallpaper != null) {
       map['wallpaper'] = Variable<Uint8List>(wallpaper);
     }
+    if (!nullToAbsent || online != null) {
+      map['online'] = Variable<bool>(online);
+    }
+    if (!nullToAbsent || lastSeen != null) {
+      map['last_seen'] = Variable<DateTime>(lastSeen);
+    }
     return map;
   }
 
@@ -685,6 +701,11 @@ class Contact extends DataClass implements Insertable<Contact> {
       wallpaper: wallpaper == null && nullToAbsent
           ? const Value.absent()
           : Value(wallpaper),
+      online:
+          online == null && nullToAbsent ? const Value.absent() : Value(online),
+      lastSeen: lastSeen == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSeen),
     );
   }
 
@@ -698,6 +719,8 @@ class Contact extends DataClass implements Insertable<Contact> {
       color: serializer.fromJson<int>(json['color']),
       avatar: serializer.fromJson<Uint8List>(json['avatar']),
       wallpaper: serializer.fromJson<Uint8List>(json['wallpaper']),
+      online: serializer.fromJson<bool>(json['online']),
+      lastSeen: serializer.fromJson<DateTime>(json['lastSeen']),
     );
   }
   @override
@@ -710,6 +733,8 @@ class Contact extends DataClass implements Insertable<Contact> {
       'color': serializer.toJson<int>(color),
       'avatar': serializer.toJson<Uint8List>(avatar),
       'wallpaper': serializer.toJson<Uint8List>(wallpaper),
+      'online': serializer.toJson<bool>(online),
+      'lastSeen': serializer.toJson<DateTime>(lastSeen),
     };
   }
 
@@ -719,7 +744,9 @@ class Contact extends DataClass implements Insertable<Contact> {
           String chatSecretKey,
           int color,
           Uint8List avatar,
-          Uint8List wallpaper}) =>
+          Uint8List wallpaper,
+          bool online,
+          DateTime lastSeen}) =>
       Contact(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -727,6 +754,8 @@ class Contact extends DataClass implements Insertable<Contact> {
         color: color ?? this.color,
         avatar: avatar ?? this.avatar,
         wallpaper: wallpaper ?? this.wallpaper,
+        online: online ?? this.online,
+        lastSeen: lastSeen ?? this.lastSeen,
       );
   @override
   String toString() {
@@ -736,7 +765,9 @@ class Contact extends DataClass implements Insertable<Contact> {
           ..write('chatSecretKey: $chatSecretKey, ')
           ..write('color: $color, ')
           ..write('avatar: $avatar, ')
-          ..write('wallpaper: $wallpaper')
+          ..write('wallpaper: $wallpaper, ')
+          ..write('online: $online, ')
+          ..write('lastSeen: $lastSeen')
           ..write(')'))
         .toString();
   }
@@ -748,8 +779,12 @@ class Contact extends DataClass implements Insertable<Contact> {
           name.hashCode,
           $mrjc(
               chatSecretKey.hashCode,
-              $mrjc(color.hashCode,
-                  $mrjc(avatar.hashCode, wallpaper.hashCode))))));
+              $mrjc(
+                  color.hashCode,
+                  $mrjc(
+                      avatar.hashCode,
+                      $mrjc(wallpaper.hashCode,
+                          $mrjc(online.hashCode, lastSeen.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -759,7 +794,9 @@ class Contact extends DataClass implements Insertable<Contact> {
           other.chatSecretKey == this.chatSecretKey &&
           other.color == this.color &&
           other.avatar == this.avatar &&
-          other.wallpaper == this.wallpaper);
+          other.wallpaper == this.wallpaper &&
+          other.online == this.online &&
+          other.lastSeen == this.lastSeen);
 }
 
 class ContactsCompanion extends UpdateCompanion<Contact> {
@@ -769,6 +806,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
   final Value<int> color;
   final Value<Uint8List> avatar;
   final Value<Uint8List> wallpaper;
+  final Value<bool> online;
+  final Value<DateTime> lastSeen;
   const ContactsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -776,6 +815,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.color = const Value.absent(),
     this.avatar = const Value.absent(),
     this.wallpaper = const Value.absent(),
+    this.online = const Value.absent(),
+    this.lastSeen = const Value.absent(),
   });
   ContactsCompanion.insert({
     @required String id,
@@ -784,9 +825,12 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.color = const Value.absent(),
     this.avatar = const Value.absent(),
     this.wallpaper = const Value.absent(),
+    this.online = const Value.absent(),
+    @required DateTime lastSeen,
   })  : id = Value(id),
         name = Value(name),
-        chatSecretKey = Value(chatSecretKey);
+        chatSecretKey = Value(chatSecretKey),
+        lastSeen = Value(lastSeen);
   static Insertable<Contact> custom({
     Expression<String> id,
     Expression<String> name,
@@ -794,6 +838,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     Expression<int> color,
     Expression<Uint8List> avatar,
     Expression<Uint8List> wallpaper,
+    Expression<bool> online,
+    Expression<DateTime> lastSeen,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -802,6 +848,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       if (color != null) 'color': color,
       if (avatar != null) 'avatar': avatar,
       if (wallpaper != null) 'wallpaper': wallpaper,
+      if (online != null) 'online': online,
+      if (lastSeen != null) 'last_seen': lastSeen,
     });
   }
 
@@ -811,7 +859,9 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       Value<String> chatSecretKey,
       Value<int> color,
       Value<Uint8List> avatar,
-      Value<Uint8List> wallpaper}) {
+      Value<Uint8List> wallpaper,
+      Value<bool> online,
+      Value<DateTime> lastSeen}) {
     return ContactsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -819,6 +869,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       color: color ?? this.color,
       avatar: avatar ?? this.avatar,
       wallpaper: wallpaper ?? this.wallpaper,
+      online: online ?? this.online,
+      lastSeen: lastSeen ?? this.lastSeen,
     );
   }
 
@@ -843,6 +895,12 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     if (wallpaper.present) {
       map['wallpaper'] = Variable<Uint8List>(wallpaper.value);
     }
+    if (online.present) {
+      map['online'] = Variable<bool>(online.value);
+    }
+    if (lastSeen.present) {
+      map['last_seen'] = Variable<DateTime>(lastSeen.value);
+    }
     return map;
   }
 
@@ -854,7 +912,9 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
           ..write('chatSecretKey: $chatSecretKey, ')
           ..write('color: $color, ')
           ..write('avatar: $avatar, ')
-          ..write('wallpaper: $wallpaper')
+          ..write('wallpaper: $wallpaper, ')
+          ..write('online: $online, ')
+          ..write('lastSeen: $lastSeen')
           ..write(')'))
         .toString();
   }
@@ -935,9 +995,30 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     );
   }
 
+  final VerificationMeta _onlineMeta = const VerificationMeta('online');
+  GeneratedBoolColumn _online;
+  @override
+  GeneratedBoolColumn get online => _online ??= _constructOnline();
+  GeneratedBoolColumn _constructOnline() {
+    return GeneratedBoolColumn('online', $tableName, false,
+        defaultValue: const Constant(false));
+  }
+
+  final VerificationMeta _lastSeenMeta = const VerificationMeta('lastSeen');
+  GeneratedDateTimeColumn _lastSeen;
+  @override
+  GeneratedDateTimeColumn get lastSeen => _lastSeen ??= _constructLastSeen();
+  GeneratedDateTimeColumn _constructLastSeen() {
+    return GeneratedDateTimeColumn(
+      'last_seen',
+      $tableName,
+      false,
+    );
+  }
+
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, chatSecretKey, color, avatar, wallpaper];
+      [id, name, chatSecretKey, color, avatar, wallpaper, online, lastSeen];
   @override
   $ContactsTable get asDslTable => this;
   @override
@@ -979,6 +1060,16 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     if (data.containsKey('wallpaper')) {
       context.handle(_wallpaperMeta,
           wallpaper.isAcceptableOrUnknown(data['wallpaper'], _wallpaperMeta));
+    }
+    if (data.containsKey('online')) {
+      context.handle(_onlineMeta,
+          online.isAcceptableOrUnknown(data['online'], _onlineMeta));
+    }
+    if (data.containsKey('last_seen')) {
+      context.handle(_lastSeenMeta,
+          lastSeen.isAcceptableOrUnknown(data['last_seen'], _lastSeenMeta));
+    } else if (isInserting) {
+      context.missing(_lastSeenMeta);
     }
     return context;
   }

@@ -15,7 +15,8 @@ abstract class AcceptInviteMessage with _$AcceptInviteMessage {
   const factory AcceptInviteMessage(
       {String theirId,
       String myName,
-      String encryptedChatSecretKey}) = _AcceptInviteMessage;
+      String encryptedChatSecretKey,
+      int timestamp}) = _AcceptInviteMessage;
 
   factory AcceptInviteMessage.fromJson(Map<String, dynamic> json) =>
       _$AcceptInviteMessageFromJson(json);
