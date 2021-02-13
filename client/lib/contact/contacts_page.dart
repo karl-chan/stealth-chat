@@ -8,6 +8,7 @@ import 'package:stealth_chat/contact/add_contact_page.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
+import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
 
 enum Menu { addContact, settings }
@@ -25,6 +26,24 @@ class ContactsController extends GetxController {
 
 class ContactsPage extends StatelessWidget {
   ContactsPage({Key key}) : super(key: key);
+
+  Widget getAvatar(Contact contact) {
+    Widget avatar = CircleAvatar(
+      child: Text(
+        contact.name.characters.elementAt(0).toUpperCase(),
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Color(contact.color),
+    );
+    if (contact.online) {
+      avatar = Badge(
+          badgeColor: Colors.green,
+          position: BadgePosition.bottomEnd(end: 0, bottom: 0),
+          borderSide: BorderSide(color: Colors.white, width: 1),
+          child: avatar);
+    }
+    return avatar;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,20 +109,21 @@ class ContactsPage extends StatelessWidget {
           itemCount: c.contacts.length,
           itemBuilder: (BuildContext context, int index) {
             final contact = c.contacts.elementAt(index);
+
             return ListTile(
-                leading: CircleAvatar(
-                  child: Text(
-                    contact.name.characters.elementAt(0).toUpperCase(),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Color(contact.color),
-                ),
+                leading: getAvatar(contact),
                 title: Text(contact.name),
                 subtitle: Text('Last message'),
                 trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [Text('Last seen'), Text('12:00 AM')]),
+                    children: contact.online
+                        ? [Text('Online')]
+                        : [
+                            Text('Last seen'),
+                            Text(
+                                DateTimeFormatter.formatShort(contact.lastSeen))
+                          ]),
                 onTap: () => Get.to(ChatPage(contact)));
           },
           separatorBuilder: (BuildContext context, int index) =>

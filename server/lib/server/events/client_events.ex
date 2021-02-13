@@ -3,8 +3,8 @@ defmodule Server.Events.ClientEvents do
   alias Server.Events.ServerEvents
 
   defmodule AcceptInvite do
-    @enforce_keys [:theirId, :myName, :encryptedChatSecretKey]
-    defstruct [:theirId, :myName, :encryptedChatSecretKey]
+    @enforce_keys [:theirId, :myName, :encryptedChatSecretKey, :timestamp]
+    defstruct [:theirId, :myName, :encryptedChatSecretKey, :timestamp]
   end
 
   defmodule AckLastMessageTimestamp do
@@ -22,6 +22,11 @@ defmodule Server.Events.ClientEvents do
     defstruct [:contactId, :timestamp, :event, :eventTimestamp]
   end
 
+  defmodule SendStatus do
+    @enforce_keys [:contactIds, :online, :lastSeen]
+    defstruct [:contactIds, :online, :lastSeen]
+  end
+
   def handle(event, payload, socket) do
     user_id = socket.assigns[:user_id]
 
@@ -30,13 +35,14 @@ defmodule Server.Events.ClientEvents do
         %AcceptInvite{
           theirId: their_id,
           myName: my_name,
-          encryptedChatSecretKey: encrypted_chat_secret_key
+          encryptedChatSecretKey: encrypted_chat_secret_key,
+          timestamp: timestamp
         } ->
           ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
             id: user_id,
             name: my_name,
             encryptedChatSecretKey: encrypted_chat_secret_key,
-            timestamp: System.os_time(:millisecond)
+            timestamp: timestamp
           })
 
         %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
@@ -69,6 +75,22 @@ defmodule Server.Events.ClientEvents do
             event: event,
             eventTimestamp: eventTimestamp
           })
+
+        %SendStatus{
+          contactIds: contact_ids,
+          online: online,
+          lastSeen: last_seen
+        } ->
+          ServerEvents.invalidateStatus(user_id)
+
+          contact_ids
+          |> Enum.each(fn contact_id ->
+            ServerEvents.insert(contact_id, %ServerEvents.ReceiveStatus{
+              contactId: user_id,
+              online: online,
+              lastSeen: last_seen
+            })
+          end)
       end
 
       :ok
@@ -82,7 +104,8 @@ defmodule Server.Events.ClientEvents do
          %AcceptInvite{
            theirId: payload["theirId"],
            myName: payload["myName"],
-           encryptedChatSecretKey: payload["encryptedChatSecretKey"]
+           encryptedChatSecretKey: payload["encryptedChatSecretKey"],
+           timestamp: payload["timestamp"]
          }}
 
       "ACK_LAST_MESSAGE_TIMESTAMP" ->
@@ -107,6 +130,16 @@ defmodule Server.Events.ClientEvents do
             timestamp: payload["timestamp"],
             event: payload["event"],
             eventTimestamp: payload["eventTimestamp"]
+          }
+        }
+
+      "SEND_STATUS" ->
+        {
+          :ok,
+          %SendStatus{
+            contactIds: payload["contactIds"],
+            online: payload["online"],
+            lastSeen: payload["lastSeen"]
           }
         }
 
