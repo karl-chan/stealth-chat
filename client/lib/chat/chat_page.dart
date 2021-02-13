@@ -172,11 +172,11 @@ class ChatPage extends StatelessWidget {
     final appBar = AppBar(
       title: Column(children: [
         Text(c.contact.value.name),
-        Text(
+        Obx(() => Text(
             c.contact.value.online
                 ? 'Online'
                 : 'Last seen ${DateTimeFormatter.formatShort(c.contact.value.lastSeen)}',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200))
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200)))
       ]),
     );
     final multiSelectModeAppBar = AppBar(
