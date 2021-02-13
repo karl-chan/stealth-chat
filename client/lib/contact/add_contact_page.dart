@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share/share.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
@@ -75,7 +76,7 @@ class AddContactPage extends StatelessWidget {
           body: TabBarView(
             children: [
               ViaMessageTab(globals, c).paddingAll(10),
-              AcceptInviteTab(globals, c).paddingAll(10)
+              InPersonTab(globals, c).paddingAll(10)
             ],
           ),
         ));
@@ -147,12 +148,12 @@ class ViaMessageTab extends StatelessWidget {
   }
 }
 
-class AcceptInviteTab extends StatelessWidget {
+class InPersonTab extends StatelessWidget {
   final Globals globals;
 
   final AddContactController c;
 
-  const AcceptInviteTab(Globals globals, AddContactController c, {Key key})
+  const InPersonTab(Globals globals, AddContactController c, {Key key})
       : this.globals = globals,
         this.c = c,
         super(key: key);
@@ -162,7 +163,15 @@ class AcceptInviteTab extends StatelessWidget {
     return Container(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [],
+      children: [
+        SizedBox(height: 20),
+        HeaderText('Scan QR code'),
+        SizedBox(height: 20),
+        QrImage(
+          padding: EdgeInsets.all(10),
+          data: c.inviteLink.toString(),
+        ),
+      ],
     ));
   }
 }
