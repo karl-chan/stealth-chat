@@ -12,10 +12,6 @@ import_config "secret/secrets.exs"
 
 # Configures the endpoint
 config :server, ServerWeb.Endpoint,
-  http: [
-    port: System.get_env("PORT", "3000"),
-    transport_options: [socket_opts: [:inet6]]
-  ],
   render_errors: [view: ServerWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Server.PubSub,
   live_view: [signing_salt: "DvkFpRe0"]

@@ -15,11 +15,16 @@ enum Menu { addContact, settings }
 
 class ContactsController extends GetxController {
   final RxList<Contact> contacts;
+  final RxMap<String, ChatMessage> mostRecentMessages;
   final RxInt numUnreadNotifications;
 
   ContactsController(Globals globals)
       : this.contacts = List<Contact>().obs
           ..bindStream(globals.db.contacts.listContacts()),
+        this.mostRecentMessages = Map<String, ChatMessage>().obs
+          ..bindStream(globals.db.chatMessages
+              .listMostRecentMessages()
+              .map((messages) => {for (final m in messages) m.contactId: m})),
         this.numUnreadNotifications = 0.obs
           ..bindStream(globals.db.notifications.countUnreadNotifications());
 }
@@ -113,17 +118,27 @@ class ContactsPage extends StatelessWidget {
             return ListTile(
                 leading: getAvatar(contact),
                 title: Text(contact.name),
-                subtitle: Text('Last message'),
+                subtitle: Obx(() => Text(
+                      c.mostRecentMessages[contact.id]?.message ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
                 trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: contact.online
-                        ? [Text('Online')]
-                        : [
-                            Text('Last seen'),
-                            Text(
-                                DateTimeFormatter.formatShort(contact.lastSeen))
-                          ]),
+                    children: [
+                      Text(contact.online
+                          ? 'Online'
+                          : 'Last seen ${DateTimeFormatter.formatShort(contact.lastSeen)}'),
+                      SizedBox(height: 5),
+                      Obx(() => Text(
+                            c.mostRecentMessages[contact.id] != null
+                                ? DateTimeFormatter.formatShort(
+                                    c.mostRecentMessages[contact.id].timestamp)
+                                : '',
+                            style: TextStyle(color: Colors.grey),
+                          ))
+                    ]),
                 onTap: () => Get.to(ChatPage(contact)));
           },
           separatorBuilder: (BuildContext context, int index) =>

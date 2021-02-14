@@ -41,10 +41,10 @@ class ChatController extends GetxController {
         this.isMultiSelectMode = false.obs,
         this.selected = Set<ChatMessage>().obs,
         this.showEmojiKeyboard = false.obs {
-    themeColour.bindStream(this.contact.stream.map((c) => Color(c.color)));
     inputMessageController.addListener(() {
       canSend.value = inputMessageController.text.isNotEmpty;
     });
+    ever(this.contact, (c) => this.themeColour.value = Color(c.color));
     markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
   }
 
