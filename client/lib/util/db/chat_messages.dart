@@ -24,14 +24,14 @@ class ChatMessages extends Table {
 @UseDao(tables: [
   ChatMessages
 ], queries: {
-  'listLastMessages': '''
-      SELECT c.* FROM chat_messages AS c
-      INNER JOIN
+  'mostRecentMessages': '''
+    SELECT c.* FROM chat_messages AS c
+    INNER JOIN
         (SELECT contact_id, MAX(timestamp) AS max_timestamp
         FROM chat_messages
         GROUP BY contact_id) AS c2
-      WHERE c.contact_id = c2.contact_id
-      AND   c.timestamp = c2.max_timestamp'''
+    WHERE c.contact_id = c2.contact_id
+    AND   c.timestamp = c2.max_timestamp'''
 })
 class ChatMessagesDao extends DatabaseAccessor<AppDb>
     with _$ChatMessagesDaoMixin {
@@ -99,6 +99,10 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
           ..where((m) => m.contactId.equals(contactId))
           ..orderBy([(m) => OrderingTerm.desc(m.timestamp)]))
         .watch();
+  }
+
+  Stream<List<ChatMessage>> listMostRecentMessages() {
+    return mostRecentMessages().watch();
   }
 
   Future<void> deleteMessages(List<ChatMessage> messages) async {
