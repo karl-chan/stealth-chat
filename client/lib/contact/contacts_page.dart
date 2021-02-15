@@ -114,22 +114,15 @@ class ContactsPage extends StatelessWidget {
           itemCount: c.contacts.length,
           itemBuilder: (BuildContext context, int index) {
             final contact = c.contacts.elementAt(index);
-            final mostRecentMessage = c.mostRecentMessages[contact.id];
-            final mostRecentText = mostRecentMessage?.message ?? '';
-            final mostRecentTimestamp = mostRecentMessage != null
-                ? DateTimeFormatter.formatShort(mostRecentMessage.timestamp)
-                : '';
 
             return ListTile(
                 leading: getAvatar(contact),
                 title: Text(contact.name),
-                subtitle: Obx(
-                  () => Text(
-                    mostRecentText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+                subtitle: Obx(() => Text(
+                      c.mostRecentMessages[contact.id]?.message ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
                 trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -139,7 +132,10 @@ class ContactsPage extends StatelessWidget {
                           : 'Last seen ${DateTimeFormatter.formatShort(contact.lastSeen)}'),
                       SizedBox(height: 5),
                       Obx(() => Text(
-                            mostRecentTimestamp,
+                            c.mostRecentMessages[contact.id] != null
+                                ? DateTimeFormatter.formatShort(
+                                    c.mostRecentMessages[contact.id].timestamp)
+                                : '',
                             style: TextStyle(color: Colors.grey),
                           ))
                     ]),
