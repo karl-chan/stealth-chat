@@ -59,6 +59,13 @@ dev_dependencies:
   freezed: 0.12.7 
   moor_generator: 
 
+dependency_overrides:
+  sqflite:
+    git:
+      url: https://www.github.com/davidmartos96/sqflite_sqlcipher.git
+      path: sqflite
+      ref: fmdb_override
+
 flutter:
   uses-material-design: true
   assets:

@@ -695,6 +695,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0-nullsafety.2"
+  sqflite:
+    dependency: "direct overridden"
+    description:
+      path: sqflite
+      ref: fmdb_override
+      resolved-ref: bb2b0a7c95e3679e323c32d54722ad3f639147d8
+      url: "https://www.github.com/davidmartos96/sqflite_sqlcipher.git"
+    source: git
+    version: "1.3.0+1"
   sqflite_common:
     dependency: transitive
     description:
