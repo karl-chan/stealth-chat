@@ -107,7 +107,7 @@ class __$KeysCopyWithImpl<$Res> extends _$KeysCopyWithImpl<$Res>
 }
 
 /// @nodoc
-class _$_Keys implements _Keys {
+class _$_Keys with DiagnosticableTreeMixin implements _Keys {
   const _$_Keys({this.secretKey, this.publicKey, this.privateKey});
 
   @override
@@ -118,8 +118,18 @@ class _$_Keys implements _Keys {
   final RSAPrivateKey privateKey;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'Keys(secretKey: $secretKey, publicKey: $publicKey, privateKey: $privateKey)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'Keys'))
+      ..add(DiagnosticsProperty('secretKey', secretKey))
+      ..add(DiagnosticsProperty('publicKey', publicKey))
+      ..add(DiagnosticsProperty('privateKey', privateKey));
   }
 
   @override

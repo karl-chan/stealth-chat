@@ -74,13 +74,15 @@ class DictionaryPage extends LoginPage {
       ],
     );
 
-    final searchBar =
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      TextField(
-        controller: c.searchTermController,
-        decoration: InputDecoration(labelText: 'Enter a term'),
-      ),
-      Obx(() => MaterialButton(
+    final searchBar = Obx(
+      () => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            controller: c.searchTermController,
+            decoration: InputDecoration(labelText: 'Enter a term'),
+          ),
+          MaterialButton(
             onPressed: c.isSearching.value ? null : () => c.performSearch(boot),
             color: Colors.teal,
             disabledColor: Colors.teal.shade300,
@@ -93,8 +95,13 @@ class DictionaryPage extends LoginPage {
                 const Icon(Icons.search)
               ],
             ),
-          ))
-    ]);
+          ),
+          ...(c.isSearching.value
+              ? [LinearProgressIndicator(minHeight: 10)]
+              : []),
+        ],
+      ),
+    );
 
     final resultsPanel = Obx(() => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,7 +135,11 @@ class DictionaryPage extends LoginPage {
           child: c.currSearch.value == null
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [jumbotron, const SizedBox(height: 75), searchBar],
+                  children: [
+                    jumbotron,
+                    const SizedBox(height: 75),
+                    searchBar,
+                  ],
                 )
               : SingleChildScrollView(
                   child: Column(
