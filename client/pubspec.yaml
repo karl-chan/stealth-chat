@@ -37,6 +37,7 @@ dependencies:
   path:
   path_provider:
   phoenix_socket: 0.4.11
+  qr_code_scanner: 0.3.4
   qr_flutter: 3.1.0
   share: '>=0.6.5+4 <2.0.0'
   shared_preferences: 
