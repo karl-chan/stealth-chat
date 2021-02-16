@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show Color;
 import 'package:moor/moor.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
@@ -50,6 +51,11 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
 
   Stream<List<Contact>> listContacts() {
     return (select(contacts)).watch();
+  }
+
+  Future<void> changeColour(String id, Color colour) {
+    return (update(contacts)..where((c) => c.id.equals(id)))
+        .write(ContactsCompanion(color: Value(colour.value)));
   }
 
   Future<void> updateStatus(String id, bool online, DateTime lastSeen) {

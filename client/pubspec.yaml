@@ -23,6 +23,7 @@ dependencies:
       path: extras/encryption 
   flutter:
     sdk: flutter
+  flutter_colorpicker: 0.3.5
   font_awesome_flutter: 8.11.0
   get: 3.24.0
   gradient_widgets: 0.5.2

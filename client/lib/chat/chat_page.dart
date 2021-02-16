@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
 import 'package:stealth_chat/chat/message_card.dart';
 import 'package:stealth_chat/chat/message_info_page.dart';
+import 'package:stealth_chat/contact/contact_settings_page.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
@@ -171,13 +172,29 @@ class ChatPage extends StatelessWidget {
 
     final appBar = AppBar(
       title: Column(children: [
-        Text(c.contact.value.name),
+        Text(c.contact.value.name, style: TextStyle(color: Colors.white)),
         Obx(() => Text(
             c.contact.value.online
                 ? 'Online'
                 : 'Last seen ${DateTimeFormatter.formatShort(c.contact.value.lastSeen)}',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200)))
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w200,
+                color: Colors.white)))
       ]),
+      actions: [
+        PopupMenuButton<Function>(
+          onSelected: (Function function) => function(),
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem<Function>(
+                  value: () => Get.to(ContactSettingsPage(c.contact.value)),
+                  child: const Text('Preferences'))
+            ];
+          },
+        ),
+      ],
+      centerTitle: true,
     );
     final multiSelectModeAppBar = AppBar(
       title: Obx(() => Text('${c.selected.length} selected')),
