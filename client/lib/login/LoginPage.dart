@@ -10,7 +10,7 @@ import 'package:stealth_chat/util/security/auth.dart';
 class LoginController extends GetxController {
   loginAndRedirect(
       String password, BootConfig boot, Future<void> onLoginFailed()) async {
-    bool success = Auth.login(password);
+    bool success = await Auth.login(password);
     if (success) {
       logDebug('Login controller:' + (boot.destination == null).toString());
       boot.destination != null

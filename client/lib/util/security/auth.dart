@@ -5,26 +5,29 @@ import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 
 class Auth {
-  static void setUser(String id, String name, String password, Keys keys) {
+  static Future<void> setUser(
+      String id, String name, String password, Keys keys) async {
     Globals globals = Get.find();
     assert(globals.user.id == null, 'User is already registered!');
 
-    final String hash = Keys.hashSecretKey(keys.secretKey, id);
+    final String hash = await Keys.hashSecretKey(keys.secretKey, id);
     final encryptedPrivateKey = Aes.encrypt(keys.privateKey.toPEM(), keys);
 
-    globals.prefs.setString(Prefs.USER_ID, id);
-    globals.prefs.setString(Prefs.USER_NAME, name);
-    globals.prefs.setString(Prefs.USER_PUBLIC_KEY, keys.publicKey.toPEM());
-    globals.prefs.setString(
-        Prefs.USER_PRIVATE_KEY_ENCRYPTED, encryptedPrivateKey.encrypted);
-    globals.prefs
-        .setString(Prefs.USER_PRIVATE_KEY_ENCRYPTED_IV, encryptedPrivateKey.iv);
-    globals.prefs.setString(Prefs.USER_PASSWORD_HASH, hash);
+    await Future.wait([
+      globals.prefs.setString(Prefs.USER_ID, id),
+      globals.prefs.setString(Prefs.USER_NAME, name),
+      globals.prefs.setString(Prefs.USER_PUBLIC_KEY, keys.publicKey.toPEM()),
+      globals.prefs.setString(
+          Prefs.USER_PRIVATE_KEY_ENCRYPTED, encryptedPrivateKey.encrypted),
+      globals.prefs.setString(
+          Prefs.USER_PRIVATE_KEY_ENCRYPTED_IV, encryptedPrivateKey.iv),
+      globals.prefs.setString(Prefs.USER_PASSWORD_HASH, hash)
+    ]);
 
     globals.user = User(id: id, name: name, keys: keys);
   }
 
-  static bool login(String password) {
+  static Future<bool> login(String password) async {
     Globals globals = Get.find();
     assert(globals.user.id != null, 'User is not registered!');
 
@@ -36,9 +39,9 @@ class Auth {
     final String privateKeyEncryptedPemIv =
         globals.prefs.getString(Prefs.USER_PRIVATE_KEY_ENCRYPTED_IV);
 
-    String secretKey = Keys.computeSecretKey(globals.user.id, password);
+    String secretKey = await Keys.computeSecretKey(globals.user.id, password);
     bool success =
-        Keys.verifySecretKey(secretKey, globals.user.id, passwordHash);
+        await Keys.verifySecretKey(secretKey, globals.user.id, passwordHash);
 
     if (success) {
       Keys keys = Keys(secretKey: secretKey);

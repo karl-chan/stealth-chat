@@ -5,8 +5,8 @@ import 'package:stealth_chat/util/security/rsa.dart';
 void main() {
   Keys keys;
 
-  setUpAll(() {
-    keys = Keys.generate('user', 'pass');
+  setUpAll(() async {
+    keys = await Keys.generate('user', 'pass');
   });
 
   test('rsa sign / verification', () {

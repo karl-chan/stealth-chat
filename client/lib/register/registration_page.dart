@@ -69,13 +69,13 @@ class RegistrationController extends GetxController {
 
     final name = setNameController.text;
     final password = setPasswordController.text;
-    final keys = Keys.generate(id, password);
+    final keys = await Keys.generate(id, password);
 
     try {
       await UserApi.create(id, keys.publicKey);
 
-      Auth.setUser(id, name, password, keys);
-      Auth.login(password);
+      await Auth.setUser(id, name, password, keys);
+      await Auth.login(password);
 
       registrationErrorText.nil();
       isRegistering.value = false;
