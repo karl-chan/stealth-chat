@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_colorpicker: 0.3.5
+  flutter_linkify: 4.0.2
   font_awesome_flutter: 8.11.0
   get: 3.24.0
   gradient_widgets: 0.5.2
@@ -42,21 +43,20 @@ dependencies:
   qr_flutter: 3.1.0
   share: '>=0.6.5+4 <2.0.0'
   shared_preferences: 
-  steel_crypt: 
-    git:
-      url: https://github.com/AKushWarrior/steel_crypt.git
-      ref: 662008c
+  steel_crypt: 2.3.1+6
   sqlite3_flutter_libs: 0.3.0
   tinycolor: 1.0.3
   tuple:
   uni_links: 0.4.0
+  url_launcher: 5.7.10
   uuid:
-  web_socket_channel:
 
 dev_dependencies:
+  build_runner:
+  flutter_launcher_name: 0.0.1
+  flutter_launcher_icons: 0.8.0
   flutter_test:
     sdk: flutter
-  build_runner:
   freezed: 0.12.7 
   moor_generator: 
 
@@ -71,3 +71,11 @@ flutter:
   uses-material-design: true
   assets:
     - app.properties
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+
+flutter_launcher_name:
+  name: "Dictionary"
