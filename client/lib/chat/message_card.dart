@@ -41,6 +41,9 @@ class MessageCard extends StatelessWidget {
           style: TextStyle(
               color: message.isSelf ? Colors.black : Colors.white,
               fontSize: 16),
+          linkStyle: TextStyle(
+              color: message.isSelf ? Colors.blueAccent : Colors.white),
+          options: LinkifyOptions(humanize: false),
           onOpen: (link) async {
             if (await canLaunch(link.url)) {
               await launch(link.url);
