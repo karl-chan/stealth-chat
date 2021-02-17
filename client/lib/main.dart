@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:uni_links/uni_links.dart';
 
 void main() async {
@@ -28,6 +29,8 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  final lock = Lock();
+
   StreamSubscription _sub;
   bool isColdBoot = true;
   BootConfig boot = BootConfig();
@@ -51,19 +54,21 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        isColdBoot = false;
-        await exit();
-        return;
-      case AppLifecycleState.resumed:
-        await Get.offAll(BootScreen(boot));
-        if (!isColdBoot) {
-          boot = BootConfig();
-        }
-        return;
-      default:
-    }
+    await lock.synchronized(() async {
+      switch (state) {
+        case AppLifecycleState.inactive:
+          isColdBoot = false;
+          await exit();
+          return;
+        case AppLifecycleState.resumed:
+          await Get.offAll(BootScreen(boot));
+          if (!isColdBoot) {
+            boot = BootConfig();
+          }
+          return;
+        default:
+      }
+    });
   }
 
   Future<void> registerAppLinkHandlers() async {

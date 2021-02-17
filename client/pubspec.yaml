@@ -45,6 +45,7 @@ dependencies:
   shared_preferences: 
   steel_crypt: 2.3.1+6
   sqlite3_flutter_libs: 0.3.0
+  synchronized: 2.2.0+2
   tinycolor: 1.0.3
   tuple:
   uni_links: 0.4.0
