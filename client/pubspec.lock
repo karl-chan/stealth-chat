@@ -22,6 +22,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.13"
   args:
     dependency: transitive
     description:
@@ -267,6 +274,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.5"
+  flutter_launcher_icons:
+    dependency: "direct dev"
+    description:
+      name: flutter_launcher_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.0"
+  flutter_launcher_name:
+    dependency: "direct dev"
+    description:
+      name: flutter_launcher_name
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
+  flutter_linkify:
+    dependency: "direct main"
+    description:
+      name: flutter_linkify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -354,6 +382,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.19"
   ini:
     dependency: "direct main"
     description:
@@ -396,6 +431,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.5.1"
+  linkify:
+    dependency: transitive
+    description:
+      name: linkify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   logging:
     dependency: "direct main"
     description:
@@ -515,6 +557,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.2"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   phoenix_socket:
     dependency: "direct main"
     description:
@@ -756,12 +805,10 @@ packages:
   steel_crypt:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "662008c"
-      resolved-ref: "662008c4094474068588ee69601503886fa6a50f"
-      url: "https://github.com/AKushWarrior/steel_crypt.git"
-    source: git
-    version: "2.3.1"
+      name: steel_crypt
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.1+6"
   stream_channel:
     dependency: transitive
     description:
@@ -839,6 +886,48 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.0"
+  url_launcher:
+    dependency: "direct main"
+    description:
+      name: url_launcher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.7.10"
+  url_launcher_linux:
+    dependency: transitive
+    description:
+      name: url_launcher_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+4"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+9"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.9"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5+3"
+  url_launcher_windows:
+    dependency: transitive
+    description:
+      name: url_launcher_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+3"
   uuid:
     dependency: "direct main"
     description:
@@ -861,7 +950,7 @@ packages:
     source: hosted
     version: "0.9.7+15"
   web_socket_channel:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: web_socket_channel
       url: "https://pub.dartlang.org"
@@ -881,6 +970,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.5.1"
   yaml:
     dependency: transitive
     description:
@@ -890,4 +986,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.10.0 <2.11.0"
-  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+  flutter: ">=1.22.0 <2.0.0"

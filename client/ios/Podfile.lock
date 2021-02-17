@@ -16,6 +16,10 @@ PODS:
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
+  - sqflite (0.0.1):
+    - Flutter
+    - FMDB/SQLCipher (~> 2.7.5)
+    - SQLCipher (~> 4.4.0)
   - sqflite_sqlcipher (0.0.1):
     - Flutter
     - FMDB/SQLCipher (~> 2.7.5)
@@ -45,6 +49,8 @@ PODS:
     - sqlite3/rtree
   - uni_links (0.0.1):
     - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - emoji_picker (from `.symlinks/plugins/emoji_picker/ios`)
@@ -54,9 +60,11 @@ DEPENDENCIES:
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - share (from `.symlinks/plugins/share/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - sqflite_sqlcipher (from `.symlinks/plugins/sqflite_sqlcipher/ios`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
   - uni_links (from `.symlinks/plugins/uni_links/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
   trunk:
@@ -80,12 +88,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
   sqflite_sqlcipher:
     :path: ".symlinks/plugins/sqflite_sqlcipher/ios"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
   uni_links:
     :path: ".symlinks/plugins/uni_links/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   emoji_picker: 0e868059aa18f9473d234f3d0701fbd4d5fd310c
@@ -97,11 +109,13 @@ SPEC CHECKSUMS:
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  sqflite: 9b549b4a8b0a7f9ea465738a929b247655c8da27
   sqflite_sqlcipher: 70eb7fd8d4f0b0352d0bde5cf345b810737f54bb
   SQLCipher: 1ab0b9486a77d141e72e92ff30681926ed79c07a
   sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
   sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 

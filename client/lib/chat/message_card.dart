@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageCard extends StatelessWidget {
   final ChatMessage message;
@@ -34,11 +36,18 @@ class MessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final messageText = Align(
         alignment: Alignment.topLeft,
-        child: Text(
-          message.message,
+        child: SelectableLinkify(
+          text: message.message,
           style: TextStyle(
               color: message.isSelf ? Colors.black : Colors.white,
               fontSize: 16),
+          onOpen: (link) async {
+            if (await canLaunch(link.url)) {
+              await launch(link.url);
+            } else {
+              throw 'Could not launch $link';
+            }
+          },
         ));
     final timestamp = Text(DateTimeFormatter.formatTime(message.timestamp),
         style: TextStyle(

@@ -35,7 +35,7 @@ class Globals {
     prefs = await SharedPreferences.getInstance();
     packageInfo = await PackageInfo.fromPlatform();
 
-    properties = await Properties.init();
+    properties = await Properties.init(prefs);
 
     user = User(
         id: prefs.getString(Prefs.USER_ID),
