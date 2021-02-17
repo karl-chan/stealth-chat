@@ -16,6 +16,7 @@ enum Menu { addContact, settings }
 class ContactsController extends GetxController {
   final RxList<Contact> contacts;
   final RxMap<String, ChatMessage> mostRecentMessages;
+  final RxMap<String, int> numUnreadMessages;
   final RxInt numUnreadNotifications;
 
   ContactsController(Globals globals)
@@ -25,6 +26,8 @@ class ContactsController extends GetxController {
           ..bindStream(globals.db.chatMessages
               .listMostRecentMessages()
               .map((messages) => {for (final m in messages) m.contactId: m})),
+        this.numUnreadMessages = Map<String, int>().obs
+          ..bindStream(globals.db.chatMessages.countUnreadMessages()),
         this.numUnreadNotifications = 0.obs
           ..bindStream(globals.db.notifications.countUnreadNotifications());
 }
@@ -48,6 +51,34 @@ class ContactsPage extends StatelessWidget {
           child: avatar);
     }
     return avatar;
+  }
+
+  Widget renderLastMessage(ChatMessage mostRecentMessage, int numUnread) {
+    if (mostRecentMessage == null) {
+      return Text('');
+    }
+    if (numUnread == null) {
+      return Text(
+        mostRecentMessage.message,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else {
+      return Text(
+        '${mostRecentMessage.message} ($numUnread)',
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+  }
+
+  Widget renderMostRecentTimestamp(ChatMessage mostRecentMessage) {
+    return Text(
+        mostRecentMessage != null
+            ? DateTimeFormatter.formatShort(mostRecentMessage.timestamp)
+            : '',
+        style: TextStyle(color: Colors.grey));
   }
 
   @override
@@ -118,11 +149,10 @@ class ContactsPage extends StatelessWidget {
             return ListTile(
                 leading: getAvatar(contact),
                 title: Text(contact.name),
-                subtitle: Obx(() => Text(
-                      c.mostRecentMessages[contact.id]?.message ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )),
+                subtitle: Obx(
+                  () => renderLastMessage(c.mostRecentMessages[contact.id],
+                      c.numUnreadMessages[contact.id]),
+                ),
                 trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -131,13 +161,8 @@ class ContactsPage extends StatelessWidget {
                           ? 'Online'
                           : 'Last seen ${DateTimeFormatter.formatShort(contact.lastSeen)}'),
                       SizedBox(height: 5),
-                      Obx(() => Text(
-                            c.mostRecentMessages[contact.id] != null
-                                ? DateTimeFormatter.formatShort(
-                                    c.mostRecentMessages[contact.id].timestamp)
-                                : '',
-                            style: TextStyle(color: Colors.grey),
-                          ))
+                      Obx(() => renderMostRecentTimestamp(
+                          c.mostRecentMessages[contact.id]))
                     ]),
                 onTap: () => Get.to(ChatPage(contact)));
           },

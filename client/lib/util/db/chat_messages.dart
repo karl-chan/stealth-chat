@@ -21,18 +21,7 @@ class ChatMessages extends Table {
   Set<Column> get primaryKey => {contactId, timestamp};
 }
 
-@UseDao(tables: [
-  ChatMessages
-], queries: {
-  'mostRecentMessages': '''
-    SELECT c.* FROM chat_messages AS c
-    INNER JOIN
-        (SELECT contact_id, MAX(timestamp) AS max_timestamp
-        FROM chat_messages
-        GROUP BY contact_id) AS c2
-    WHERE c.contact_id = c2.contact_id
-    AND   c.timestamp = c2.max_timestamp'''
-})
+@UseDao(tables: [ChatMessages], include: {'chat_messages.moor'})
 class ChatMessagesDao extends DatabaseAccessor<AppDb>
     with _$ChatMessagesDaoMixin {
   ChatMessagesDao(AppDb db) : super(db);
@@ -103,6 +92,20 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
 
   Stream<List<ChatMessage>> listMostRecentMessages() {
     return mostRecentMessages().watch();
+  }
+
+  Stream<Map<String, int>> countUnreadMessages() {
+    final contactId = chatMessages.contactId;
+    final numUnread = chatMessages.timestamp.count();
+    return (selectOnly(chatMessages)
+          ..addColumns([contactId, numUnread])
+          ..where(isNull(chatMessages.readTimestamp) &
+              chatMessages.isSelf.equals(false))
+          ..groupBy([contactId]))
+        .watch()
+        .map((result) => {
+              for (final row in result) row.read(contactId): row.read(numUnread)
+            });
   }
 
   Future<void> deleteMessages(List<ChatMessage> messages) async {

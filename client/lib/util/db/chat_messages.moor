@@ -1,0 +1,12 @@
+import 'chat_messages.dart';
+
+CREATE INDEX read_timestamp_self_index ON chat_messages(read_timestamp, is_self);
+
+mostRecentMessages: 
+    SELECT c.* FROM chat_messages AS c
+    INNER JOIN
+        (SELECT contact_id, MAX(timestamp) AS max_timestamp
+        FROM chat_messages
+        GROUP BY contact_id) AS c2
+    WHERE c.contact_id = c2.contact_id
+    AND   c.timestamp = c2.max_timestamp;
