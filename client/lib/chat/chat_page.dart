@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
 import 'package:stealth_chat/chat/message_card.dart';
 import 'package:stealth_chat/chat/message_info_page.dart';
+import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/contact/contact_settings_page.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
@@ -171,16 +172,22 @@ class ChatPage extends StatelessWidget {
     ChatController c = Get.put(ChatController(contact, globals));
 
     final appBar = AppBar(
-      title: Column(children: [
-        Text(c.contact.value.name, style: TextStyle(color: Colors.white)),
-        Obx(() => Text(
-            c.contact.value.online
-                ? 'Online'
-                : 'Last seen ${DateTimeFormatter.formatShort(c.contact.value.lastSeen)}',
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w200,
-                color: Colors.white)))
+      title: Stack(alignment: Alignment.center, children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Avatar(c.contact.value, darkMode: true),
+        ),
+        Column(children: [
+          Text(c.contact.value.name, style: TextStyle(color: Colors.white)),
+          Obx(() => Text(
+              c.contact.value.online
+                  ? 'Online'
+                  : 'Last seen ${DateTimeFormatter.formatShort(c.contact.value.lastSeen)}',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w200,
+                  color: Colors.white)))
+        ])
       ]),
       actions: [
         PopupMenuButton<Function>(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
 
@@ -15,22 +16,18 @@ class ContactSettingsController extends GetxController {
           ..bindStream(globals.db.contacts.watchContact(contact.id));
 
   Future<void> showChangeColourDialog() async {
-    Color pickedColour = Color(contact.value.color);
     await Get.defaultDialog(
-        title: 'Pick a colour',
-        content: BlockPicker(
-          pickerColor: pickedColour,
-          onColorChanged: (newColour) async {
-            pickedColour = newColour;
-          },
-        ),
-        textConfirm: 'Done',
-        confirmTextColor: Colors.white,
-        onConfirm: () async {
-          await globals.db.contacts
-              .changeColour(contact.value.id, pickedColour);
-          Get.back();
-        });
+      title: 'Pick a colour',
+      content: BlockPicker(
+        pickerColor: Color(contact.value.color),
+        onColorChanged: (newColour) async {
+          await globals.db.contacts.changeColour(contact.value.id, newColour);
+        },
+      ),
+      textConfirm: 'Done',
+      confirmTextColor: Colors.white,
+      onConfirm: Get.back,
+    );
   }
 }
 
@@ -49,10 +46,18 @@ class ContactSettingsPage extends StatelessWidget {
             body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              title: Text(c.contact.value.name),
               floating: true,
-              flexibleSpace: Placeholder(),
               backgroundColor: Color(c.contact.value.color),
+              flexibleSpace: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Avatar(c.contact.value, darkMode: true, size: 50),
+                    SizedBox(height: 10),
+                    Text(
+                      c.contact.value.name,
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ]),
               expandedHeight: 200,
             ),
             SliverList(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/chat/chat_page.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
+import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
@@ -34,24 +35,6 @@ class ContactsController extends GetxController {
 
 class ContactsPage extends StatelessWidget {
   ContactsPage({Key key}) : super(key: key);
-
-  Widget getAvatar(Contact contact) {
-    Widget avatar = CircleAvatar(
-      child: Text(
-        contact.name.characters.elementAt(0).toUpperCase(),
-        style: TextStyle(color: Colors.white),
-      ),
-      backgroundColor: Color(contact.color),
-    );
-    if (contact.online) {
-      avatar = Badge(
-          badgeColor: Colors.green,
-          position: BadgePosition.bottomEnd(end: 0, bottom: 0),
-          borderSide: BorderSide(color: Colors.white, width: 1),
-          child: avatar);
-    }
-    return avatar;
-  }
 
   Widget renderLastMessage(ChatMessage mostRecentMessage, int numUnread) {
     if (mostRecentMessage == null) {
@@ -147,7 +130,7 @@ class ContactsPage extends StatelessWidget {
             final contact = c.contacts.elementAt(index);
 
             return ListTile(
-                leading: getAvatar(contact),
+                leading: Avatar(contact),
                 title: Text(contact.name),
                 subtitle: Obx(
                   () => renderLastMessage(c.mostRecentMessages[contact.id],
