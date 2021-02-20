@@ -112,7 +112,7 @@ class RegistrationController extends GetxController {
         if (registrationSuccess) {
           boot.destination != null
               ? await boot.destination()
-              : await Get.off(HomePage());
+              : await Get.off(() => HomePage());
         }
     }
   }
@@ -151,7 +151,7 @@ class RegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(RegistrationController(boot));
+    final c = RegistrationController(boot);
 
     return Scaffold(
         appBar: AppBar(title: Text('Register')),

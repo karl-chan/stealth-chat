@@ -58,6 +58,11 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
         .write(ContactsCompanion(color: Value(colour.value)));
   }
 
+  Future<void> setWallpaper(String id, Uint8List wallpaper) {
+    return (update(contacts)..where((c) => c.id.equals(id)))
+        .write(ContactsCompanion(wallpaper: Value(wallpaper)));
+  }
+
   Future<void> updateStatus(String id, bool online, DateTime lastSeen) {
     return (update(contacts)..where((c) => c.id.equals(id))).write(
         ContactsCompanion(online: Value(online), lastSeen: Value(lastSeen)));

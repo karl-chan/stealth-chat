@@ -29,7 +29,7 @@ class DictionaryController extends LoginController {
 
   Future<Search> searchDictionary(String term) async {
     final response = await http
-        .get('https://dictionary.cambridge.org/dictionary/english/$term');
+        .get(Uri.https('dictionary.cambridge.com', 'dictionary/english/$term'));
     final document = parse(response.body);
     final searchResults =
         document.querySelectorAll('.def-block.ddef_block').map((e) {
@@ -54,7 +54,7 @@ class DictionaryPage extends LoginPage {
   @override
   Widget build(BuildContext context) {
     logDebug('Dictionary page: ' + (boot.destination == null).toString());
-    DictionaryController c = Get.put(DictionaryController());
+    DictionaryController c = DictionaryController();
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,

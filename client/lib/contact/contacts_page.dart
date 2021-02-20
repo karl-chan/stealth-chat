@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/chat/chat_page.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
+import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
@@ -20,7 +21,7 @@ class ContactsController extends GetxController {
   final RxInt numUnreadNotifications;
 
   ContactsController(Globals globals)
-      : this.contacts = List<Contact>().obs
+      : this.contacts = <Contact>[].obs
           ..bindStream(globals.db.contacts.listContacts()),
         this.mostRecentMessages = Map<String, ChatMessage>().obs
           ..bindStream(globals.db.chatMessages
@@ -34,24 +35,6 @@ class ContactsController extends GetxController {
 
 class ContactsPage extends StatelessWidget {
   ContactsPage({Key key}) : super(key: key);
-
-  Widget getAvatar(Contact contact) {
-    Widget avatar = CircleAvatar(
-      child: Text(
-        contact.name.characters.elementAt(0).toUpperCase(),
-        style: TextStyle(color: Colors.white),
-      ),
-      backgroundColor: Color(contact.color),
-    );
-    if (contact.online) {
-      avatar = Badge(
-          badgeColor: Colors.green,
-          position: BadgePosition.bottomEnd(end: 0, bottom: 0),
-          borderSide: BorderSide(color: Colors.white, width: 1),
-          child: avatar);
-    }
-    return avatar;
-  }
 
   Widget renderLastMessage(ChatMessage mostRecentMessage, int numUnread) {
     if (mostRecentMessage == null) {
@@ -84,7 +67,7 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ContactsController c = Get.put(ContactsController(globals));
+    ContactsController c = ContactsController(globals);
 
     final appBar = AppBar(
       title: const Text('Contacts'),
@@ -93,7 +76,7 @@ class ContactsPage extends StatelessWidget {
             message: 'Add contact',
             child: IconButton(
               icon: Icon(Icons.person_add),
-              onPressed: () => Get.to(AddContactPage()),
+              onPressed: () => Get.to(() => AddContactPage()),
             )),
         Tooltip(
             message: 'View notifications',
@@ -105,14 +88,14 @@ class ContactsPage extends StatelessWidget {
                   ),
                   showBadge: c.numUnreadNotifications > 0,
                   child: Icon(Icons.notifications))),
-              onPressed: () => Get.to(NotificationsPage()),
+              onPressed: () => Get.to(() => NotificationsPage()),
             )),
         PopupMenuButton<Function>(
           onSelected: (Function function) => function(),
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem<Function>(
-                  value: () => Get.to(SettingsPage()),
+                  value: () => Get.to(() => SettingsPage()),
                   child: const Text('Settings'))
             ];
           },
@@ -147,7 +130,7 @@ class ContactsPage extends StatelessWidget {
             final contact = c.contacts.elementAt(index);
 
             return ListTile(
-                leading: getAvatar(contact),
+                leading: Avatar(contact),
                 title: Text(contact.name),
                 subtitle: Obx(
                   () => renderLastMessage(c.mostRecentMessages[contact.id],
@@ -164,7 +147,7 @@ class ContactsPage extends StatelessWidget {
                       Obx(() => renderMostRecentTimestamp(
                           c.mostRecentMessages[contact.id]))
                     ]),
-                onTap: () => Get.to(ChatPage(contact)));
+                onTap: () => Get.to(() => ChatPage(contact)));
           },
           separatorBuilder: (BuildContext context, int index) =>
               const Divider(),
