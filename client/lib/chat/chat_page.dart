@@ -228,6 +228,8 @@ class ChatPage extends StatelessWidget {
               ? BoxDecoration(
                   image: DecorationImage(
                       fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                          Colors.black.withOpacity(0.9), BlendMode.dstATop),
                       image: MemoryImage(c.contact.value.wallpaper)))
               : null,
           child: ListView.separated(

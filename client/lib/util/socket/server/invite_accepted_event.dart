@@ -22,6 +22,7 @@ class InviteAcceptedEvent extends ServerEvent<InviteAcceptedMessage> {
               message.name,
               Rsa.decrypt(message.encryptedChatSecretKey, globals.user.keys),
               DateTime.fromMillisecondsSinceEpoch(message.timestamp));
+          await globals.socket.broadcastSingle(message.id, online: true);
         });
 }
 
