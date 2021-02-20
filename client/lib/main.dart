@@ -95,7 +95,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> handleAppLinkOnColdBoot(Uri appLink) async {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
-        boot.destination = () => Get.off(() => AcceptInvitePage(appLink));
+        boot.destination = () => Get.off(AcceptInvitePage(appLink));
       }
     }
   }

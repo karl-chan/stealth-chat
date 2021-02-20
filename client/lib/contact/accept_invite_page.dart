@@ -98,7 +98,7 @@ class AcceptInviteController extends GetxController {
   }
 
   void finish() {
-    Get.off(() => HomePage());
+    Get.off(HomePage());
   }
 }
 

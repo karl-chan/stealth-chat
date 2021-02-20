@@ -9,10 +9,18 @@ import 'package:url_launcher/url_launcher.dart';
 class MessageCard extends StatelessWidget {
   final ChatMessage message;
   final Color colour;
+  final GestureTapCallback onTap;
+  final GestureLongPressCallback onLongPress;
 
-  const MessageCard(ChatMessage message, {Key key, Color colour})
+  const MessageCard(ChatMessage message,
+      {Key key,
+      Color colour,
+      GestureTapCallback onTap,
+      GestureLongPressCallback onLongPress})
       : this.message = message,
         this.colour = colour,
+        this.onTap = onTap,
+        this.onLongPress = onLongPress,
         super(key: key);
 
   Widget getLastSeenIcon(ChatMessage message) {
@@ -74,9 +82,9 @@ class MessageCard extends StatelessWidget {
           child: Material(
               color: Colors.transparent,
               child: InkWell(
-                borderRadius: borderRadius,
-                onTap: () => null,
-              )))
+                  borderRadius: borderRadius,
+                  onTap: onTap,
+                  onLongPress: onLongPress)))
     ]);
   }
 }
