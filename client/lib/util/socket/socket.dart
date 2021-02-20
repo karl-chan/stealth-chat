@@ -83,6 +83,13 @@ class Socket {
             lastSeen: DateTime.now().millisecondsSinceEpoch)));
   }
 
+  Future<void> broadcastSingle(String contactId, {bool online}) {
+    return client.sendStatus.push(SendStatusMessage(
+        contactIds: [contactId],
+        online: online,
+        lastSeen: DateTime.now().millisecondsSinceEpoch));
+  }
+
   Future<void> close() async {
     if (client != null && !errorFlag) {
       await Future.wait<dynamic>([

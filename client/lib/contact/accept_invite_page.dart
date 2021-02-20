@@ -91,6 +91,10 @@ class AcceptInviteController extends GetxController {
     finish();
     Get.snackbar('Done!', 'Added $name to my contacts.',
         snackPosition: SnackPosition.BOTTOM);
+
+    // broadcast online status
+    await Future.delayed(const Duration(seconds: 2),
+        () async => globals.socket.broadcastSingle(id, online: true));
   }
 
   void decline() {
