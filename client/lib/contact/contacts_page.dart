@@ -76,7 +76,7 @@ class ContactsPage extends StatelessWidget {
             message: 'Add contact',
             child: IconButton(
               icon: Icon(Icons.person_add),
-              onPressed: () => Get.to(() => AddContactPage()),
+              onPressed: () => Get.to(AddContactPage()),
             )),
         Tooltip(
             message: 'View notifications',
@@ -88,14 +88,14 @@ class ContactsPage extends StatelessWidget {
                   ),
                   showBadge: c.numUnreadNotifications > 0,
                   child: Icon(Icons.notifications))),
-              onPressed: () => Get.to(() => NotificationsPage()),
+              onPressed: () => Get.to(NotificationsPage()),
             )),
         PopupMenuButton<Function>(
           onSelected: (Function function) => function(),
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem<Function>(
-                  value: () => Get.to(() => SettingsPage()),
+                  value: () => Get.to(SettingsPage()),
                   child: const Text('Settings'))
             ];
           },
@@ -147,7 +147,7 @@ class ContactsPage extends StatelessWidget {
                       Obx(() => renderMostRecentTimestamp(
                           c.mostRecentMessages[contact.id]))
                     ]),
-                onTap: () => Get.to(() => ChatPage(contact)));
+                onTap: () => Get.to(ChatPage(contact)));
           },
           separatorBuilder: (BuildContext context, int index) =>
               const Divider(),

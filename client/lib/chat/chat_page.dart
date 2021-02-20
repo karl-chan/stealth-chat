@@ -195,8 +195,7 @@ class ChatPage extends StatelessWidget {
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem<Function>(
-                  value: () =>
-                      Get.to(() => ContactSettingsPage(c.contact.value)),
+                  value: () => Get.to(ContactSettingsPage(c.contact.value)),
                   child: const Text('Preferences'))
             ];
           },
@@ -214,8 +213,7 @@ class ChatPage extends StatelessWidget {
                 message: 'Info',
                 child: IconButton(
                     icon: Icon(Icons.info_outline),
-                    onPressed: () =>
-                        Get.to(() => MessageInfoPage(c.selected.first))))
+                    onPressed: () => Get.to(MessageInfoPage(c.selected.first))))
             : SizedBox(width: 0, height: 0)),
         Tooltip(
           message: 'Delete selected',
@@ -246,16 +244,16 @@ class ChatPage extends StatelessWidget {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       widthFactor: 0.7,
-                      child: GestureDetector(
-                        child: MessageCard(message,
-                            colour: message.isSelf
-                                ? Colors.grey.shade200
-                                : c.themeColour.value),
+                      child: MessageCard(
+                        message,
+                        colour: message.isSelf
+                            ? Colors.grey.shade200
+                            : c.themeColour.value,
                         onTap: () => c.isMultiSelectMode.value
                             ? c.toggleSelect(message)
                             : null,
                         onLongPress: () => c.enterMultiSelectMode(message),
-                      )).marginSymmetric(horizontal: 5)));
+                      ).marginSymmetric(horizontal: 5))));
             },
             separatorBuilder: (BuildContext context, int index) {
               ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);

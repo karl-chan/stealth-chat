@@ -15,7 +15,7 @@ class LoginController extends GetxController {
       logDebug('Login controller:' + (boot.destination == null).toString());
       boot.destination != null
           ? await boot.destination()
-          : await Get.off(() => HomePage());
+          : await Get.off(HomePage());
     } else {
       await onLoginFailed();
     }
