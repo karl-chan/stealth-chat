@@ -15,12 +15,13 @@ dependencies:
   badges:
   characters:
   crypton:
-  cupertino_icons: 1.0.0
+  cupertino_icons:
   emoji_picker:
   encrypted_moor:
     git:
       url: https://github.com/simolus3/moor.git
       path: extras/encryption
+      ref: 51e62d4
   flutter:
     sdk: flutter
   flutter_colorpicker:
@@ -45,8 +46,8 @@ dependencies:
   qr_flutter:
   share:
   shared_preferences:
-  steel_crypt: 2.3.1+6
-  sqlite3_flutter_libs: 0.3.0
+  steel_crypt:
+  sqlite3_flutter_libs:
   synchronized:
   tinycolor:
   tuple:
