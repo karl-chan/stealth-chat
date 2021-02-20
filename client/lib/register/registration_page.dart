@@ -112,7 +112,7 @@ class RegistrationController extends GetxController {
         if (registrationSuccess) {
           boot.destination != null
               ? await boot.destination()
-              : await Get.off(() => HomePage());
+              : await Get.off(HomePage());
         }
     }
   }
