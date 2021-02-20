@@ -99,7 +99,7 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
     final numUnread = chatMessages.timestamp.count();
     return (selectOnly(chatMessages)
           ..addColumns([contactId, numUnread])
-          ..where(isNull(chatMessages.readTimestamp) &
+          ..where(chatMessages.readTimestamp.isNull() &
               chatMessages.isSelf.equals(false))
           ..groupBy([contactId]))
         .watch()

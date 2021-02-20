@@ -2,8 +2,26 @@ PODS:
   - emoji_picker (0.0.3):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_image_compress (0.0.1):
+    - Flutter
+    - Mantle
+    - SDWebImageWebPCoder
   - FMDB/SQLCipher (2.7.5):
     - SQLCipher
+  - image_picker (0.0.1):
+    - Flutter
+  - libwebp (1.2.0):
+    - libwebp/demux (= 1.2.0)
+    - libwebp/mux (= 1.2.0)
+    - libwebp/webp (= 1.2.0)
+  - libwebp/demux (1.2.0):
+    - libwebp/webp
+  - libwebp/mux (1.2.0):
+    - libwebp/demux
+  - libwebp/webp (1.2.0)
+  - Mantle (2.1.6):
+    - Mantle/extobjc (= 2.1.6)
+  - Mantle/extobjc (2.1.6)
   - MTBBarcodeScanner (5.0.11)
   - package_info (0.0.1):
     - Flutter
@@ -12,6 +30,10 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
+  - SDWebImage/Core (5.9.5)
+  - SDWebImageWebPCoder (0.6.1):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.7)
   - share (0.0.1):
     - Flutter
   - shared_preferences (0.0.1):
@@ -23,11 +45,11 @@ PODS:
   - sqflite_sqlcipher (0.0.1):
     - Flutter
     - FMDB/SQLCipher (~> 2.7.5)
-    - SQLCipher (= 4.4.2)
-  - SQLCipher (4.4.2):
-    - SQLCipher/standard (= 4.4.2)
-  - SQLCipher/common (4.4.2)
-  - SQLCipher/standard (4.4.2):
+    - SQLCipher (= 4.4.1)
+  - SQLCipher (4.4.1):
+    - SQLCipher/standard (= 4.4.1)
+  - SQLCipher/common (4.4.1)
+  - SQLCipher/standard (4.4.1):
     - SQLCipher/common
   - sqlite3 (3.32.3):
     - sqlite3/common (= 3.32.3)
@@ -55,6 +77,8 @@ PODS:
 DEPENDENCIES:
   - emoji_picker (from `.symlinks/plugins/emoji_picker/ios`)
   - Flutter (from `Flutter`)
+  - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
@@ -69,7 +93,11 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - FMDB
+    - libwebp
+    - Mantle
     - MTBBarcodeScanner
+    - SDWebImage
+    - SDWebImageWebPCoder
     - SQLCipher
     - sqlite3
 
@@ -78,6 +106,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/emoji_picker/ios"
   Flutter:
     :path: Flutter
+  flutter_image_compress:
+    :path: ".symlinks/plugins/flutter_image_compress/ios"
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider:
@@ -101,17 +133,23 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   emoji_picker: 0e868059aa18f9473d234f3d0701fbd4d5fd310c
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
+  Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
+  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
+  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 9b549b4a8b0a7f9ea465738a929b247655c8da27
-  sqflite_sqlcipher: 70eb7fd8d4f0b0352d0bde5cf345b810737f54bb
-  SQLCipher: 1ab0b9486a77d141e72e92ff30681926ed79c07a
+  sqflite_sqlcipher: cc00ecef02643b799857eb5c66c7074660aa658a
+  SQLCipher: 0b81a39b21247c559c52c3bd2234808e626c008b
   sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
   sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a

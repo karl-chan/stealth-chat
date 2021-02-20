@@ -12,7 +12,7 @@ class MessageInfoPage extends StatelessWidget {
         super(key: key);
 
   Widget getTable(ChatMessage message) {
-    final rows = List<Widget>();
+    final List<Widget> rows = [];
     if (message.sentTimestamp != null) {
       rows.addAll([
         Text(

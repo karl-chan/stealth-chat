@@ -36,7 +36,7 @@ class ChatController extends GetxController {
       : this.globals = globals,
         this.contact = contact.obs
           ..bindStream(globals.db.contacts.watchContact(contact.id)),
-        this.chatMessages = List<ChatMessage>().obs
+        this.chatMessages = <ChatMessage>[].obs
           ..bindStream(globals.db.chatMessages.listChatMessages(contact.id)),
         // ignore: unnecessary_cast
         this.themeColour = (Colors.green as Color).obs,
@@ -169,7 +169,7 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ChatController c = Get.put(ChatController(contact, globals));
+    ChatController c = ChatController(contact, globals);
 
     final appBar = AppBar(
       title: Stack(alignment: Alignment.center, children: [
@@ -195,7 +195,8 @@ class ChatPage extends StatelessWidget {
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem<Function>(
-                  value: () => Get.to(ContactSettingsPage(c.contact.value)),
+                  value: () =>
+                      Get.to(() => ContactSettingsPage(c.contact.value)),
                   child: const Text('Preferences'))
             ];
           },
@@ -213,7 +214,8 @@ class ChatPage extends StatelessWidget {
                 message: 'Info',
                 child: IconButton(
                     icon: Icon(Icons.info_outline),
-                    onPressed: () => Get.to(MessageInfoPage(c.selected.first))))
+                    onPressed: () =>
+                        Get.to(() => MessageInfoPage(c.selected.first))))
             : SizedBox(width: 0, height: 0)),
         Tooltip(
           message: 'Delete selected',
@@ -224,6 +226,12 @@ class ChatPage extends StatelessWidget {
     );
 
     final chatPanel = Obx(() => Container(
+          decoration: c.contact.value.wallpaper != null
+              ? BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: MemoryImage(c.contact.value.wallpaper)))
+              : null,
           child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               ChatMessage message = c.chatMessages.elementAt(index);

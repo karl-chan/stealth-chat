@@ -12,7 +12,7 @@ class NotificationsController extends GetxController {
   final Globals globals;
 
   NotificationsController(Globals globals)
-      : this.notifications = List<Notification>().obs
+      : this.notifications = <Notification>[].obs
           ..bindStream(globals.db.notifications
               .listNotifications()
               .map((notifications) => notifications.reversed.toList())),
@@ -79,7 +79,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    NotificationsController c = Get.put(NotificationsController(globals));
+    NotificationsController c = NotificationsController(globals);
 
     final emptyView = DefaultTextStyle(
         style: TextStyle(color: Colors.grey, fontSize: 24),
@@ -106,7 +106,8 @@ class NotificationsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(DateTimeFormatter.formatShort(notification.timestamp)),
+                        Text(DateTimeFormatter.formatShort(
+                            notification.timestamp)),
                         Text('')
                       ]),
                   onTap: () => c.isMultiSelectMode.value

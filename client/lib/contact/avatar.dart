@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
-import 'package:stealth_chat/util/logging.dart';
 
 class AvatarController extends GetxController {
   final Rx<Contact> contact;
@@ -28,9 +27,8 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AvatarController c = Get.put(AvatarController(contact, globals));
+    AvatarController c = AvatarController(contact, globals);
 
-    logDebug('Dark mode: $darkMode');
     Widget avatar = Obx(() => CircleAvatar(
           radius: size,
           child: Text(

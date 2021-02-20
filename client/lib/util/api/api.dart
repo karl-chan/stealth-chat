@@ -25,7 +25,7 @@ class Api {
           {Map<String, String> headers = const {}}) =>
       http.delete(_url(endpoint), headers: _sign(headers: headers));
 
-  static String _url(String endpoint) => '$host/api/$endpoint';
+  static Uri _url(String endpoint) => Uri.parse('$host/api/$endpoint');
 
   static Map<String, String> _sign(
       {Map<String, String> headers, dynamic body = ''}) {

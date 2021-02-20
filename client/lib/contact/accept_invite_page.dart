@@ -98,7 +98,7 @@ class AcceptInviteController extends GetxController {
   }
 
   void finish() {
-    Get.off(HomePage());
+    Get.off(() => HomePage());
   }
 }
 
@@ -112,8 +112,7 @@ class AcceptInvitePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AcceptInviteController c =
-        Get.put(AcceptInviteController(appLink, globals));
+    AcceptInviteController c = AcceptInviteController(appLink, globals);
 
     final errorScreen = Obx(() => Container(
           child: Column(

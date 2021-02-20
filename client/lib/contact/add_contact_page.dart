@@ -99,7 +99,7 @@ $inviteLink''';
       confirmTextColor: Colors.white,
       onConfirm: () async {
         if (acceptInviteLink.value != null) {
-          await Get.to(AcceptInvitePage(acceptInviteLink.value));
+          await Get.to(() => AcceptInvitePage(acceptInviteLink.value));
         }
       },
     );
@@ -120,7 +120,7 @@ $inviteLink''';
                       uri.scheme == this.scheme &&
                       uri.host == this.host &&
                       uri.path == Paths.ACCEPT_INVITE) {
-                    await Get.to(AcceptInvitePage(uri));
+                    await Get.to(() => AcceptInvitePage(uri));
                   }
                 });
               })),
@@ -134,7 +134,7 @@ class AddContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AddContactController c = Get.put(AddContactController(globals));
+    AddContactController c = AddContactController(globals);
 
     return DefaultTabController(
         length: 2,

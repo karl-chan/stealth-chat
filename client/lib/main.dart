@@ -8,6 +8,8 @@ import 'package:stealth_chat/globals.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:uni_links/uni_links.dart';
 
+bool _stayAwake = false;
+
 void main() async {
   runApp(MainApp());
 }
@@ -20,6 +22,10 @@ void exit() async {
     }
     await Get.delete<Globals>();
   }
+}
+
+void stayAwake(bool stayAwake) {
+  _stayAwake = stayAwake;
 }
 
 class MainApp extends StatefulWidget {
@@ -41,6 +47,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     registerAppLinkHandlers().then((_) {
       WidgetsBinding.instance.addObserver(this);
     });
+    stayAwake(false);
   }
 
   @override
@@ -54,6 +61,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (_stayAwake) {
+      return;
+    }
     await lock.synchronized(() async {
       switch (state) {
         case AppLifecycleState.inactive:
@@ -85,7 +95,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> handleAppLinkOnColdBoot(Uri appLink) async {
     if (appLink != null) {
       if (appLink.path.startsWith(Paths.ACCEPT_INVITE)) {
-        boot.destination = () => Get.off(AcceptInvitePage(appLink));
+        boot.destination = () => Get.off(() => AcceptInvitePage(appLink));
       }
     }
   }
