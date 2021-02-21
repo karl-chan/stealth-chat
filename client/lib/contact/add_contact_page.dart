@@ -8,6 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share/share.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class AddContactController extends GetxController {
@@ -106,6 +107,7 @@ $inviteLink''';
   }
 
   Future<void> showAcceptInviteQRDialog() async {
+    stayAwake(true);
     await Get.defaultDialog(
       title: 'Scan QR code',
       content: SizedBox(
@@ -121,10 +123,12 @@ $inviteLink''';
                       uri.host == this.host &&
                       uri.path == Paths.ACCEPT_INVITE) {
                     await Get.to(AcceptInvitePage(uri));
+                    stayAwake(false);
                   }
                 });
               })),
     );
+    stayAwake(false);
   }
 }
 
