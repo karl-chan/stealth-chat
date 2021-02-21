@@ -67,6 +67,11 @@ class AcceptInviteController extends GetxController {
           'The invite link should be opened by your contact, not yourself.';
       return;
     }
+    final isExistingContact = await globals.db.contacts.exist(id);
+    if (isExistingContact) {
+      errorText.value = 'You have already added $name';
+      return;
+    }
   }
 
   void accept() async {
@@ -118,22 +123,24 @@ class AcceptInvitePage extends StatelessWidget {
     Globals globals = Get.find();
     AcceptInviteController c = AcceptInviteController(appLink, globals);
 
-    final errorScreen = Obx(() => Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error, color: Colors.red, size: 150),
-              SizedBox(height: 50),
-              Text(
-                c.errorText.value,
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-              )
-            ],
-          ),
-        ));
+    final errorScreen = Obx(
+      () => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Icon(Icons.error, color: Colors.red, size: 150),
+          SizedBox(height: 50),
+          Text(
+            c.errorText.value,
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
+    );
 
     final acceptInviteScreen = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 100),
         Column(children: [
@@ -171,11 +178,9 @@ class AcceptInvitePage extends StatelessWidget {
         appBar: AppBar(
           title: Text('Accept invite'),
         ),
-        body: Container(
-            child: Obx(() => Card(
-                  child: c.errorText.value == null
-                      ? acceptInviteScreen
-                      : errorScreen,
-                ))));
+        body: Obx(() => Container(
+              child:
+                  c.errorText.value == null ? acceptInviteScreen : errorScreen,
+            )));
   }
 }
