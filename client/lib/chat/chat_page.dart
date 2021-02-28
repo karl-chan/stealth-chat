@@ -1,29 +1,36 @@
+import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:emoji_picker/emoji_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
-import 'package:stealth_chat/chat/message_card.dart';
-import 'package:stealth_chat/chat/message_info_page.dart';
+import 'package:stealth_chat/chat/attachment/attachment.dart';
+import 'package:stealth_chat/chat/attachment/attachment_view.dart';
+import 'package:stealth_chat/chat/message/message_card.dart';
+import 'package:stealth_chat/chat/message/message_info_page.dart';
 import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/contact/contact_settings_page.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
+import 'package:stealth_chat/util/socket/client/send_attachment_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_update_event.dart';
 import 'package:tinycolor/tinycolor.dart';
 
 class ChatController extends GetxController {
+  final GZipCodec gzip = GZipCodec();
+
   final Globals globals;
   final Rx<Contact> contact;
   final RxList<ChatMessage> chatMessages;
   final Rx<Color> themeColour;
   final RxBool canSend = false.obs;
-  final Rx<Uint8List> inputAttachment = Rx(null);
+  final Rx<Attachment> inputAttachment = Rx(null);
   final TextEditingController inputMessageController = TextEditingController();
 
   final RxBool isMultiSelectMode;
@@ -43,35 +50,52 @@ class ChatController extends GetxController {
         this.isMultiSelectMode = false.obs,
         this.selected = Set<ChatMessage>().obs,
         this.showEmojiKeyboard = false.obs {
-    inputMessageController.addListener(() {
-      canSend.value = inputMessageController.text.isNotEmpty;
-    });
+    inputMessageController.addListener(updateCanSend);
+    ever(this.inputAttachment, (_) => updateCanSend);
     ever(this.contact, (c) => this.themeColour.value = Color(c.color));
     markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
   }
 
   @override
   void onClose() {
+    this.inputMessageController.dispose();
     this.markAsReadWorker.dispose();
     super.onClose();
   }
 
-  void sendMessage() async {
+  Future<void> sendMessage() async {
+    // get and clear input immediately
     String message = inputMessageController.text;
+    Attachment attachment = inputAttachment.value;
     inputMessageController.clear();
+    inputAttachment.nil();
 
-    AesMessage aes =
-        Aes.encrypt(message, Keys(secretKey: contact.value.chatSecretKey));
     DateTime now = DateTime.now();
+    Keys keys = Keys(secretKey: contact.value.chatSecretKey);
 
-    await globals.db.chatMessages
-        .insertMessage(contact.value.id, true, message, now);
+    if (message.isNotEmpty) {
+      AesMessage aes = await Aes.encrypt(message, keys);
 
-    await globals.socket.client.sendChat.push(SendChatMessage(
+      await globals.socket.client.sendChat.push(SendChatMessage(
+          contactId: contact.value.id,
+          encrypted: aes.encrypted,
+          iv: aes.iv,
+          timestamp: now.millisecondsSinceEpoch));
+      await globals.db.chatMessages
+          .insertMessage(contact.value.id, true, message, now);
+    }
+
+    if (attachment != null) {
+      AesMessage attachmentAes = await attachment.encode(keys);
+      await globals.socket.client.sendAttachment.push(SendAttachmentMessage(
         contactId: contact.value.id,
-        encrypted: aes.encrypted,
-        iv: aes.iv,
-        timestamp: now.millisecondsSinceEpoch));
+        timestamp: now.millisecondsSinceEpoch,
+        encrypted: attachmentAes.encrypted,
+        iv: attachmentAes.iv,
+      ));
+      await globals.db.chatMessages
+          .insertAttachment(contact.value.id, true, now, attachment);
+    }
   }
 
   Future<void> markIncomingMessagesAsRead(List<ChatMessage> value) async {
@@ -108,6 +132,11 @@ class ChatController extends GetxController {
 
   bool isInfoAvailable() {
     return this.selected.length == 1 && this.selected.first.isSelf;
+  }
+
+  void updateCanSend() {
+    this.canSend.value = this.inputAttachment.value != null ||
+        !this.inputMessageController.value.isBlank;
   }
 
   void toggleSelect(ChatMessage message) {
@@ -156,6 +185,20 @@ class ChatController extends GetxController {
               selection: TextSelection.fromPosition(
                   TextPosition(offset: prefix.length)));
         });
+  }
+
+  Future<void> selectFile() async {
+    stayAwake(true);
+    FilePickerResult result = await FilePicker.platform
+        .pickFiles(withData: true, allowCompression: true);
+    stayAwake(false);
+    if (result != null) {
+      inputAttachment.value = Attachment(
+          type: AttachmentTypes.fromExtension(result.files.single.extension),
+          name: result.files.single.name,
+          value: result.files.single.bytes);
+      updateCanSend();
+    }
   }
 }
 
@@ -280,33 +323,43 @@ class ChatPage extends StatelessWidget {
           ),
         ));
 
-    final inputPanel = Obx(() => Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: c.inputMessageController,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(hintText: 'Enter a message'),
-                minLines: 1,
-                maxLines: 5,
-              ),
-            ),
-            IconButton(
-                icon: Icon(
-                  Icons.emoji_emotions_outlined,
+    final inputPanel = Obx(() => Column(children: [
+          ...(c.inputAttachment.value != null
+              ? [
+                  Row(children: [AttachmentView(c.inputAttachment.value)])
+                ]
+              : []),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: c.inputMessageController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(hintText: 'Enter a message'),
+                  minLines: 1,
+                  maxLines: 5,
                 ),
-                onPressed: () {
-                  c.showEmojiKeyboard.toggle();
-                }),
-            IconButton(
-              icon: Icon(
-                Icons.send,
               ),
-              color: c.themeColour.value,
-              onPressed: c.canSend.value ? c.sendMessage : null,
-            ),
-          ],
-        ));
+              IconButton(
+                  icon: Icon(
+                    Icons.emoji_emotions_outlined,
+                  ),
+                  onPressed: c.showEmojiKeyboard.toggle),
+              IconButton(
+                  icon: Icon(
+                    Icons.attach_file,
+                  ),
+                  onPressed: c.selectFile),
+              IconButton(
+                icon: Icon(
+                  Icons.send,
+                ),
+                color: c.themeColour.value,
+                onPressed: c.canSend.value ? () => c.sendMessage() : null,
+              ),
+            ],
+          )
+        ]));
 
     return Obx(() => Theme(
         data: ThemeData.from(

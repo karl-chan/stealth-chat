@@ -17,6 +17,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
   final DateTime readTimestamp;
   final DateTime expiryTimestamp;
   final int attachmentType;
+  final String attachmentName;
   final Uint8List attachment;
   ChatMessage(
       {@required this.contactId,
@@ -28,6 +29,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
       this.readTimestamp,
       this.expiryTimestamp,
       @required this.attachmentType,
+      this.attachmentName,
       this.attachment});
   factory ChatMessage.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -56,6 +58,8 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
           .mapFromDatabaseResponse(data['${effectivePrefix}expiry_timestamp']),
       attachmentType: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}attachment_type']),
+      attachmentName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}attachment_name']),
       attachment: uint8ListType
           .mapFromDatabaseResponse(data['${effectivePrefix}attachment']),
     );
@@ -89,6 +93,9 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
     }
     if (!nullToAbsent || attachmentType != null) {
       map['attachment_type'] = Variable<int>(attachmentType);
+    }
+    if (!nullToAbsent || attachmentName != null) {
+      map['attachment_name'] = Variable<String>(attachmentName);
     }
     if (!nullToAbsent || attachment != null) {
       map['attachment'] = Variable<Uint8List>(attachment);
@@ -124,6 +131,9 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
       attachmentType: attachmentType == null && nullToAbsent
           ? const Value.absent()
           : Value(attachmentType),
+      attachmentName: attachmentName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(attachmentName),
       attachment: attachment == null && nullToAbsent
           ? const Value.absent()
           : Value(attachment),
@@ -144,6 +154,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
       readTimestamp: serializer.fromJson<DateTime>(json['readTimestamp']),
       expiryTimestamp: serializer.fromJson<DateTime>(json['expiryTimestamp']),
       attachmentType: serializer.fromJson<int>(json['attachmentType']),
+      attachmentName: serializer.fromJson<String>(json['attachmentName']),
       attachment: serializer.fromJson<Uint8List>(json['attachment']),
     );
   }
@@ -160,6 +171,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
       'readTimestamp': serializer.toJson<DateTime>(readTimestamp),
       'expiryTimestamp': serializer.toJson<DateTime>(expiryTimestamp),
       'attachmentType': serializer.toJson<int>(attachmentType),
+      'attachmentName': serializer.toJson<String>(attachmentName),
       'attachment': serializer.toJson<Uint8List>(attachment),
     };
   }
@@ -174,6 +186,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
           DateTime readTimestamp,
           DateTime expiryTimestamp,
           int attachmentType,
+          String attachmentName,
           Uint8List attachment}) =>
       ChatMessage(
         contactId: contactId ?? this.contactId,
@@ -185,6 +198,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
         readTimestamp: readTimestamp ?? this.readTimestamp,
         expiryTimestamp: expiryTimestamp ?? this.expiryTimestamp,
         attachmentType: attachmentType ?? this.attachmentType,
+        attachmentName: attachmentName ?? this.attachmentName,
         attachment: attachment ?? this.attachment,
       );
   @override
@@ -199,6 +213,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
           ..write('readTimestamp: $readTimestamp, ')
           ..write('expiryTimestamp: $expiryTimestamp, ')
           ..write('attachmentType: $attachmentType, ')
+          ..write('attachmentName: $attachmentName, ')
           ..write('attachment: $attachment')
           ..write(')'))
         .toString();
@@ -221,8 +236,10 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
                               readTimestamp.hashCode,
                               $mrjc(
                                   expiryTimestamp.hashCode,
-                                  $mrjc(attachmentType.hashCode,
-                                      attachment.hashCode))))))))));
+                                  $mrjc(
+                                      attachmentType.hashCode,
+                                      $mrjc(attachmentName.hashCode,
+                                          attachment.hashCode)))))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -236,6 +253,7 @@ class ChatMessage extends DataClass implements Insertable<ChatMessage> {
           other.readTimestamp == this.readTimestamp &&
           other.expiryTimestamp == this.expiryTimestamp &&
           other.attachmentType == this.attachmentType &&
+          other.attachmentName == this.attachmentName &&
           other.attachment == this.attachment);
 }
 
@@ -249,6 +267,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
   final Value<DateTime> readTimestamp;
   final Value<DateTime> expiryTimestamp;
   final Value<int> attachmentType;
+  final Value<String> attachmentName;
   final Value<Uint8List> attachment;
   const ChatMessagesCompanion({
     this.contactId = const Value.absent(),
@@ -260,22 +279,23 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
     this.readTimestamp = const Value.absent(),
     this.expiryTimestamp = const Value.absent(),
     this.attachmentType = const Value.absent(),
+    this.attachmentName = const Value.absent(),
     this.attachment = const Value.absent(),
   });
   ChatMessagesCompanion.insert({
     @required String contactId,
     @required bool isSelf,
-    @required String message,
+    this.message = const Value.absent(),
     @required DateTime timestamp,
     this.sentTimestamp = const Value.absent(),
     this.deliveredTimestamp = const Value.absent(),
     this.readTimestamp = const Value.absent(),
     this.expiryTimestamp = const Value.absent(),
     this.attachmentType = const Value.absent(),
+    this.attachmentName = const Value.absent(),
     this.attachment = const Value.absent(),
   })  : contactId = Value(contactId),
         isSelf = Value(isSelf),
-        message = Value(message),
         timestamp = Value(timestamp);
   static Insertable<ChatMessage> custom({
     Expression<String> contactId,
@@ -287,6 +307,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
     Expression<DateTime> readTimestamp,
     Expression<DateTime> expiryTimestamp,
     Expression<int> attachmentType,
+    Expression<String> attachmentName,
     Expression<Uint8List> attachment,
   }) {
     return RawValuesInsertable({
@@ -299,6 +320,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
       if (readTimestamp != null) 'read_timestamp': readTimestamp,
       if (expiryTimestamp != null) 'expiry_timestamp': expiryTimestamp,
       if (attachmentType != null) 'attachment_type': attachmentType,
+      if (attachmentName != null) 'attachment_name': attachmentName,
       if (attachment != null) 'attachment': attachment,
     });
   }
@@ -313,6 +335,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
       Value<DateTime> readTimestamp,
       Value<DateTime> expiryTimestamp,
       Value<int> attachmentType,
+      Value<String> attachmentName,
       Value<Uint8List> attachment}) {
     return ChatMessagesCompanion(
       contactId: contactId ?? this.contactId,
@@ -324,6 +347,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
       readTimestamp: readTimestamp ?? this.readTimestamp,
       expiryTimestamp: expiryTimestamp ?? this.expiryTimestamp,
       attachmentType: attachmentType ?? this.attachmentType,
+      attachmentName: attachmentName ?? this.attachmentName,
       attachment: attachment ?? this.attachment,
     );
   }
@@ -358,6 +382,9 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
     if (attachmentType.present) {
       map['attachment_type'] = Variable<int>(attachmentType.value);
     }
+    if (attachmentName.present) {
+      map['attachment_name'] = Variable<String>(attachmentName.value);
+    }
     if (attachment.present) {
       map['attachment'] = Variable<Uint8List>(attachment.value);
     }
@@ -376,6 +403,7 @@ class ChatMessagesCompanion extends UpdateCompanion<ChatMessage> {
           ..write('readTimestamp: $readTimestamp, ')
           ..write('expiryTimestamp: $expiryTimestamp, ')
           ..write('attachmentType: $attachmentType, ')
+          ..write('attachmentName: $attachmentName, ')
           ..write('attachment: $attachment')
           ..write(')'))
         .toString();
@@ -416,11 +444,8 @@ class $ChatMessagesTable extends ChatMessages
   @override
   GeneratedTextColumn get message => _message ??= _constructMessage();
   GeneratedTextColumn _constructMessage() {
-    return GeneratedTextColumn(
-      'message',
-      $tableName,
-      false,
-    );
+    return GeneratedTextColumn('message', $tableName, false,
+        defaultValue: const Constant(''));
   }
 
   final VerificationMeta _timestampMeta = const VerificationMeta('timestamp');
@@ -502,6 +527,20 @@ class $ChatMessagesTable extends ChatMessages
         defaultValue: const Constant(0));
   }
 
+  final VerificationMeta _attachmentNameMeta =
+      const VerificationMeta('attachmentName');
+  GeneratedTextColumn _attachmentName;
+  @override
+  GeneratedTextColumn get attachmentName =>
+      _attachmentName ??= _constructAttachmentName();
+  GeneratedTextColumn _constructAttachmentName() {
+    return GeneratedTextColumn(
+      'attachment_name',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _attachmentMeta = const VerificationMeta('attachment');
   GeneratedBlobColumn _attachment;
   @override
@@ -525,6 +564,7 @@ class $ChatMessagesTable extends ChatMessages
         readTimestamp,
         expiryTimestamp,
         attachmentType,
+        attachmentName,
         attachment
       ];
   @override
@@ -553,8 +593,6 @@ class $ChatMessagesTable extends ChatMessages
     if (data.containsKey('message')) {
       context.handle(_messageMeta,
           message.isAcceptableOrUnknown(data['message'], _messageMeta));
-    } else if (isInserting) {
-      context.missing(_messageMeta);
     }
     if (data.containsKey('timestamp')) {
       context.handle(_timestampMeta,
@@ -591,6 +629,12 @@ class $ChatMessagesTable extends ChatMessages
           _attachmentTypeMeta,
           attachmentType.isAcceptableOrUnknown(
               data['attachment_type'], _attachmentTypeMeta));
+    }
+    if (data.containsKey('attachment_name')) {
+      context.handle(
+          _attachmentNameMeta,
+          attachmentName.isAcceptableOrUnknown(
+              data['attachment_name'], _attachmentNameMeta));
     }
     if (data.containsKey('attachment')) {
       context.handle(

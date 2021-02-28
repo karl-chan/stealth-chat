@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -54,9 +56,9 @@ class ContactSettingsController extends GetxController {
                   await imagePicker.getImage(source: ImageSource.gallery);
               if (file != null) {
                 changed = true;
-                final wallpaper = await FlutterImageCompress.compressWithFile(
-                    file.path,
-                    quality: 90);
+                Uint8List wallpaper =
+                    await FlutterImageCompress.compressWithFile(file.path,
+                        quality: 50);
                 await globals.db.contacts
                     .setWallpaper(contact.value.id, wallpaper);
               }

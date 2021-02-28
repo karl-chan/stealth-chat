@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stealth_chat/chat/message_card.dart';
+import 'package:stealth_chat/chat/message/message_card.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
 

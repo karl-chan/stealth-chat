@@ -32,6 +32,12 @@ class AddContactController extends GetxController {
     personalMessageController.addListener(updateRenderedMessage);
   }
 
+  @override
+  void onClose() {
+    this.personalMessageController.dispose();
+    super.onClose();
+  }
+
   Uri generateInviteLink(Globals globals) {
     String id = globals.user.id;
     String name = globals.user.name;

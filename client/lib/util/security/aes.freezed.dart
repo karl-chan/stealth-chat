@@ -106,7 +106,7 @@ class __$AesMessageCopyWithImpl<$Res> extends _$AesMessageCopyWithImpl<$Res>
 @JsonSerializable()
 
 /// @nodoc
-class _$_AesMessage implements _AesMessage {
+class _$_AesMessage with DiagnosticableTreeMixin implements _AesMessage {
   const _$_AesMessage({this.encrypted, this.iv});
 
   factory _$_AesMessage.fromJson(Map<String, dynamic> json) =>
@@ -118,8 +118,17 @@ class _$_AesMessage implements _AesMessage {
   final String iv;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AesMessage(encrypted: $encrypted, iv: $iv)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AesMessage'))
+      ..add(DiagnosticsProperty('encrypted', encrypted))
+      ..add(DiagnosticsProperty('iv', iv));
   }
 
   @override

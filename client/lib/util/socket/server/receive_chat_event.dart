@@ -17,7 +17,7 @@ class ReceiveChatEvent extends ServerEvent<ReceiveChatMessage> {
             callback: (message) async {
           Contact contact =
               await globals.db.contacts.getContact(message.contactId);
-          String messageText = Aes.decrypt(
+          String messageText = await Aes.decrypt(
               AesMessage(encrypted: message.encrypted, iv: message.iv),
               Keys(secretKey: contact.chatSecretKey));
 

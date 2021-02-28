@@ -17,6 +17,12 @@ class DictionaryController extends LoginController {
 
   DictionaryController() : super();
 
+  @override
+  void onClose() {
+    this.searchTermController.dispose();
+    super.onClose();
+  }
+
   void performSearch(BootConfig boot) async {
     isSearching.value = true;
     String term = searchTermController.text;

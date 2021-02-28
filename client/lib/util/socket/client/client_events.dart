@@ -2,6 +2,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/socket/client/accept_invite_event.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
+import 'package:stealth_chat/util/socket/client/send_attachment_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_update_event.dart';
 import 'package:stealth_chat/util/socket/client/send_status_event.dart';
@@ -11,6 +12,7 @@ class ClientEvents {
   final AckLastMessageTimestampEvent ackLastMessageTimestamp;
   final SendChatEvent sendChat;
   final SendChatUpdateEvent sendChatUpdate;
+  final SendAttachmentEvent sendAttachment;
   final SendStatusEvent sendStatus;
 
   ClientEvents(PhoenixChannel channel)
@@ -18,6 +20,7 @@ class ClientEvents {
         this.ackLastMessageTimestamp = AckLastMessageTimestampEvent(channel),
         this.sendChat = SendChatEvent(channel),
         this.sendChatUpdate = SendChatUpdateEvent(channel),
+        this.sendAttachment = SendAttachmentEvent(channel),
         this.sendStatus = SendStatusEvent(channel);
 }
 

@@ -29,6 +29,14 @@ class RegistrationController extends GetxController {
   var setPasswordController = TextEditingController();
   var confirmPasswordController = TextEditingController();
 
+  @override
+  void onClose() {
+    this.setNameController.dispose();
+    this.setPasswordController.dispose();
+    this.confirmPasswordController.dispose();
+    super.onClose();
+  }
+
   Future<bool> runSetName() async {
     final name = setNameController.text;
     if (name.isBlank) {
