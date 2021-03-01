@@ -35,7 +35,7 @@ class DictionaryController extends LoginController {
 
   Future<Search> searchDictionary(String term) async {
     final response = await http
-        .get(Uri.https('dictionary.cambridge.com', 'dictionary/english/$term'));
+        .get(Uri.https('dictionary.cambridge.org', 'dictionary/english/$term'));
     final document = parse(response.body);
     final searchResults =
         document.querySelectorAll('.def-block.ddef_block').map((e) {
