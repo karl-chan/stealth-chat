@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 
@@ -37,10 +38,13 @@ abstract class Attachment implements _$Attachment {
       {AttachmentType type, String name, Uint8List value}) = _Attachment;
 
   Future<AesMessage> encode(Keys keys) async {
-    var compressed;
+    Uint8List compressed;
     switch (type) {
       case AttachmentType.photo:
-        compressed = FlutterImageCompress.compressWithList(value, quality: 50);
+        logDebug('Original size: ${value.lengthInBytes / 1024} kB');
+        compressed =
+            await FlutterImageCompress.compressWithList(value, quality: 50);
+        logDebug('Compressed size: ${compressed.lengthInBytes / 1024} kB');
         break;
       default:
         compressed = value;
@@ -50,7 +54,9 @@ abstract class Attachment implements _$Attachment {
       'name': this.name,
       'value': base64Encode(compressed),
     };
+    logDebug('Base 64 encoded');
     String json = jsonEncode(m);
+    logDebug('JSON encoded');
     return Aes.encrypt(json, keys);
   }
 

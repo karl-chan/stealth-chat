@@ -10,6 +10,7 @@ import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 class ContactSettingsController extends GetxController {
   final ImagePicker imagePicker = ImagePicker();
@@ -59,6 +60,8 @@ class ContactSettingsController extends GetxController {
                 Uint8List wallpaper =
                     await FlutterImageCompress.compressWithFile(file.path,
                         quality: 50);
+                logDebug(
+                    'Compressed wallpaper size: ${wallpaper.lengthInBytes / 1024} kB');
                 await globals.db.contacts
                     .setWallpaper(contact.value.id, wallpaper);
               }

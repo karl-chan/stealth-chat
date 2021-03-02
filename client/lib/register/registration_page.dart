@@ -25,9 +25,9 @@ class RegistrationController extends GetxController {
   RxString confirmPasswordErrorText = RxString(null);
   RxString registrationErrorText = RxString(null);
 
-  var setNameController = TextEditingController();
-  var setPasswordController = TextEditingController();
-  var confirmPasswordController = TextEditingController();
+  TextEditingController setNameController = TextEditingController();
+  TextEditingController setPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   @override
   void onClose() {

@@ -15,6 +15,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/socket/client/send_attachment_event.dart';
@@ -87,14 +88,17 @@ class ChatController extends GetxController {
 
     if (attachment != null) {
       AesMessage attachmentAes = await attachment.encode(keys);
+      logDebug('Encrypted');
       await globals.socket.client.sendAttachment.push(SendAttachmentMessage(
         contactId: contact.value.id,
         timestamp: now.millisecondsSinceEpoch,
         encrypted: attachmentAes.encrypted,
         iv: attachmentAes.iv,
       ));
+      logDebug('Pushed');
       await globals.db.chatMessages
           .insertAttachment(contact.value.id, true, now, attachment);
+      logDebug('Inserted');
     }
   }
 
