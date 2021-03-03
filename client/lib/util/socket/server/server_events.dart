@@ -3,6 +3,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/socket/server/invite_accepted_event.dart';
+import 'package:stealth_chat/util/socket/server/receive_attachment_event.dart';
 import 'package:stealth_chat/util/socket/server/receive_chat_event.dart';
 import 'package:stealth_chat/util/socket/server/receive_chat_update_event.dart';
 import 'package:stealth_chat/util/socket/server/receive_status_event.dart';
@@ -11,6 +12,7 @@ class ServerEvents {
   InviteAcceptedEvent inviteAccepted;
   ReceiveChatEvent receiveChat;
   ReceiveChatUpdateEvent receiveChatUpdate;
+  ReceiveAttachmentEvent receiveAttachment;
   ReceiveStatusEvent receiveStatus;
 
   ServerEvents(PhoenixChannel channel, Globals globals) {
@@ -27,6 +29,7 @@ class ServerEvents {
     inviteAccepted = InviteAcceptedEvent(splitter.split(), globals);
     receiveChat = ReceiveChatEvent(splitter.split(), globals);
     receiveChatUpdate = ReceiveChatUpdateEvent(splitter.split(), globals);
+    receiveAttachment = ReceiveAttachmentEvent(splitter.split(), globals);
     receiveStatus = ReceiveStatusEvent(splitter.split(), globals);
 
     splitter.close();
