@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart' hide Value;
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/chat/attachment/attachment_view.dart';
@@ -75,30 +77,31 @@ class ChatController extends GetxController {
     Keys keys = Keys(secretKey: contact.value.chatSecretKey);
 
     if (message.isNotEmpty) {
-      AesMessage aes = await Aes.encrypt(message, keys);
+      await globals.db.chatMessages
+          .insertMessage(contact.value.id, true, message, now);
+    }
+    if (attachment != null) {
+      await globals.db.chatMessages
+          .insertAttachment(contact.value.id, true, now, attachment);
+    }
 
+    if (message.isNotEmpty) {
+      AesMessage aes = await Aes.encrypt(message, keys);
       await globals.socket.client.sendChat.push(SendChatMessage(
           contactId: contact.value.id,
           encrypted: aes.encrypted,
           iv: aes.iv,
           timestamp: now.millisecondsSinceEpoch));
-      await globals.db.chatMessages
-          .insertMessage(contact.value.id, true, message, now);
     }
 
     if (attachment != null) {
       AesMessage attachmentAes = await attachment.encode(keys);
-      logDebug('Encrypted');
       await globals.socket.client.sendAttachment.push(SendAttachmentMessage(
         contactId: contact.value.id,
         timestamp: now.millisecondsSinceEpoch,
         encrypted: attachmentAes.encrypted,
         iv: attachmentAes.iv,
       ));
-      logDebug('Pushed');
-      await globals.db.chatMessages
-          .insertAttachment(contact.value.id, true, now, attachment);
-      logDebug('Inserted');
     }
   }
 
@@ -197,10 +200,20 @@ class ChatController extends GetxController {
         .pickFiles(withData: true, allowCompression: true);
     stayAwake(false);
     if (result != null) {
-      inputAttachment.value = Attachment(
-          type: AttachmentTypes.fromExtension(result.files.single.extension),
-          name: result.files.single.name,
-          value: result.files.single.bytes);
+      AttachmentType type =
+          AttachmentTypes.fromExtension(result.files.single.extension);
+      Uint8List bytes = result.files.single.bytes;
+      logDebug('Original size: ${bytes.lengthInBytes / 1024} kB');
+      switch (type) {
+        case AttachmentType.photo:
+          bytes =
+              await FlutterImageCompress.compressWithList(bytes, quality: 50);
+          break;
+        default:
+      }
+      logDebug('Compressed size: ${bytes.lengthInBytes / 1024} kB');
+      inputAttachment.value =
+          Attachment(type: type, name: result.files.single.name, value: bytes);
       updateCanSend();
     }
   }

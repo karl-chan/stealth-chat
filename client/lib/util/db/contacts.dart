@@ -31,7 +31,7 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   }
 
   Future<bool> exist(String id) async {
-    final contact = getContact(id);
+    final contact = await getContact(id);
     return contact != null;
   }
 
