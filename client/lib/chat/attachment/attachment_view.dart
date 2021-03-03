@@ -20,7 +20,7 @@ class AttachmentView extends StatelessWidget {
     switch (attachment.type) {
       case AttachmentType.photo:
         contents = [
-          Image.memory(attachment.value, height: 200),
+          Image.memory(attachment.value, height: 200, gaplessPlayback: true),
           SizedBox(height: 10),
           ...contents
         ];
