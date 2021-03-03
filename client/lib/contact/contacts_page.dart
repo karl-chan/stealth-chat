@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:stealth_chat/chat/chat_page.dart';
 import 'package:stealth_chat/contact/add_contact_page.dart';
 import 'package:stealth_chat/contact/avatar.dart';
+import 'package:stealth_chat/contact/most_recent_message_preview.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
@@ -35,26 +36,6 @@ class ContactsController extends GetxController {
 
 class ContactsPage extends StatelessWidget {
   ContactsPage({Key key}) : super(key: key);
-
-  Widget renderLastMessage(ChatMessage mostRecentMessage, int numUnread) {
-    if (mostRecentMessage == null) {
-      return Text('');
-    }
-    if (numUnread == null) {
-      return Text(
-        mostRecentMessage.message,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    } else {
-      return Text(
-        '${mostRecentMessage.message} ($numUnread)',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-  }
 
   Widget renderMostRecentTimestamp(ChatMessage mostRecentMessage) {
     return Text(
@@ -133,7 +114,8 @@ class ContactsPage extends StatelessWidget {
                 leading: Avatar(contact),
                 title: Text(contact.name),
                 subtitle: Obx(
-                  () => renderLastMessage(c.mostRecentMessages[contact.id],
+                  () => MostRecentMessagePreview(
+                      c.mostRecentMessages[contact.id],
                       c.numUnreadMessages[contact.id]),
                 ),
                 trailing: Column(

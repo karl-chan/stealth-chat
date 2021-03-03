@@ -74,11 +74,12 @@ class MessageCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
         color: this.colour,
         child: Column(children: [
-          ...(message.attachment != null
+          ...(AttachmentTypes.parseInt(message.attachmentType) !=
+                  AttachmentType.none
               ? [
                   Row(children: [
                     AttachmentView(Attachment(
-                        type: AttachmentType.values[message.attachmentType],
+                        type: AttachmentTypes.parseInt(message.attachmentType),
                         name: message.attachmentName,
                         value: message.attachment))
                   ])

@@ -7,7 +7,7 @@ import 'package:stealth_chat/util/security/keys.dart';
 
 part 'attachment.freezed.dart';
 
-enum AttachmentType { none, photo, video, audio }
+enum AttachmentType { none, photo, video, audio, other }
 
 extension AttachmentTypes on AttachmentType {
   static AttachmentType fromExtension(String ext) {
@@ -24,8 +24,12 @@ extension AttachmentTypes on AttachmentType {
       case 'mp3':
         return AttachmentType.audio;
       default:
-        return AttachmentType.none;
+        return AttachmentType.other;
     }
+  }
+
+  static AttachmentType parseInt(int value) {
+    return AttachmentType.values[value];
   }
 }
 
@@ -49,7 +53,7 @@ abstract class Attachment implements _$Attachment {
     String decrypted = await Aes.decrypt(aes, keys);
     Map<String, dynamic> m = jsonDecode(decrypted);
     return Attachment(
-        type: AttachmentType.values[m['type'] as int],
+        type: AttachmentTypes.parseInt(m['type'] as int),
         name: m['name'],
         value: base64Decode(m['value']));
   }
