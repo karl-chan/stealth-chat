@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:stealth_chat/chat/attachment/attachment.dart';
+import 'package:stealth_chat/chat/attachment/attachment_view.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -72,6 +74,16 @@ class MessageCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
         color: this.colour,
         child: Column(children: [
+          ...(message.attachment != null
+              ? [
+                  Row(children: [
+                    AttachmentView(Attachment(
+                        type: AttachmentType.values[message.attachmentType],
+                        name: message.attachmentName,
+                        value: message.attachment))
+                  ])
+                ]
+              : []),
           messageText,
           Row(
               mainAxisAlignment: MainAxisAlignment.end,

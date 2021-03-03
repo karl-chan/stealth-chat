@@ -39,6 +39,13 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to scan QR codes</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app needs music access for chat message attachments</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photos access for wallpaper customisation</string>
 	<key>UILaunchStoryboardName</key>

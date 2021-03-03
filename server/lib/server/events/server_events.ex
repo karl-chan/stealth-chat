@@ -28,6 +28,12 @@ defmodule Server.Events.ServerEvents do
     defstruct [:contactId, :timestamp, :event, :eventTimestamp]
   end
 
+  defmodule ReceiveAttachment do
+    @derive [Poison.Encoder]
+    @enforce_keys [:contactId, :timestamp, :encrypted, :iv]
+    defstruct [:contactId, :timestamp, :encrypted, :iv]
+  end
+
   defmodule ReceiveStatus do
     @derive [Poison.Encoder]
     @enforce_keys [:contactId, :online, :lastSeen]

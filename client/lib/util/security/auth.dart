@@ -11,7 +11,8 @@ class Auth {
     assert(globals.user.id == null, 'User is already registered!');
 
     final String hash = await Keys.hashSecretKey(keys.secretKey, id);
-    final encryptedPrivateKey = Aes.encrypt(keys.privateKey.toPEM(), keys);
+    final encryptedPrivateKey =
+        await Aes.encrypt(keys.privateKey.toPEM(), keys);
 
     await Future.wait([
       globals.prefs.setString(Prefs.USER_ID, id),
@@ -45,7 +46,7 @@ class Auth {
 
     if (success) {
       Keys keys = Keys(secretKey: secretKey);
-      String privateKeyPem = Aes.decrypt(
+      String privateKeyPem = await Aes.decrypt(
           AesMessage(
               encrypted: privateKeyEncryptedPem, iv: privateKeyEncryptedPemIv),
           keys);

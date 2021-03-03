@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -8,6 +10,7 @@ import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/logging.dart';
 
 class ContactSettingsController extends GetxController {
   final ImagePicker imagePicker = ImagePicker();
@@ -54,9 +57,11 @@ class ContactSettingsController extends GetxController {
                   await imagePicker.getImage(source: ImageSource.gallery);
               if (file != null) {
                 changed = true;
-                final wallpaper = await FlutterImageCompress.compressWithFile(
-                    file.path,
-                    quality: 90);
+                Uint8List wallpaper =
+                    await FlutterImageCompress.compressWithFile(file.path,
+                        quality: 50);
+                logDebug(
+                    'Compressed wallpaper size: ${wallpaper.lengthInBytes / 1024} kB');
                 await globals.db.contacts
                     .setWallpaper(contact.value.id, wallpaper);
               }

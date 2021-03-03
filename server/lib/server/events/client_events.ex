@@ -22,6 +22,11 @@ defmodule Server.Events.ClientEvents do
     defstruct [:contactId, :timestamp, :event, :eventTimestamp]
   end
 
+  defmodule SendAttachment do
+    @enforce_keys [:contactId, :timestamp, :encrypted, :iv]
+    defstruct [:contactId, :timestamp, :encrypted, :iv]
+  end
+
   defmodule SendStatus do
     @enforce_keys [:contactIds, :online, :lastSeen]
     defstruct [:contactIds, :online, :lastSeen]
@@ -48,7 +53,12 @@ defmodule Server.Events.ClientEvents do
         %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
           ServerEvents.delete(user_id, last_message_timestamp)
 
-        %SendChat{contactId: contact_id, encrypted: encrypted, iv: iv, timestamp: timestamp} ->
+        %SendChat{
+          contactId: contact_id,
+          encrypted: encrypted,
+          iv: iv,
+          timestamp: timestamp
+        } ->
           ServerEvents.insert(contact_id, %ServerEvents.ReceiveChat{
             contactId: user_id,
             encrypted: encrypted,
@@ -74,6 +84,19 @@ defmodule Server.Events.ClientEvents do
             timestamp: timestamp,
             event: event,
             eventTimestamp: eventTimestamp
+          })
+
+        %SendAttachment{
+          contactId: contact_id,
+          timestamp: timestamp,
+          encrypted: encrypted,
+          iv: iv
+        } ->
+          ServerEvents.insert(contact_id, %ServerEvents.ReceiveAttachment{
+            contactId: user_id,
+            timestamp: timestamp,
+            encrypted: encrypted,
+            iv: iv
           })
 
         %SendStatus{
@@ -130,6 +153,17 @@ defmodule Server.Events.ClientEvents do
             timestamp: payload["timestamp"],
             event: payload["event"],
             eventTimestamp: payload["eventTimestamp"]
+          }
+        }
+
+      "SEND_ATTACHMENT" ->
+        {
+          :ok,
+          %SendAttachment{
+            contactId: payload["contactId"],
+            timestamp: payload["timestamp"],
+            encrypted: payload["encrypted"],
+            iv: payload["iv"]
           }
         }
 

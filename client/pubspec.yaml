@@ -22,6 +22,7 @@ dependencies:
       url: https://github.com/simolus3/moor.git
       path: extras/encryption
       ref: 51e62d4
+  file_picker:
   flutter:
     sdk: flutter
   flutter_colorpicker:

@@ -9,10 +9,10 @@ void main() {
     keys = await Keys.generate('user', 'pass');
   });
 
-  test('aes encrypt / decrypt', () {
+  test('aes encrypt / decrypt', () async {
     const message = 'The quick brown fox jumps over the lazy dog.';
-    final encrypted = Aes.encrypt(message, keys);
-    final decrypted = Aes.decrypt(encrypted, keys);
+    final encrypted = await Aes.encrypt(message, keys);
+    final decrypted = await Aes.decrypt(encrypted, keys);
     expect(decrypted, equals(message));
   });
 }

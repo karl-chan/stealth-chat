@@ -1,20 +1,20 @@
 import 'package:moor/moor.dart';
+import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/util/db/db.dart';
 
 part 'chat_messages.g.dart';
 
-enum AttachmentType { none, photo, video, audio }
-
 class ChatMessages extends Table {
   TextColumn get contactId => text()();
   BoolColumn get isSelf => boolean()();
-  TextColumn get message => text()();
+  TextColumn get message => text().withDefault(const Constant(''))();
   DateTimeColumn get timestamp => dateTime()();
   DateTimeColumn get sentTimestamp => dateTime().nullable()();
   DateTimeColumn get deliveredTimestamp => dateTime().nullable()();
   DateTimeColumn get readTimestamp => dateTime().nullable()();
   DateTimeColumn get expiryTimestamp => dateTime().nullable()();
   IntColumn get attachmentType => integer().withDefault(const Constant(0))();
+  TextColumn get attachmentName => text().nullable()();
   BlobColumn get attachment => blob().nullable()();
 
   @override
@@ -27,17 +27,25 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
   ChatMessagesDao(AppDb db) : super(db);
 
   Future<void> insertMessage(
-    String contactId,
-    bool isSelf,
-    String message,
-    DateTime timestamp,
-  ) async {
+      String contactId, bool isSelf, String message, DateTime timestamp) async {
     return into(chatMessages).insertOnConflictUpdate(
         ChatMessagesCompanion.insert(
             contactId: contactId,
             isSelf: isSelf,
-            message: message,
+            message: Value(message),
             timestamp: timestamp));
+  }
+
+  Future<void> insertAttachment(String contactId, bool isSelf,
+      DateTime timestamp, Attachment attachment) async {
+    return into(chatMessages).insertOnConflictUpdate(
+        ChatMessagesCompanion.insert(
+            contactId: contactId,
+            isSelf: isSelf,
+            timestamp: timestamp,
+            attachmentType: Value(attachment.type.index),
+            attachmentName: Value(attachment.name),
+            attachment: Value(attachment.value)));
   }
 
   Future<void> updateSent(
