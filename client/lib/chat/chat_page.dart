@@ -76,23 +76,19 @@ class ChatController extends GetxController {
     DateTime now = DateTime.now();
     Keys keys = Keys(secretKey: contact.value.chatSecretKey);
 
-    if (message.isNotEmpty) {
-      await globals.db.chatMessages
-          .insertMessage(contact.value.id, true, message, now);
-    }
+    await globals.db.chatMessages
+        .insertMessage(contact.value.id, true, message, now);
     if (attachment != null) {
       await globals.db.chatMessages
           .insertAttachment(contact.value.id, true, now, attachment);
     }
 
-    if (message.isNotEmpty) {
-      AesMessage aes = await Aes.encrypt(message, keys);
-      await globals.socket.client.sendChat.push(SendChatMessage(
-          contactId: contact.value.id,
-          encrypted: aes.encrypted,
-          iv: aes.iv,
-          timestamp: now.millisecondsSinceEpoch));
-    }
+    AesMessage aes = await Aes.encrypt(message, keys);
+    await globals.socket.client.sendChat.push(SendChatMessage(
+        contactId: contact.value.id,
+        encrypted: aes.encrypted,
+        iv: aes.iv,
+        timestamp: now.millisecondsSinceEpoch));
 
     if (attachment != null) {
       AesMessage attachmentAes = await attachment.encode(keys);
