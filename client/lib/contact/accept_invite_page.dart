@@ -121,7 +121,8 @@ class AcceptInvitePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AcceptInviteController c = AcceptInviteController(appLink, globals);
+    AcceptInviteController c =
+        Get.put(AcceptInviteController(appLink, globals));
 
     final errorScreen = Obx(
       () => Column(

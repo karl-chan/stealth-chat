@@ -1,3 +1,4 @@
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 
@@ -11,16 +12,19 @@ class AttachmentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> contents = [
-      Row(children: [
+      Wrap(children: [
         Icon(Icons.attach_file),
         Text(attachment.name),
+        SizedBox(width: 5),
+        Text('(${filesize(attachment.value.lengthInBytes)})')
       ])
     ];
 
     switch (attachment.type) {
       case AttachmentType.photo:
         contents = [
-          Image.memory(attachment.value, height: 200, gaplessPlayback: true),
+          Image.memory(attachment.value,
+              fit: BoxFit.fitWidth, gaplessPlayback: true),
           SizedBox(height: 10),
           ...contents
         ];
@@ -32,7 +36,10 @@ class AttachmentView extends StatelessWidget {
     return Card(
         child: Padding(
           padding: EdgeInsets.all(5),
-          child: Column(children: contents),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: contents,
+          ),
         ),
         color: Colors.grey.shade100);
   }

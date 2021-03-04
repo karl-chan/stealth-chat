@@ -10,7 +10,7 @@ import 'package:stealth_chat/util/logging.dart';
 
 part 'dictionary_page.freezed.dart';
 
-class DictionaryController extends LoginController {
+class DictionaryController extends GetxController {
   final searchTermController = TextEditingController();
   final RxBool isSearching = false.obs;
   final Rx<Search> currSearch = Rx(null);
@@ -60,7 +60,7 @@ class DictionaryPage extends LoginPage {
   @override
   Widget build(BuildContext context) {
     logDebug('Dictionary page: ' + (boot.destination == null).toString());
-    DictionaryController c = DictionaryController();
+    DictionaryController c = Get.put(DictionaryController());
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,

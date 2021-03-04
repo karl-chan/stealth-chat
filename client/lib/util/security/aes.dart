@@ -8,6 +8,9 @@ part 'aes.g.dart';
 
 class Aes {
   static Future<AesMessage> encrypt(String message, Keys keys) async {
+    if (message.isEmpty) {
+      return AesMessage(encrypted: '', iv: '');
+    }
     return compute(_encrypt, {'message': message, 'secretKey': keys.secretKey});
   }
 
@@ -19,6 +22,9 @@ class Aes {
   }
 
   static Future<String> decrypt(AesMessage encrypted, Keys keys) async {
+    if (encrypted.encrypted.isEmpty) {
+      return '';
+    }
     return compute(_decrypt, {
       'encrypted': encrypted.encrypted,
       'iv': encrypted.iv,

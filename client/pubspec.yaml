@@ -23,6 +23,7 @@ dependencies:
       path: extras/encryption
       ref: 51e62d4
   file_picker:
+  filesize:
   flutter:
     sdk: flutter
   flutter_colorpicker:

@@ -15,4 +15,11 @@ void main() {
     final decrypted = await Aes.decrypt(encrypted, keys);
     expect(decrypted, equals(message));
   });
+
+  test('aes encrypt / decrypt empty string', () async {
+    const message = '';
+    final encrypted = await Aes.encrypt(message, keys);
+    final decrypted = await Aes.decrypt(encrypted, keys);
+    expect(decrypted, equals(message));
+  });
 }

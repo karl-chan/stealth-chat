@@ -1,23 +1,16 @@
 import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 
-import 'package:emoji_picker/emoji_picker.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart' hide Value;
 import 'package:stealth_chat/chat/attachment/attachment.dart';
-import 'package:stealth_chat/chat/attachment/attachment_view.dart';
+import 'package:stealth_chat/chat/chat_input_panel.dart';
 import 'package:stealth_chat/chat/message/message_card.dart';
 import 'package:stealth_chat/chat/message/message_info_page.dart';
 import 'package:stealth_chat/contact/avatar.dart';
 import 'package:stealth_chat/contact/contact_settings_page.dart';
 import 'package:stealth_chat/globals.dart';
-import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
-import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/socket/client/send_attachment_event.dart';
@@ -32,13 +25,9 @@ class ChatController extends GetxController {
   final Rx<Contact> contact;
   final RxList<ChatMessage> chatMessages;
   final Rx<Color> themeColour;
-  final RxBool canSend = false.obs;
-  final Rx<Attachment> inputAttachment = Rx(null);
-  final TextEditingController inputMessageController = TextEditingController();
 
   final RxBool isMultiSelectMode;
   final RxSet<ChatMessage> selected;
-  final RxBool showEmojiKeyboard;
 
   Worker markAsReadWorker;
 
@@ -51,48 +40,34 @@ class ChatController extends GetxController {
         // ignore: unnecessary_cast
         this.themeColour = (Colors.green as Color).obs,
         this.isMultiSelectMode = false.obs,
-        this.selected = Set<ChatMessage>().obs,
-        this.showEmojiKeyboard = false.obs {
-    inputMessageController.addListener(updateCanSend);
-    ever(this.inputAttachment, (_) => updateCanSend);
+        this.selected = Set<ChatMessage>().obs {
     ever(this.contact, (c) => this.themeColour.value = Color(c.color));
     markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
   }
 
   @override
   void onClose() {
-    this.inputMessageController.dispose();
     this.markAsReadWorker.dispose();
     super.onClose();
   }
 
-  Future<void> sendMessage() async {
-    // get and clear input immediately
-    String message = inputMessageController.text;
-    Attachment attachment = inputAttachment.value;
-    inputMessageController.clear();
-    inputAttachment.nil();
-
+  Future<void> sendMessage(String message, Attachment attachment) async {
     DateTime now = DateTime.now();
     Keys keys = Keys(secretKey: contact.value.chatSecretKey);
 
-    if (message.isNotEmpty) {
-      await globals.db.chatMessages
-          .insertMessage(contact.value.id, true, message, now);
-    }
+    await globals.db.chatMessages
+        .insertMessage(contact.value.id, true, message, now);
     if (attachment != null) {
       await globals.db.chatMessages
           .insertAttachment(contact.value.id, true, now, attachment);
     }
 
-    if (message.isNotEmpty) {
-      AesMessage aes = await Aes.encrypt(message, keys);
-      await globals.socket.client.sendChat.push(SendChatMessage(
-          contactId: contact.value.id,
-          encrypted: aes.encrypted,
-          iv: aes.iv,
-          timestamp: now.millisecondsSinceEpoch));
-    }
+    AesMessage aes = await Aes.encrypt(message, keys);
+    await globals.socket.client.sendChat.push(SendChatMessage(
+        contactId: contact.value.id,
+        encrypted: aes.encrypted,
+        iv: aes.iv,
+        timestamp: now.millisecondsSinceEpoch));
 
     if (attachment != null) {
       AesMessage attachmentAes = await attachment.encode(keys);
@@ -141,11 +116,6 @@ class ChatController extends GetxController {
     return this.selected.length == 1 && this.selected.first.isSelf;
   }
 
-  void updateCanSend() {
-    this.canSend.value = this.inputAttachment.value != null ||
-        !this.inputMessageController.value.isBlank;
-  }
-
   void toggleSelect(ChatMessage message) {
     if (isSelected(message)) {
       this.selected.remove(message);
@@ -172,51 +142,6 @@ class ChatController extends GetxController {
           style: TextButton.styleFrom(backgroundColor: Colors.red),
         ));
   }
-
-  Widget getEmojiKeyboard() {
-    return EmojiPicker(
-        rows: 4,
-        columns: 9,
-        onEmojiSelected: (emoji, category) {
-          int baseIdx =
-              max(0, this.inputMessageController.selection.baseOffset);
-          int endIdx =
-              max(0, this.inputMessageController.selection.extentOffset);
-          String prefix =
-              this.inputMessageController.text.substring(0, baseIdx) +
-                  emoji.emoji;
-          String text =
-              prefix + this.inputMessageController.text.substring(endIdx);
-          this.inputMessageController.value = TextEditingValue(
-              text: text,
-              selection: TextSelection.fromPosition(
-                  TextPosition(offset: prefix.length)));
-        });
-  }
-
-  Future<void> selectFile() async {
-    stayAwake(true);
-    FilePickerResult result = await FilePicker.platform
-        .pickFiles(withData: true, allowCompression: true);
-    stayAwake(false);
-    if (result != null) {
-      AttachmentType type =
-          AttachmentTypes.fromExtension(result.files.single.extension);
-      Uint8List bytes = result.files.single.bytes;
-      logDebug('Original size: ${bytes.lengthInBytes / 1024} kB');
-      switch (type) {
-        case AttachmentType.photo:
-          bytes =
-              await FlutterImageCompress.compressWithList(bytes, quality: 50);
-          break;
-        default:
-      }
-      logDebug('Compressed size: ${bytes.lengthInBytes / 1024} kB');
-      inputAttachment.value =
-          Attachment(type: type, name: result.files.single.name, value: bytes);
-      updateCanSend();
-    }
-  }
 }
 
 class ChatPage extends StatelessWidget {
@@ -229,7 +154,7 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ChatController c = ChatController(contact, globals);
+    ChatController c = Get.put(ChatController(contact, globals));
 
     final appBar = AppBar(
       title: Stack(alignment: Alignment.center, children: [
@@ -340,44 +265,6 @@ class ChatPage extends StatelessWidget {
           ),
         ));
 
-    final inputPanel = Obx(() => Column(children: [
-          ...(c.inputAttachment.value != null
-              ? [
-                  Row(children: [AttachmentView(c.inputAttachment.value)])
-                ]
-              : []),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: c.inputMessageController,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(hintText: 'Enter a message'),
-                  minLines: 1,
-                  maxLines: 5,
-                ),
-              ),
-              IconButton(
-                  icon: Icon(
-                    Icons.emoji_emotions_outlined,
-                  ),
-                  onPressed: c.showEmojiKeyboard.toggle),
-              IconButton(
-                  icon: Icon(
-                    Icons.attach_file,
-                  ),
-                  onPressed: c.selectFile),
-              IconButton(
-                icon: Icon(
-                  Icons.send,
-                ),
-                color: c.themeColour.value,
-                onPressed: c.canSend.value ? () => c.sendMessage() : null,
-              ),
-            ],
-          )
-        ]));
-
     return Obx(() => Theme(
         data: ThemeData.from(
             colorScheme: ColorScheme.light(primary: c.themeColour.value)),
@@ -396,10 +283,11 @@ class ChatPage extends StatelessWidget {
                 body: Column(children: [
                   Expanded(child: chatPanel),
                   Divider(),
-                  c.showEmojiKeyboard.value
-                      ? c.getEmojiKeyboard()
-                      : SizedBox(width: 0, height: 0),
-                  SafeArea(child: inputPanel)
+                  SafeArea(
+                    child: ChatInputPanel(
+                        themeColour: c.themeColour.value,
+                        onSend: c.sendMessage),
+                  )
                 ])))));
   }
 }
