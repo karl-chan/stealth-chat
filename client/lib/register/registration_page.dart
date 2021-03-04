@@ -159,7 +159,7 @@ class RegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = RegistrationController(boot);
+    final c = Get.put(RegistrationController(boot));
 
     return Scaffold(
         appBar: AppBar(title: Text('Register')),

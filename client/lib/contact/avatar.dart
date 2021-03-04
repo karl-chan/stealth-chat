@@ -27,7 +27,8 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AvatarController c = AvatarController(contact, globals);
+    AvatarController c =
+        Get.put(AvatarController(contact, globals), tag: contact.id);
 
     Widget avatar = Obx(() => CircleAvatar(
           radius: size,

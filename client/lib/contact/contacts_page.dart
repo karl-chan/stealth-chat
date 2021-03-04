@@ -48,7 +48,7 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ContactsController c = ContactsController(globals);
+    ContactsController c = Get.put(ContactsController(globals));
 
     final appBar = AppBar(
       title: const Text('Contacts'),

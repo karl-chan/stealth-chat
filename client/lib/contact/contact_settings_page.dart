@@ -106,7 +106,8 @@ class ContactSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ContactSettingsController c = ContactSettingsController(contact, globals);
+    ContactSettingsController c =
+        Get.put(ContactSettingsController(contact, globals));
     return Obx(() => Scaffold(
             body: CustomScrollView(
           slivers: [

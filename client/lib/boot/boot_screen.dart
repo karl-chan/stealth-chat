@@ -49,7 +49,7 @@ class BootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logDebug('Boot screen:' + (boot.destination == null).toString());
-    final BootController c = BootController();
+    final BootController c = Get.put(BootController());
     c.boot();
 
     return Obx(() {

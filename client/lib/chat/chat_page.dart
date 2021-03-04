@@ -229,7 +229,7 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ChatController c = ChatController(contact, globals);
+    ChatController c = Get.put(ChatController(contact, globals));
 
     final appBar = AppBar(
       title: Stack(alignment: Alignment.center, children: [

@@ -144,7 +144,7 @@ class AddContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AddContactController c = AddContactController(globals);
+    AddContactController c = Get.put(AddContactController(globals));
 
     return DefaultTabController(
         length: 2,

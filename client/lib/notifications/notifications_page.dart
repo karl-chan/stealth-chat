@@ -79,7 +79,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    NotificationsController c = NotificationsController(globals);
+    NotificationsController c = Get.put(NotificationsController(globals));
 
     final emptyView = DefaultTextStyle(
         style: TextStyle(color: Colors.grey, fontSize: 24),
