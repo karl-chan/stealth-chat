@@ -34,12 +34,12 @@ dependencies:
   gradient_widgets:
   html:
   http:
-  image_picker: ^0.7.2
+  image_picker: 0.7.2
   ini:
   intl:
   json_serializable:
   logging:
-  moor:
+  moor: 3.4.0
   package_info:
   path:
   path_provider:
