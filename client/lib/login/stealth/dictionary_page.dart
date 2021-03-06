@@ -60,7 +60,7 @@ class DictionaryPage extends LoginPage {
   @override
   Widget build(BuildContext context) {
     logDebug('Dictionary page: ' + (boot.destination == null).toString());
-    DictionaryController c = Get.put(DictionaryController());
+    DictionaryController c = DictionaryController();
 
     final jumbotron = Row(
       mainAxisAlignment: MainAxisAlignment.center,
