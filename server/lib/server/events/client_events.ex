@@ -1,10 +1,16 @@
 defmodule Server.Events.ClientEvents do
   use EnumType
   alias Server.Events.ServerEvents
+  alias Phoenix.Socket
 
   defmodule AcceptInvite do
     @enforce_keys [:theirId, :myName, :encryptedChatSecretKey, :timestamp]
     defstruct [:theirId, :myName, :encryptedChatSecretKey, :timestamp]
+  end
+
+  defmodule AckAcceptInvite do
+    @enforce_keys [:contactId]
+    defstruct [:contactId]
   end
 
   defmodule AckLastMessageTimestamp do
@@ -27,96 +33,107 @@ defmodule Server.Events.ClientEvents do
     defstruct [:contactId, :timestamp, :encrypted, :iv]
   end
 
-  defmodule SendStatus do
-    @enforce_keys [:contactIds, :online, :lastSeen]
-    defstruct [:contactIds, :online, :lastSeen]
+  def handle(event, payload, socket) do
+    with {:ok, client_event} <- parse_client_event(event, payload) do
+      handle_client_event(client_event, socket)
+      socket = maybe_assign_socket(client_event, socket)
+      {:ok, socket}
+    end
   end
 
-  def handle(event, payload, socket) do
-    user_id = socket.assigns[:user_id]
+  defp handle_client_event(client_event, socket) do
+    user_id = socket.assigns.user_id
 
-    with {:ok, client_event} <- parse_client_event(event, payload) do
-      case client_event do
-        %AcceptInvite{
-          theirId: their_id,
-          myName: my_name,
+    case client_event do
+      %AcceptInvite{
+        theirId: their_id,
+        myName: my_name,
+        encryptedChatSecretKey: encrypted_chat_secret_key,
+        timestamp: timestamp
+      } ->
+        ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
+          id: user_id,
+          name: my_name,
           encryptedChatSecretKey: encrypted_chat_secret_key,
           timestamp: timestamp
-        } ->
-          ServerEvents.insert(their_id, %ServerEvents.InviteAccepted{
-            id: user_id,
-            name: my_name,
-            encryptedChatSecretKey: encrypted_chat_secret_key,
-            timestamp: timestamp
-          })
+        })
 
-        %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
-          ServerEvents.delete(user_id, last_message_timestamp)
+        ServerEvents.insert(their_id, %ServerEvents.ReceiveStatus{
+          contactId: user_id,
+          online: true,
+          lastSeen: System.os_time(:millisecond)
+        })
 
-        %SendChat{
-          contactId: contact_id,
+      %AckAcceptInvite{contactId: contact_id} ->
+        ServerEvents.insert(contact_id, %ServerEvents.ReceiveStatus{
+          contactId: user_id,
+          online: true,
+          lastSeen: System.os_time(:millisecond)
+        })
+
+      %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
+        ServerEvents.delete(user_id, last_message_timestamp)
+
+      %SendChat{
+        contactId: contact_id,
+        encrypted: encrypted,
+        iv: iv,
+        timestamp: timestamp
+      } ->
+        ServerEvents.insert(contact_id, %ServerEvents.ReceiveChat{
+          contactId: user_id,
           encrypted: encrypted,
           iv: iv,
           timestamp: timestamp
-        } ->
-          ServerEvents.insert(contact_id, %ServerEvents.ReceiveChat{
-            contactId: user_id,
-            encrypted: encrypted,
-            iv: iv,
-            timestamp: timestamp
-          })
+        })
 
-          ServerEvents.insert(user_id, %ServerEvents.ReceiveChatUpdate{
-            contactId: contact_id,
-            timestamp: timestamp,
-            event: "sent",
-            eventTimestamp: System.os_time(:millisecond)
-          })
-
-        %SendChatUpdate{
+        ServerEvents.insert(user_id, %ServerEvents.ReceiveChatUpdate{
           contactId: contact_id,
+          timestamp: timestamp,
+          event: "sent",
+          eventTimestamp: System.os_time(:millisecond)
+        })
+
+      %SendChatUpdate{
+        contactId: contact_id,
+        timestamp: timestamp,
+        event: event,
+        eventTimestamp: eventTimestamp
+      } ->
+        ServerEvents.insert(contact_id, %ServerEvents.ReceiveChatUpdate{
+          contactId: user_id,
           timestamp: timestamp,
           event: event,
           eventTimestamp: eventTimestamp
-        } ->
-          ServerEvents.insert(contact_id, %ServerEvents.ReceiveChatUpdate{
-            contactId: user_id,
-            timestamp: timestamp,
-            event: event,
-            eventTimestamp: eventTimestamp
-          })
+        })
 
-        %SendAttachment{
-          contactId: contact_id,
+      %SendAttachment{
+        contactId: contact_id,
+        timestamp: timestamp,
+        encrypted: encrypted,
+        iv: iv
+      } ->
+        ServerEvents.insert(contact_id, %ServerEvents.ReceiveAttachment{
+          contactId: user_id,
           timestamp: timestamp,
           encrypted: encrypted,
           iv: iv
-        } ->
-          ServerEvents.insert(contact_id, %ServerEvents.ReceiveAttachment{
-            contactId: user_id,
-            timestamp: timestamp,
-            encrypted: encrypted,
-            iv: iv
-          })
+        })
+    end
+  end
 
-        %SendStatus{
-          contactIds: contact_ids,
-          online: online,
-          lastSeen: last_seen
-        } ->
-          ServerEvents.invalidateStatus(user_id)
+  defp maybe_assign_socket(client_event, socket) do
+    contact_ids = socket.assigns.contact_ids
 
-          contact_ids
-          |> Enum.each(fn contact_id ->
-            ServerEvents.insert(contact_id, %ServerEvents.ReceiveStatus{
-              contactId: user_id,
-              online: online,
-              lastSeen: last_seen
-            })
-          end)
-      end
+    case client_event do
+      %AcceptInvite{theirId: their_id} ->
+        Socket.assign(socket, :contact_ids, [their_id | contact_ids])
 
-      :ok
+      %AckAcceptInvite{contactId: contact_id} ->
+        Socket.assign(socket, :contact_ids, [contact_id | contact_ids])
+
+      _ ->
+        socket
     end
   end
 
@@ -130,6 +147,14 @@ defmodule Server.Events.ClientEvents do
            encryptedChatSecretKey: payload["encryptedChatSecretKey"],
            timestamp: payload["timestamp"]
          }}
+
+      "ACK_ACCEPT_INVITE" ->
+        {
+          :ok,
+          %AckAcceptInvite{
+            contactId: payload["contactId"]
+          }
+        }
 
       "ACK_LAST_MESSAGE_TIMESTAMP" ->
         {:ok, %AckLastMessageTimestamp{lastMessageTimestamp: payload["lastMessageTimestamp"]}}
@@ -164,16 +189,6 @@ defmodule Server.Events.ClientEvents do
             timestamp: payload["timestamp"],
             encrypted: payload["encrypted"],
             iv: payload["iv"]
-          }
-        }
-
-      "SEND_STATUS" ->
-        {
-          :ok,
-          %SendStatus{
-            contactIds: payload["contactIds"],
-            online: payload["online"],
-            lastSeen: payload["lastSeen"]
           }
         }
 

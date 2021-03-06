@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
+import 'package:stealth_chat/util/socket/client/ack_accept_invite_event.dart';
 import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 part 'invite_accepted_event.freezed.dart';
@@ -22,7 +23,8 @@ class InviteAcceptedEvent extends ServerEvent<InviteAcceptedMessage> {
               message.name,
               Rsa.decrypt(message.encryptedChatSecretKey, globals.user.keys),
               DateTime.fromMillisecondsSinceEpoch(message.timestamp));
-          await globals.socket.broadcastSingle(message.id, online: true);
+          await globals.socket.client.ackAcceptInvite
+              .push(AckAcceptInviteMessage(contactId: message.id));
         });
 }
 
