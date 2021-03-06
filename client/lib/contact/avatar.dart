@@ -30,7 +30,9 @@ class Avatar extends StatelessWidget {
     AvatarController c =
         Get.put(AvatarController(contact, globals), tag: contact.id);
 
-    Widget avatar = Obx(() => CircleAvatar(
+    return Container(
+      child: Obx(() {
+        Widget avatar = CircleAvatar(
           radius: size,
           child: Text(
             c.contact.value.name.characters.elementAt(0).toUpperCase(),
@@ -40,17 +42,18 @@ class Avatar extends StatelessWidget {
           ),
           backgroundColor:
               darkMode ? Colors.white : Color(c.contact.value.color),
-        ));
+        );
 
-    if (c.contact.value.online) {
-      avatar = Badge(
-          badgeColor: Colors.green,
-          position: BadgePosition.bottomEnd(end: 0, bottom: 0),
-          borderSide: BorderSide(color: Colors.white, width: 1),
-          child: avatar);
-    }
-    return Container(
-      child: avatar,
+        if (c.contact.value.online) {
+          avatar = Badge(
+              badgeColor: Colors.green,
+              position: BadgePosition.bottomEnd(end: 0, bottom: 0),
+              borderSide: BorderSide(color: Colors.white, width: 1),
+              child: avatar);
+        }
+
+        return avatar;
+      }),
     );
   }
 }

@@ -184,15 +184,15 @@ SPEC CHECKSUMS:
   emoji_picker: 0e868059aa18f9473d234f3d0701fbd4d5fd310c
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   SDWebImageFLPlugin: 6c2295fb1242d44467c6c87dc5db6b0a13228fd8

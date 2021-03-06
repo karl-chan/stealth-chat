@@ -28,13 +28,13 @@ dependencies:
     sdk: flutter
   flutter_colorpicker:
   flutter_image_compress:
-  flutter_linkify:
+  flutter_linkify: 4.0.2
   font_awesome_flutter:
   get:
   gradient_widgets:
   html:
   http:
-  image_picker:
+  image_picker: ^0.7.2
   ini:
   intl:
   json_serializable:

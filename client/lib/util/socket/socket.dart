@@ -9,7 +9,6 @@ import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
 import 'package:stealth_chat/util/socket/client/client_events.dart';
-import 'package:stealth_chat/util/socket/client/send_status_event.dart';
 import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 class Socket {
@@ -46,15 +45,16 @@ class Socket {
     socket.openStream.listen((event) async {
       errorFlag = false;
       logDebug('Last message timestamp: ${globals.lastMessageTimestamp}');
-      channel = socket.addChannel(
-          topic: 'user:${globals.user.id}',
-          parameters: {'last_message_timestamp': globals.lastMessageTimestamp})
-        ..join();
+      List<String> contactIds = await globals.db.contacts.getContactIds();
+      channel =
+          socket.addChannel(topic: 'user:${globals.user.id}', parameters: {
+        'last_message_timestamp': globals.lastMessageTimestamp,
+        'contact_ids': contactIds
+      })
+            ..join();
 
       server = ServerEvents(channel, globals);
       client = ClientEvents(channel);
-
-      await broadcastStatus(online: true);
     });
 
     socket.errorStream.listen((event) async {
@@ -75,27 +75,11 @@ class Socket {
     });
   }
 
-  Future<void> broadcastStatus({bool online}) {
-    return globals.db.contacts.getContactIds().then((contactIds) =>
-        client.sendStatus.push(SendStatusMessage(
-            contactIds: contactIds,
-            online: online,
-            lastSeen: DateTime.now().millisecondsSinceEpoch)));
-  }
-
-  Future<void> broadcastSingle(String contactId, {bool online}) {
-    return client.sendStatus.push(SendStatusMessage(
-        contactIds: [contactId],
-        online: online,
-        lastSeen: DateTime.now().millisecondsSinceEpoch));
-  }
-
   Future<void> close() async {
     if (client != null && !errorFlag) {
       await Future.wait<dynamic>([
         client.ackLastMessageTimestamp.push(AckLastMessageTimestampMessage(
             lastMessageTimestamp: globals.lastMessageTimestamp)),
-        broadcastStatus(online: false)
       ]);
     }
 
