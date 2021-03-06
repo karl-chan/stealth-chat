@@ -55,11 +55,11 @@ class BootScreen extends StatelessWidget {
     return Obx(() {
       switch (c.status.value) {
         case BootStatus.REDIRECT_TO_REGISTRATION_PAGE:
-          Future.microtask(() => Get.off(RegistrationPage(boot)));
+          Future.delayed(Duration.zero, () => Get.off(RegistrationPage(boot)));
           break;
 
         case BootStatus.REDIRECT_TO_LOGIN_PAGE:
-          Future.microtask(() => Get.off(LoginPage(boot)));
+          Future.delayed(Duration.zero, () => Get.off(LoginPage(boot)));
           break;
 
         default:
