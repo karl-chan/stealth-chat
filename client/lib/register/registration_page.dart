@@ -4,6 +4,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/home/home_page.dart';
+import 'package:stealth_chat/settings/settings_page.dart';
 import 'package:stealth_chat/util/api/user_api.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
@@ -162,7 +163,17 @@ class RegistrationPage extends StatelessWidget {
     final c = Get.put(RegistrationController(boot));
 
     return Scaffold(
-        appBar: AppBar(title: Text('Register')),
+        appBar: AppBar(
+          title: Text('Register'),
+          actions: [
+            Tooltip(
+                message: 'Settings',
+                child: IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () => Get.to(SettingsPage()),
+                )),
+          ],
+        ),
         body: Obx(() => Stepper(
               steps: [
                 Step(
@@ -200,12 +211,23 @@ class RegistrationPage extends StatelessWidget {
                     content: ConstrainedBox(
                         constraints: BoxConstraints(maxHeight: 200),
                         child: c.isRegistering.value
-                            ? SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.blue,
-                                ))
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                    SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: Colors.blue,
+                                        )),
+                                    SizedBox(height: 20),
+                                    Text('Processing...',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 5),
+                                    Text('It may take up to a minute'),
+                                    Text('Please be patient')
+                                  ])
                             : (c.registrationErrorText.value != null
                                 ? Column(children: [
                                     Icon(Icons.error,
