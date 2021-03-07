@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:stealth_chat/globals.dart';
@@ -7,6 +8,7 @@ import 'package:stealth_chat/util/security/rsa.dart';
 
 class Api {
   static final globals = Get.find<Globals>();
+  static final scheme = kReleaseMode ? 'https' : 'http';
 
   static Future<http.Response> get(String endpoint,
           {Map<String, String> headers = const {}}) =>
@@ -26,7 +28,7 @@ class Api {
       http.delete(_url(endpoint), headers: _sign(headers: headers));
 
   static Uri _url(String endpoint) =>
-      Uri.parse('https://${globals.serverHost}/api/$endpoint');
+      Uri.parse('$scheme://${globals.serverHost}/api/$endpoint');
 
   static Map<String, String> _sign(
       {Map<String, String> headers, dynamic body = ''}) {
