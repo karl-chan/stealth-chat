@@ -5,6 +5,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart' show exit;
+import 'package:stealth_chat/settings/settings_page.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
@@ -37,8 +38,7 @@ class Socket {
       'sig_hash': sigHash,
     };
 
-    String socketHost = globals.properties.get('server.socket.host');
-    socket = PhoenixSocket('$socketHost/socket/websocket',
+    socket = PhoenixSocket('wss://${globals.serverHost}/socket/websocket',
         socketOptions: PhoenixSocketOptions(params: params))
       ..connect();
 
@@ -71,6 +71,11 @@ class Socket {
           onConfirm: () async {
             await exit();
             await Get.offAll(BootScreen(BootConfig()));
+          },
+          textCancel: 'Open settings',
+          onCancel: () async {
+            await close();
+            await Get.offAll(SettingsPage());
           });
     });
   }
