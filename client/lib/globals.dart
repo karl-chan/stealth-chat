@@ -26,10 +26,13 @@ class Globals {
   // socket handles
   Socket socket;
 
-  // app variables
+  // properties handle
   Properties properties;
+
+  // app variables
   User user;
   int lastMessageTimestamp;
+  String serverHost;
 
   Future<Globals> init() async {
     prefs = await SharedPreferences.getInstance();
@@ -41,6 +44,7 @@ class Globals {
         id: prefs.getString(Prefs.USER_ID),
         name: prefs.getString(Prefs.USER_NAME));
     lastMessageTimestamp = prefs.getInt(Prefs.LAST_MESSSAGE_TIMESTAMP) ?? 0;
+    serverHost = properties.get(Prefs.SERVER_HOST_OVERRIDE);
 
     return this;
   }
@@ -93,6 +97,9 @@ class Prefs {
   static const USER_PRIVATE_KEY_ENCRYPTED_IV = 'USER_PRIVATE_KEY_ENCRYPTED_IV';
 
   static const LAST_MESSSAGE_TIMESTAMP = 'LAST_MESSAGE_TIMESTAMP';
+
+  // app.properties overrides
+  static const SERVER_HOST_OVERRIDE = 'server.host';
 }
 
 class ConstColours {
