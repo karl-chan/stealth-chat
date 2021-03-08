@@ -893,11 +893,12 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.wallpaper = const Value.absent(),
     this.online = const Value.absent(),
     @required DateTime lastSeen,
-    this.archived = const Value.absent(),
+    @required bool archived,
   })  : id = Value(id),
         name = Value(name),
         chatSecretKey = Value(chatSecretKey),
-        lastSeen = Value(lastSeen);
+        lastSeen = Value(lastSeen),
+        archived = Value(archived);
   static Insertable<Contact> custom({
     Expression<String> id,
     Expression<String> name,
@@ -1096,8 +1097,11 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
   @override
   GeneratedBoolColumn get archived => _archived ??= _constructArchived();
   GeneratedBoolColumn _constructArchived() {
-    return GeneratedBoolColumn('archived', $tableName, false,
-        defaultValue: const Constant(false));
+    return GeneratedBoolColumn(
+      'archived',
+      $tableName,
+      false,
+    );
   }
 
   @override
@@ -1167,6 +1171,8 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     if (data.containsKey('archived')) {
       context.handle(_archivedMeta,
           archived.isAcceptableOrUnknown(data['archived'], _archivedMeta));
+    } else if (isInserting) {
+      context.missing(_archivedMeta);
     }
     return context;
   }

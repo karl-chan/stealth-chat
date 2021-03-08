@@ -15,7 +15,7 @@ class Contacts extends Table {
   BlobColumn get wallpaper => blob().nullable()();
   BoolColumn get online => boolean().withDefault(const Constant(false))();
   DateTimeColumn get lastSeen => dateTime()();
-  BoolColumn get archived => boolean().withDefault(const Constant(false))();
+  BoolColumn get archived => boolean()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -28,7 +28,11 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   Future<void> addContact(
       String id, String name, String chatSecretKey, DateTime lastSeen) async {
     return into(contacts).insertOnConflictUpdate(ContactsCompanion.insert(
-        id: id, name: name, chatSecretKey: chatSecretKey, lastSeen: lastSeen));
+        id: id,
+        name: name,
+        chatSecretKey: chatSecretKey,
+        lastSeen: lastSeen,
+        archived: false));
   }
 
   Future<bool> exist(String id) async {
