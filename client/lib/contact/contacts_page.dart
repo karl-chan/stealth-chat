@@ -178,7 +178,7 @@ class ContactsPage extends StatelessWidget {
             return Obx(() => Ink(
                 color: c.isSelected(contact) ? Colors.blue.shade100 : null,
                 child: ListTile(
-                    contentPadding: const EdgeInsets.all(8),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                     leading: Avatar(contact),
                     title: Text(contact.name),
                     subtitle: Obx(
@@ -203,7 +203,7 @@ class ContactsPage extends StatelessWidget {
                     onLongPress: () => c.enterMultiSelectMode(contact))));
           },
           separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+              const Divider(height: 0),
         ));
 
     return Obx(() => Scaffold(
