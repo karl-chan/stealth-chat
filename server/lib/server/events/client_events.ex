@@ -18,6 +18,11 @@ defmodule Server.Events.ClientEvents do
     defstruct [:lastMessageTimestamp]
   end
 
+  defmodule DeleteContacts do
+    @enforce_keys [:contactIds]
+    defstruct [:contactIds]
+  end
+
   defmodule SendChat do
     @enforce_keys [:contactId, :encrypted, :iv, :timestamp]
     defstruct [:contactId, :encrypted, :iv, :timestamp]
@@ -73,6 +78,13 @@ defmodule Server.Events.ClientEvents do
 
       %AckLastMessageTimestamp{lastMessageTimestamp: last_message_timestamp} ->
         ServerEvents.delete(user_id, last_message_timestamp)
+
+      %DeleteContacts{contactIds: contact_ids} ->
+        Enum.each(contact_ids, fn contact_id ->
+          ServerEvents.insert(contact_id, %ServerEvents.ArchiveContact{
+            contactId: user_id
+          })
+        end)
 
       %SendChat{
         contactId: contact_id,
@@ -158,6 +170,9 @@ defmodule Server.Events.ClientEvents do
 
       "ACK_LAST_MESSAGE_TIMESTAMP" ->
         {:ok, %AckLastMessageTimestamp{lastMessageTimestamp: payload["lastMessageTimestamp"]}}
+
+      "DELETE_CONTACTS" ->
+        {:ok, %DeleteContacts{contactIds: payload["contactIds"]}}
 
       "SEND_CHAT" ->
         {
