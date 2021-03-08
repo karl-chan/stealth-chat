@@ -668,6 +668,7 @@ class Contact extends DataClass implements Insertable<Contact> {
   final Uint8List wallpaper;
   final bool online;
   final DateTime lastSeen;
+  final bool archived;
   Contact(
       {@required this.id,
       @required this.name,
@@ -676,7 +677,8 @@ class Contact extends DataClass implements Insertable<Contact> {
       this.avatar,
       this.wallpaper,
       @required this.online,
-      @required this.lastSeen});
+      @required this.lastSeen,
+      @required this.archived});
   factory Contact.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -699,6 +701,8 @@ class Contact extends DataClass implements Insertable<Contact> {
           boolType.mapFromDatabaseResponse(data['${effectivePrefix}online']),
       lastSeen: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}last_seen']),
+      archived:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}archived']),
     );
   }
   @override
@@ -728,6 +732,9 @@ class Contact extends DataClass implements Insertable<Contact> {
     if (!nullToAbsent || lastSeen != null) {
       map['last_seen'] = Variable<DateTime>(lastSeen);
     }
+    if (!nullToAbsent || archived != null) {
+      map['archived'] = Variable<bool>(archived);
+    }
     return map;
   }
 
@@ -750,6 +757,9 @@ class Contact extends DataClass implements Insertable<Contact> {
       lastSeen: lastSeen == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSeen),
+      archived: archived == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archived),
     );
   }
 
@@ -765,6 +775,7 @@ class Contact extends DataClass implements Insertable<Contact> {
       wallpaper: serializer.fromJson<Uint8List>(json['wallpaper']),
       online: serializer.fromJson<bool>(json['online']),
       lastSeen: serializer.fromJson<DateTime>(json['lastSeen']),
+      archived: serializer.fromJson<bool>(json['archived']),
     );
   }
   @override
@@ -779,6 +790,7 @@ class Contact extends DataClass implements Insertable<Contact> {
       'wallpaper': serializer.toJson<Uint8List>(wallpaper),
       'online': serializer.toJson<bool>(online),
       'lastSeen': serializer.toJson<DateTime>(lastSeen),
+      'archived': serializer.toJson<bool>(archived),
     };
   }
 
@@ -790,7 +802,8 @@ class Contact extends DataClass implements Insertable<Contact> {
           Uint8List avatar,
           Uint8List wallpaper,
           bool online,
-          DateTime lastSeen}) =>
+          DateTime lastSeen,
+          bool archived}) =>
       Contact(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -800,6 +813,7 @@ class Contact extends DataClass implements Insertable<Contact> {
         wallpaper: wallpaper ?? this.wallpaper,
         online: online ?? this.online,
         lastSeen: lastSeen ?? this.lastSeen,
+        archived: archived ?? this.archived,
       );
   @override
   String toString() {
@@ -811,7 +825,8 @@ class Contact extends DataClass implements Insertable<Contact> {
           ..write('avatar: $avatar, ')
           ..write('wallpaper: $wallpaper, ')
           ..write('online: $online, ')
-          ..write('lastSeen: $lastSeen')
+          ..write('lastSeen: $lastSeen, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -827,8 +842,12 @@ class Contact extends DataClass implements Insertable<Contact> {
                   color.hashCode,
                   $mrjc(
                       avatar.hashCode,
-                      $mrjc(wallpaper.hashCode,
-                          $mrjc(online.hashCode, lastSeen.hashCode))))))));
+                      $mrjc(
+                          wallpaper.hashCode,
+                          $mrjc(
+                              online.hashCode,
+                              $mrjc(
+                                  lastSeen.hashCode, archived.hashCode)))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -840,7 +859,8 @@ class Contact extends DataClass implements Insertable<Contact> {
           other.avatar == this.avatar &&
           other.wallpaper == this.wallpaper &&
           other.online == this.online &&
-          other.lastSeen == this.lastSeen);
+          other.lastSeen == this.lastSeen &&
+          other.archived == this.archived);
 }
 
 class ContactsCompanion extends UpdateCompanion<Contact> {
@@ -852,6 +872,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
   final Value<Uint8List> wallpaper;
   final Value<bool> online;
   final Value<DateTime> lastSeen;
+  final Value<bool> archived;
   const ContactsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -861,6 +882,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.wallpaper = const Value.absent(),
     this.online = const Value.absent(),
     this.lastSeen = const Value.absent(),
+    this.archived = const Value.absent(),
   });
   ContactsCompanion.insert({
     @required String id,
@@ -871,6 +893,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.wallpaper = const Value.absent(),
     this.online = const Value.absent(),
     @required DateTime lastSeen,
+    this.archived = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         chatSecretKey = Value(chatSecretKey),
@@ -884,6 +907,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     Expression<Uint8List> wallpaper,
     Expression<bool> online,
     Expression<DateTime> lastSeen,
+    Expression<bool> archived,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -894,6 +918,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       if (wallpaper != null) 'wallpaper': wallpaper,
       if (online != null) 'online': online,
       if (lastSeen != null) 'last_seen': lastSeen,
+      if (archived != null) 'archived': archived,
     });
   }
 
@@ -905,7 +930,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       Value<Uint8List> avatar,
       Value<Uint8List> wallpaper,
       Value<bool> online,
-      Value<DateTime> lastSeen}) {
+      Value<DateTime> lastSeen,
+      Value<bool> archived}) {
     return ContactsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -915,6 +941,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       wallpaper: wallpaper ?? this.wallpaper,
       online: online ?? this.online,
       lastSeen: lastSeen ?? this.lastSeen,
+      archived: archived ?? this.archived,
     );
   }
 
@@ -945,6 +972,9 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     if (lastSeen.present) {
       map['last_seen'] = Variable<DateTime>(lastSeen.value);
     }
+    if (archived.present) {
+      map['archived'] = Variable<bool>(archived.value);
+    }
     return map;
   }
 
@@ -958,7 +988,8 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
           ..write('avatar: $avatar, ')
           ..write('wallpaper: $wallpaper, ')
           ..write('online: $online, ')
-          ..write('lastSeen: $lastSeen')
+          ..write('lastSeen: $lastSeen, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -1060,9 +1091,27 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     );
   }
 
+  final VerificationMeta _archivedMeta = const VerificationMeta('archived');
+  GeneratedBoolColumn _archived;
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, chatSecretKey, color, avatar, wallpaper, online, lastSeen];
+  GeneratedBoolColumn get archived => _archived ??= _constructArchived();
+  GeneratedBoolColumn _constructArchived() {
+    return GeneratedBoolColumn('archived', $tableName, false,
+        defaultValue: const Constant(false));
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        chatSecretKey,
+        color,
+        avatar,
+        wallpaper,
+        online,
+        lastSeen,
+        archived
+      ];
   @override
   $ContactsTable get asDslTable => this;
   @override
@@ -1114,6 +1163,10 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
           lastSeen.isAcceptableOrUnknown(data['last_seen'], _lastSeenMeta));
     } else if (isInserting) {
       context.missing(_lastSeenMeta);
+    }
+    if (data.containsKey('archived')) {
+      context.handle(_archivedMeta,
+          archived.isAcceptableOrUnknown(data['archived'], _archivedMeta));
     }
     return context;
   }

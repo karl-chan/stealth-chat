@@ -76,7 +76,7 @@ class RegistrationController extends GetxController {
   Future<bool> runRegistration() async {
     isRegistering.value = true;
 
-    final name = setNameController.text;
+    final name = setNameController.text.trim();
     final password = setPasswordController.text;
     final keys = await Keys.generate(id, password);
 

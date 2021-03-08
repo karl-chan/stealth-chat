@@ -16,6 +16,12 @@ defmodule Server.Events.ServerEvents do
     defstruct [:id, :name, :encryptedChatSecretKey, :timestamp]
   end
 
+  defmodule ArchiveContact do
+    @derive [Poison.Encoder]
+    @enforce_keys [:contactId]
+    defstruct [:contactId]
+  end
+
   defmodule ReceiveChat do
     @derive [Poison.Encoder]
     @enforce_keys [:contactId, :encrypted, :iv, :timestamp]

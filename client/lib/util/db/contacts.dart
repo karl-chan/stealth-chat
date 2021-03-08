@@ -15,6 +15,7 @@ class Contacts extends Table {
   BlobColumn get wallpaper => blob().nullable()();
   BoolColumn get online => boolean().withDefault(const Constant(false))();
   DateTimeColumn get lastSeen => dateTime()();
+  BoolColumn get archived => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -43,6 +44,10 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
     return (select(contacts)..where((c) => c.id.equals(id))).watchSingle();
   }
 
+  Future<void> deleteContacts(List<String> ids) async {
+    return (delete(contacts)..where((c) => c.id.isIn(ids))).go();
+  }
+
   Future<List<String>> getContactIds() async {
     return (selectOnly(contacts)..addColumns([contacts.id]))
         .map((c) => c.read(contacts.id))
@@ -66,5 +71,10 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
   Future<void> updateStatus(String id, bool online, DateTime lastSeen) {
     return (update(contacts)..where((c) => c.id.equals(id))).write(
         ContactsCompanion(online: Value(online), lastSeen: Value(lastSeen)));
+  }
+
+  Future<void> archiveContact(String id) {
+    return (update(contacts)..where((c) => c.id.equals(id)))
+        .write(ContactsCompanion(archived: Value(true)));
   }
 }

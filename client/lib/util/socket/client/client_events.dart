@@ -3,6 +3,7 @@ import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/socket/client/accept_invite_event.dart';
 import 'package:stealth_chat/util/socket/client/ack_accept_invite_event.dart';
 import 'package:stealth_chat/util/socket/client/ack_last_message_timestamp_channel.dart';
+import 'package:stealth_chat/util/socket/client/delete_contacts_event.dart';
 import 'package:stealth_chat/util/socket/client/send_attachment_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_event.dart';
 import 'package:stealth_chat/util/socket/client/send_chat_update_event.dart';
@@ -11,6 +12,7 @@ class ClientEvents {
   final AcceptInviteEvent acceptInvite;
   final AckAcceptInviteEvent ackAcceptInvite;
   final AckLastMessageTimestampEvent ackLastMessageTimestamp;
+  final DeleteContactsEvent deleteContacts;
   final SendChatEvent sendChat;
   final SendChatUpdateEvent sendChatUpdate;
   final SendAttachmentEvent sendAttachment;
@@ -19,6 +21,7 @@ class ClientEvents {
       : this.acceptInvite = AcceptInviteEvent(channel),
         this.ackAcceptInvite = AckAcceptInviteEvent(channel),
         this.ackLastMessageTimestamp = AckLastMessageTimestampEvent(channel),
+        this.deleteContacts = DeleteContactsEvent(channel),
         this.sendChat = SendChatEvent(channel),
         this.sendChatUpdate = SendChatUpdateEvent(channel),
         this.sendAttachment = SendAttachmentEvent(channel);
