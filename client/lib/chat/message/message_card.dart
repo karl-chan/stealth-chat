@@ -69,32 +69,26 @@ class MessageCard extends StatelessWidget {
     final lastSeen = getLastSeenIcon(message);
     final borderRadius = BorderRadius.circular(20);
 
-    return Stack(children: [
-      Card(
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        color: this.colour,
-        child: Column(children: [
-          ...(message.attachment != null
-              ? [
-                  AttachmentView(Attachment(
-                      type: AttachmentTypes.parseInt(message.attachmentType),
-                      name: message.attachmentName,
-                      value: message.attachment))
-                ]
-              : []),
-          messageText,
-          Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [timestamp, SizedBox(width: 2), lastSeen])
-        ]).paddingAll(10),
-      ),
-      Positioned.fill(
-          child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                  borderRadius: borderRadius,
-                  onTap: onTap,
-                  onLongPress: onLongPress)))
-    ]);
+    return InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          color: this.colour,
+          child: Column(children: [
+            ...(message.attachment != null
+                ? [
+                    AttachmentView(Attachment(
+                        type: AttachmentTypes.parseInt(message.attachmentType),
+                        name: message.attachmentName,
+                        value: message.attachment))
+                  ]
+                : []),
+            messageText,
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [timestamp, SizedBox(width: 2), lastSeen])
+          ]).paddingAll(10),
+        ));
   }
 }
