@@ -265,6 +265,8 @@ class ChatPage extends StatelessWidget {
           ),
         ));
 
+    final archivedInputPanel = Text('This contact no longer accepts messages.');
+
     return Obx(() => Theme(
         data: ThemeData.from(
             colorScheme: ColorScheme.light(primary: c.themeColour.value)),
@@ -284,9 +286,11 @@ class ChatPage extends StatelessWidget {
                   Expanded(child: chatPanel),
                   Divider(),
                   SafeArea(
-                    child: ChatInputPanel(
-                        themeColour: c.themeColour.value,
-                        onSend: c.sendMessage),
+                    child: c.contact.value.archived
+                        ? archivedInputPanel
+                        : ChatInputPanel(
+                            themeColour: c.themeColour.value,
+                            onSend: c.sendMessage),
                   )
                 ])))));
   }

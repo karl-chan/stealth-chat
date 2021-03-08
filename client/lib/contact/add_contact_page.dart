@@ -70,8 +70,19 @@ $inviteLink''';
   }
 
   Future<void> showAcceptInviteTextDialog() async {
-    TextEditingController controller = TextEditingController();
     Rx<Uri> acceptInviteLink = Rx(null);
+    TextEditingController controller = TextEditingController();
+    controller.addListener(() {
+      final uri = Uri.tryParse(controller.text.trim());
+      if (uri != null &&
+          uri.scheme == this.scheme &&
+          uri.host == this.host &&
+          uri.path == Paths.ACCEPT_INVITE) {
+        acceptInviteLink.value = uri;
+      } else {
+        acceptInviteLink.nil();
+      }
+    });
     await Get.defaultDialog(
       title: 'Paste invite link',
       content: Obx(() => TextField(
@@ -85,22 +96,11 @@ $inviteLink''';
                         controller.text = data.text;
                       }
                     }),
-                hintText: 'e.g. app://chat/accept-invite/...',
+                helperText: 'e.g. app://chat/accept-invite/...',
                 errorText:
                     acceptInviteLink.value == null && controller.text.isNotEmpty
                         ? 'Not a valid link!'
                         : null),
-            onChanged: (input) {
-              final uri = Uri.tryParse(input.trim());
-              if (uri != null &&
-                  uri.scheme == this.scheme &&
-                  uri.host == this.host &&
-                  uri.path == Paths.ACCEPT_INVITE) {
-                acceptInviteLink.value = uri;
-              } else {
-                acceptInviteLink.nil();
-              }
-            },
           )),
       textConfirm: 'Enter',
       confirmTextColor: Colors.white,
@@ -110,6 +110,7 @@ $inviteLink''';
         }
       },
     );
+    controller.dispose();
   }
 
   Future<void> showAcceptInviteQRDialog() async {
@@ -193,7 +194,7 @@ class ViaMessageTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
