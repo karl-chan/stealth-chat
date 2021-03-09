@@ -7,14 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/chat/attachment/attachment_view.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/logging.dart';
+import 'package:video_compress/video_compress.dart';
 
 typedef SendCallback = void Function(String, Attachment);
 
 class ChatInputPanelController extends GetxController {
+  final ImagePicker imagePicker = ImagePicker();
   final TextEditingController inputMessageController = TextEditingController();
   final RxBool canSend = false.obs;
   final Rx<Attachment> inputAttachment = Rx(null);
@@ -39,11 +43,46 @@ class ChatInputPanelController extends GetxController {
         !this.inputMessageController.value.isBlank;
   }
 
+  Future<void> takePhoto() async {
+    stayAwake(true);
+    final file = await imagePicker.getImage(source: ImageSource.camera);
+    stayAwake(false);
+
+    if (file != null) {
+      Uint8List bytes =
+          await FlutterImageCompress.compressWithFile(file.path, quality: 50);
+      inputAttachment.value = Attachment(
+          type: AttachmentType.photo, name: basename(file.path), value: bytes);
+      updateCanSend();
+    }
+  }
+
+  Future<void> takeVideo() async {
+    stayAwake(true);
+    final file = await imagePicker.getVideo(source: ImageSource.camera);
+    stayAwake(false);
+
+    if (file != null) {
+      MediaInfo mediaInfo = await VideoCompress.compressVideo(
+        file.path,
+        quality: VideoQuality.DefaultQuality,
+        deleteOrigin: true, // It's false by default
+      );
+      Uint8List bytes = await mediaInfo.file.readAsBytes();
+      inputAttachment.value = Attachment(
+          type: AttachmentType.video,
+          name: basename(mediaInfo.path),
+          value: bytes);
+      updateCanSend();
+    }
+  }
+
   Future<void> selectAttachment() async {
     stayAwake(true);
     FilePickerResult result = await FilePicker.platform
         .pickFiles(withData: true, allowCompression: true);
     stayAwake(false);
+
     if (result != null) {
       AttachmentType type =
           AttachmentTypes.fromExtension(result.files.single.extension);
@@ -147,9 +186,35 @@ class ChatInputPanel extends StatelessWidget {
                 IconButton(
                     icon: Icon(Icons.emoji_emotions_outlined),
                     onPressed: c.showEmojiKeyboard.toggle),
-                IconButton(
-                    icon: Icon(Icons.attach_file),
-                    onPressed: c.selectAttachment),
+                PopupMenuButton<Function>(
+                  icon: Icon(Icons.attach_file),
+                  onSelected: (Function function) => function(),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<Function>(
+                          value: c.takePhoto,
+                          child: Row(children: [
+                            Icon(Icons.camera_alt),
+                            SizedBox(width: 10),
+                            Text('Take photo')
+                          ])),
+                      PopupMenuItem<Function>(
+                          value: c.takeVideo,
+                          child: Row(children: [
+                            Icon(Icons.videocam),
+                            SizedBox(width: 10),
+                            Text('Take video')
+                          ])),
+                      PopupMenuItem<Function>(
+                          value: c.selectAttachment,
+                          child: Row(children: [
+                            Icon(Icons.file_copy),
+                            SizedBox(width: 10),
+                            Text('Upload file')
+                          ])),
+                    ];
+                  },
+                ),
                 IconButton(
                   icon: Icon(Icons.send),
                   color: themeColour,
