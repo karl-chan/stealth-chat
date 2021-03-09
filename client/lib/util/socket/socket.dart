@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -15,7 +14,6 @@ import 'package:stealth_chat/util/socket/server/server_events.dart';
 
 class Socket {
   final Globals globals;
-  final String scheme = kReleaseMode ? 'wss' : 'ws';
 
   PhoenixSocket socket;
   PhoenixChannel channel;
@@ -39,6 +37,8 @@ class Socket {
       'sig_timestamp': sigTimestamp.toString(),
       'sig_hash': sigHash,
     };
+
+    String scheme = globals.serverHost.contains('localhost') ? 'ws' : 'wss';
 
     socket = PhoenixSocket('$scheme://${globals.serverHost}/socket/websocket',
         socketOptions: PhoenixSocketOptions(params: params))
