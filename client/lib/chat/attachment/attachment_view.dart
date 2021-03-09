@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
+import 'package:stealth_chat/main.dart';
 
 class AttachmentView extends StatelessWidget {
   final Attachment attachment;
@@ -9,8 +15,17 @@ class AttachmentView extends StatelessWidget {
       : this.attachment = attachment,
         super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> open() async {
+    Directory tempDir = await getTemporaryDirectory();
+    String path = join(tempDir.path, attachment.name);
+    await File(path).writeAsBytes(attachment.value);
+
+    stayAwake(true);
+    await OpenFile.open(path);
+    stayAwake(false);
+  }
+
+  List<Widget> renderContents() {
     List<Widget> contents = [
       Wrap(children: [
         Icon(Icons.attach_file),
@@ -32,15 +47,21 @@ class AttachmentView extends StatelessWidget {
       default:
         break;
     }
+    return contents;
+  }
 
-    return Card(
-        child: Padding(
-          padding: EdgeInsets.all(5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: contents,
-          ),
-        ),
-        color: Colors.grey.shade100);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: renderContents(),
+              ),
+            ),
+            color: Colors.grey.shade100),
+        onTap: open);
   }
 }
