@@ -27,6 +27,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_colorpicker:
+  flutter_ffmpeg:
   flutter_image_compress:
   flutter_linkify: 4.0.2
   font_awesome_flutter:
