@@ -1,14 +1,17 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/chat/attachment/attachment_view.dart';
 import 'package:stealth_chat/main.dart';
@@ -73,6 +76,30 @@ class ChatInputPanelController extends GetxController {
           type: AttachmentType.video,
           name: basename(mediaInfo.path),
           value: bytes);
+      updateCanSend();
+    }
+  }
+
+  Future<void> recordAudio() async {
+    stayAwake(true);
+    final file = await imagePicker.getVideo(
+        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    stayAwake(false);
+
+    if (file != null) {
+      Directory tempDir = await getTemporaryDirectory();
+      String path =
+          join(tempDir.path, '${DateTime.now().millisecondsSinceEpoch}.aac');
+      FlutterFFmpeg ffmpeg = FlutterFFmpeg();
+      int returnCode = await ffmpeg.executeWithArguments(
+          ['-i', file.path, '-vn', '-acodec', 'copy', path]);
+      if (returnCode != 0) {
+        Get.snackbar('Error', 'Failed to encode audio');
+        return;
+      }
+      Uint8List bytes = await File(path).readAsBytes();
+      inputAttachment.value = Attachment(
+          type: AttachmentType.audio, name: basename(path), value: bytes);
       updateCanSend();
     }
   }
@@ -204,6 +231,13 @@ class ChatInputPanel extends StatelessWidget {
                             Icon(Icons.videocam),
                             SizedBox(width: 10),
                             Text('Take video')
+                          ])),
+                      PopupMenuItem<Function>(
+                          value: c.recordAudio,
+                          child: Row(children: [
+                            Icon(Icons.mic),
+                            SizedBox(width: 10),
+                            Text('Record audio')
                           ])),
                       PopupMenuItem<Function>(
                           value: c.selectAttachment,
