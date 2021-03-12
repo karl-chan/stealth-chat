@@ -5,18 +5,15 @@ import 'dart:typed_data';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/chat/attachment/attachment_view.dart';
 import 'package:stealth_chat/main.dart';
+import 'package:stealth_chat/util/compress.dart';
 import 'package:stealth_chat/util/logging.dart';
-import 'package:video_compress/video_compress.dart';
 
 typedef SendCallback = void Function(String, Attachment);
 
@@ -52,11 +49,11 @@ class ChatInputPanelController extends GetxController {
     stayAwake(false);
 
     if (file != null) {
-      Uint8List bytes =
-          await FlutterImageCompress.compressWithFile(file.path, quality: 50);
+      Uint8List bytes = await Compress.image(file.path);
       inputAttachment.value = Attachment(
           type: AttachmentType.photo, name: basename(file.path), value: bytes);
       updateCanSend();
+      await File(file.path).delete();
     }
   }
 
@@ -66,17 +63,11 @@ class ChatInputPanelController extends GetxController {
     stayAwake(false);
 
     if (file != null) {
-      MediaInfo mediaInfo = await VideoCompress.compressVideo(
-        file.path,
-        quality: VideoQuality.DefaultQuality,
-        deleteOrigin: true, // It's false by default
-      );
-      Uint8List bytes = await mediaInfo.file.readAsBytes();
+      Uint8List bytes = await Compress.video(file.path);
       inputAttachment.value = Attachment(
-          type: AttachmentType.video,
-          name: basename(mediaInfo.path),
-          value: bytes);
+          type: AttachmentType.video, name: basename(file.path), value: bytes);
       updateCanSend();
+      await File(file.path).delete();
     }
   }
 
@@ -87,20 +78,18 @@ class ChatInputPanelController extends GetxController {
     stayAwake(false);
 
     if (file != null) {
-      Directory tempDir = await getTemporaryDirectory();
-      String path =
-          join(tempDir.path, '${DateTime.now().millisecondsSinceEpoch}.aac');
-      FlutterFFmpeg ffmpeg = FlutterFFmpeg();
-      int returnCode = await ffmpeg.executeWithArguments(
-          ['-i', file.path, '-vn', '-acodec', 'copy', path]);
-      if (returnCode != 0) {
+      Uint8List bytes = await Compress.audio(file.path);
+      if (bytes == null) {
         Get.snackbar('Error', 'Failed to encode audio');
+        await File(file.path).delete();
         return;
       }
-      Uint8List bytes = await File(path).readAsBytes();
       inputAttachment.value = Attachment(
-          type: AttachmentType.audio, name: basename(path), value: bytes);
+          type: AttachmentType.audio,
+          name: '${basenameWithoutExtension(file.path)}.aac',
+          value: bytes);
       updateCanSend();
+      await File(file.path).delete();
     }
   }
 
@@ -113,12 +102,12 @@ class ChatInputPanelController extends GetxController {
     if (result != null) {
       AttachmentType type =
           AttachmentTypes.fromExtension(result.files.single.extension);
-      Uint8List bytes = result.files.single.bytes;
-      logDebug('Original size: ${bytes.lengthInBytes / 1024} kB');
+      final file = result.files.single;
+      logDebug('Original size: ${file.bytes.lengthInBytes / 1024} kB');
+      Uint8List bytes = file.bytes;
       switch (type) {
         case AttachmentType.photo:
-          bytes =
-              await FlutterImageCompress.compressWithList(bytes, quality: 50);
+          bytes = await Compress.image(file.path);
           break;
         default:
       }
