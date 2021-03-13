@@ -24,6 +24,8 @@ dependencies:
       ref: 51e62d4
   file_picker:
   filesize:
+  firebase_core:
+  firebase_messaging:
   flutter:
     sdk: flutter
   flutter_colorpicker:
@@ -79,7 +81,9 @@ dependency_overrides:
 flutter:
   uses-material-design: true
   assets:
-    - app.properties
+    - assets/app.properties
+    - assets/images/notifications_prompt.jpg
+    - assets/images/enable_notifications_steps.jpg
 
 flutter_icons:
   android: "launcher_icon"

@@ -106,6 +106,8 @@ defmodule Server.Events.ClientEvents do
           eventTimestamp: System.os_time(:millisecond)
         })
 
+        ServerEvents.send_notification(user_id)
+
       %SendChatUpdate{
         contactId: contact_id,
         timestamp: timestamp,

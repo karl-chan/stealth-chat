@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -10,14 +11,18 @@ import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:uuid/uuid.dart';
 
-enum RegistrationStep { SET_NAME, SET_PASSWORD, CONFIRM_PASSWORD, REGISTRATION }
+enum RegistrationStep {
+  SET_NAME,
+  SET_PASSWORD,
+  CONFIRM_PASSWORD,
+  ENABLE_NOTIFICATIONS,
+  REGISTRATION
+}
 
 class RegistrationController extends GetxController {
   final String id = Uuid().v4();
-  final Globals globals = Get.find();
+  final Globals globals;
   final BootConfig boot;
-
-  RegistrationController(BootConfig boot) : this.boot = boot;
 
   Rx<RegistrationStep> step = RegistrationStep.SET_NAME.obs;
   RxBool isRegistering = false.obs;
@@ -25,10 +30,20 @@ class RegistrationController extends GetxController {
   RxString setPasswordErrorText = RxString(null);
   RxString confirmPasswordErrorText = RxString(null);
   RxString registrationErrorText = RxString(null);
+  Rx<AuthorizationStatus> authorizationStatus =
+      AuthorizationStatus.notDetermined.obs;
 
   TextEditingController setNameController = TextEditingController();
   TextEditingController setPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+
+  RegistrationController(Globals globals, BootConfig boot)
+      : this.globals = globals,
+        this.boot = boot {
+    globals.firebase
+        .getCurrentAuthorizationStatus()
+        .then((status) => authorizationStatus.value = status);
+  }
 
   @override
   void onClose() {
@@ -73,15 +88,26 @@ class RegistrationController extends GetxController {
     }
   }
 
+  Future<bool> runEnableNotifications() async {
+    authorizationStatus.value = await globals.firebase.requestPermissions();
+    switch (authorizationStatus.value) {
+      case AuthorizationStatus.authorized:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   Future<bool> runRegistration() async {
     isRegistering.value = true;
 
     final name = setNameController.text.trim();
     final password = setPasswordController.text;
     final keys = await Keys.generate(id, password);
+    final fcmToken = await globals.firebase.getToken();
 
     try {
-      await UserApi.create(id, keys.publicKey);
+      await UserApi.create(id, keys.publicKey, fcmToken);
 
       await Auth.setUser(id, name, password, keys);
       await Auth.login(password);
@@ -113,6 +139,12 @@ class RegistrationController extends GetxController {
       case RegistrationStep.CONFIRM_PASSWORD:
         final confirmPasswordSuccess = await runConfirmPassword();
         if (confirmPasswordSuccess) {
+          step.value = RegistrationStep.ENABLE_NOTIFICATIONS;
+        }
+        break;
+      case RegistrationStep.ENABLE_NOTIFICATIONS:
+        final enableNotificationsSuccess = await runEnableNotifications();
+        if (enableNotificationsSuccess) {
           step.value = RegistrationStep.REGISTRATION;
         }
         break;
@@ -160,7 +192,63 @@ class RegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(RegistrationController(boot));
+    Globals globals = Get.find();
+    final c = Get.put(RegistrationController(globals, boot));
+
+    final enableNotificationsViaPrompt = Column(children: [
+      RichText(
+          text: TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 16),
+              children: [
+            TextSpan(text: 'Press '),
+            TextSpan(
+                text: ' Continue ',
+                style: TextStyle(
+                    color: Colors.white,
+                    backgroundColor: Colors.green,
+                    fontWeight: FontWeight.bold)),
+            TextSpan(text: '.\n\nThen select '),
+            TextSpan(
+                text: 'Allow',
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+            TextSpan(text: ' when prompted.'),
+          ])),
+      Image.asset('assets/images/notifications_prompt.jpg').paddingAll(20)
+    ]);
+
+    final enableNotificationsViaSettings = Column(children: [
+      RichText(
+          text: TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 16),
+              children: [
+            TextSpan(text: 'Go to '),
+            TextSpan(
+                text:
+                    ' Settings > Dictionary > Notifications > Allow Notifications:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: '\n\n(scroll image from left to right)'),
+          ])),
+      SizedBox(
+              height: 300,
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Image.asset(
+                      'assets/images/enable_notifications_steps.jpg')))
+          .paddingAll(20),
+      RichText(
+          text: TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 16),
+              children: [
+            TextSpan(text: '\n\nThen come back and press '),
+            TextSpan(
+                text: ' Continue ',
+                style: TextStyle(
+                    color: Colors.white,
+                    backgroundColor: Colors.green,
+                    fontWeight: FontWeight.bold)),
+          ])),
+    ]);
 
     return Scaffold(
         appBar: AppBar(
@@ -206,6 +294,23 @@ class RegistrationPage extends StatelessWidget {
                     isActive:
                         c.isCurrentStep(RegistrationStep.CONFIRM_PASSWORD),
                     state: c.getStepState(RegistrationStep.CONFIRM_PASSWORD)),
+                Step(
+                    title: const Text('Enable notifications'),
+                    content: c.authorizationStatus.value ==
+                            AuthorizationStatus.notDetermined
+                        ? enableNotificationsViaPrompt
+                        : (c.authorizationStatus.value ==
+                                AuthorizationStatus.denied
+                            ? enableNotificationsViaSettings
+                            : Column(children: [
+                                Icon(Icons.check_circle,
+                                    color: Colors.green, size: 50),
+                                Text("You're all set!")
+                              ])),
+                    isActive:
+                        c.isCurrentStep(RegistrationStep.ENABLE_NOTIFICATIONS),
+                    state:
+                        c.getStepState(RegistrationStep.ENABLE_NOTIFICATIONS)),
                 Step(
                     title: const Text('Register'),
                     content: ConstrainedBox(
