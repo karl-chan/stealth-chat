@@ -48,3 +48,7 @@ app.*.map.json
 
 # app.properties
 /assets/app.properties
+
+# Firebase cloud messaging credentials
+google-services.json
+GoogleService-Info.plist

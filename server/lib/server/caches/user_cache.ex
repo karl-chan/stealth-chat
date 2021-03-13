@@ -11,6 +11,12 @@ defmodule Server.Caches.UserCache do
     end
   end
 
+  def get_fcm_token(id) do
+    with {:ok, user} <- get_user(id) do
+      {:ok, user["fcmToken"]}
+    end
+  end
+
   defp get_user(id) do
     res =
       Cachex.fetch(:user_cache, id, fn id ->

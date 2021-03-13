@@ -5,6 +5,7 @@ import 'package:stealth_chat/util/db/chat_messages.dart';
 import 'package:stealth_chat/util/db/contacts.dart';
 import 'package:stealth_chat/util/db/db.dart';
 import 'package:stealth_chat/util/db/notifications.dart';
+import 'package:stealth_chat/util/firebase.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/properties.dart';
 import 'package:stealth_chat/util/security/keys.dart';
@@ -20,13 +21,10 @@ class Globals {
   // auth status
   bool isLoggedIn = false;
 
-  // database handles
+  // handles
   Database db;
-
-  // socket handles
+  Firebase firebase;
   Socket socket;
-
-  // properties handle
   Properties properties;
 
   // app variables
@@ -38,6 +36,7 @@ class Globals {
     prefs = await SharedPreferences.getInstance();
     packageInfo = await PackageInfo.fromPlatform();
 
+    firebase = Firebase(this);
     properties = await Properties.init(prefs);
 
     user = User(

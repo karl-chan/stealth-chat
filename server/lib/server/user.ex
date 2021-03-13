@@ -7,14 +7,18 @@ defmodule Server.User do
     Mongo.find_one(:mongo, @coll, %{id: id}, projection: %{_id: 0})
   end
 
-  def create(id, public_key) do
+  def create(id, public_key, fcm_token) do
     Logger.info("Registering user #{id}...")
 
     res =
       if already_exists(id) do
         {:error, "User #{id} is already taken!"}
       else
-        case Mongo.insert_one(:mongo, @coll, %{"id" => id, "publicKey" => public_key}) do
+        case Mongo.insert_one(:mongo, @coll, %{
+               "id" => id,
+               "publicKey" => public_key,
+               "fcmToken" => fcm_token
+             }) do
           {:ok, _} ->
             {:ok, "Registered user #{id} successfully!"}
 

@@ -16,9 +16,16 @@ class UserApi {
     return ShowUserResponse.fromJson(jsonDecode(response.body));
   }
 
-  static Future<void> create(String id, RSAPublicKey publicKey) async {
-    final response = await Api.post('user',
-        body: {'id': id, 'publicKey': publicKey.toPEM()});
+  static Future<void> create(
+      String id, RSAPublicKey publicKey, String fcmToken) async {
+    final response = await Api.post(
+      'user',
+      body: {
+        'id': id,
+        'publicKey': publicKey.toPEM(),
+        'fcmToken': fcmToken,
+      },
+    );
     if (!Api.isSuccess(response.statusCode)) {
       throw response.body;
     }
