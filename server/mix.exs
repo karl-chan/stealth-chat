@@ -48,8 +48,10 @@ defmodule Server.MixProject do
       {:google_api_drive, "~> 0.20.4"},
       {:goth, "~> 1.2.0"},
       {:jason, "~> 1.0"},
+      {:kadabra, "~> 0.4.4"},
       {:mock, "~> 0.3.6", only: :test},
       {:mongodb_driver, "~> 0.7.1"},
+      {:pigeon, "~> 1.6.0"},
       {:plug_cowboy, "~> 2.0"},
       {:recase, "~> 0.5"},
       {:tesla, "~> 1.4.0"}

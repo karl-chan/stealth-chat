@@ -1,5 +1,6 @@
 defmodule Server.Events.ServerEvents do
   use EnumType
+  alias Server.Caches.UserCache
   require Logger
 
   @coll "messages"
@@ -101,11 +102,16 @@ defmodule Server.Events.ServerEvents do
     )
   end
 
-  def invalidateStatus(user_id) do
-    Mongo.delete_many(:mongo, @coll, %{
-      "event" => get_event_name(%ReceiveStatus{contactId: nil, online: nil, lastSeen: nil}),
-      "payload.data.contactId" => user_id
-    })
+  def send_notification(user_id) do
+    {:ok, fcm_token} = UserCache.get_fcm_token(user_id)
+
+    msg = %{
+      "title" => "Dictionary",
+      "body" => "New content is available!"
+    }
+
+    n = Pigeon.FCM.Notification.new(fcm_token, msg)
+    Pigeon.FCM.push(n)
   end
 
   @dialyzer {:nowarn_function, create_index: 0}

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1019249748382",
+    "firebase_url": "https://stealth-chat-279820.firebaseio.com",
+    "project_id": "stealth-chat-279820",
+    "storage_bucket": "stealth-chat-279820.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019249748382:android:4ccb57a28ce7f870560e8f",
+        "android_client_info": {
+          "package_name": "com.example.stealth_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019249748382-nlfplihaa9e2434ujns8vo89up8gcsrq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjIrMvvUQBAKAIBe4pvDp0iPKBGKP0P9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1019249748382-nlfplihaa9e2434ujns8vo89up8gcsrq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1019249748382-pvdfs10d407q45tmsrl92silmkgohlbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.stealthChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

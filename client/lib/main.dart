@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/boot/boot_screen.dart';
@@ -11,6 +12,8 @@ import 'package:uni_links/uni_links.dart';
 bool _stayAwake = false;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await firebase.Firebase.initializeApp();
   runApp(MainApp());
 }
 
