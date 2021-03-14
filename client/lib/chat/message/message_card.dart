@@ -3,7 +3,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
-import 'package:stealth_chat/chat/attachment/attachment_view.dart';
+import 'package:stealth_chat/chat/attachment/views/attachment_view.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
 import 'package:url_launcher/url_launcher.dart';
