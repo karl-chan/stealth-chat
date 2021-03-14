@@ -41,6 +41,7 @@ dependencies:
   ini:
   intl:
   json_serializable:
+  just_audio:
   logging:
   moor: 4.1.0
   open_file:
