@@ -86,7 +86,7 @@ class ChatInputPanelController extends GetxController {
       }
       inputAttachment.value = Attachment(
           type: AttachmentType.audio,
-          name: '${basenameWithoutExtension(file.path)}.aac',
+          name: '${basenameWithoutExtension(file.path)}.m4a',
           value: bytes);
       updateCanSend();
       await File(file.path).delete();
