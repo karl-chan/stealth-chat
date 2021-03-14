@@ -23,7 +23,7 @@ class Compress {
   static Future<Uint8List> audio(String path) async {
     return _ffmpeg(
       path,
-      '${DateTime.now().millisecondsSinceEpoch}.aac',
+      '${DateTime.now().millisecondsSinceEpoch}.m4a',
       ['-vn', '-acodec', 'copy'],
     );
   }
