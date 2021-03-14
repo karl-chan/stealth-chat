@@ -22,6 +22,7 @@ extension AttachmentTypes on AttachmentType {
       case 'mov':
         return AttachmentType.video;
       case 'aac':
+      case 'm4a':
       case 'mp3':
         return AttachmentType.audio;
       default:
