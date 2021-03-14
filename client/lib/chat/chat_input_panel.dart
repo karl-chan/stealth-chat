@@ -10,7 +10,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
-import 'package:stealth_chat/chat/attachment/attachment_view.dart';
+import 'package:stealth_chat/chat/attachment/views/attachment_view.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/compress.dart';
 import 'package:stealth_chat/util/logging.dart';

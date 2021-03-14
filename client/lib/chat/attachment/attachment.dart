@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:stealth_chat/util/security/aes.dart';
 import 'package:stealth_chat/util/security/keys.dart';
@@ -30,6 +31,21 @@ extension AttachmentTypes on AttachmentType {
 
   static AttachmentType parseInt(int value) {
     return AttachmentType.values[value];
+  }
+
+  Icon toIcon() {
+    switch (this) {
+      case AttachmentType.photo:
+        return Icon(Icons.photo);
+      case AttachmentType.video:
+        return Icon(Icons.movie);
+      case AttachmentType.audio:
+        return Icon(Icons.audiotrack);
+      case AttachmentType.other:
+        return Icon(Icons.attach_file);
+      default:
+        return null;
+    }
   }
 }
 

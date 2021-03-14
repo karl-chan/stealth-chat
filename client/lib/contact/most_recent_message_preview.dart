@@ -26,29 +26,13 @@ class MostRecentMessagePreview extends StatelessWidget {
       row = [...row, SizedBox(width: 5), Text('($numUnread)')];
     }
 
-    switch (AttachmentTypes.parseInt(chatMessage.attachmentType)) {
-      case AttachmentType.photo:
-        row = [
-          Icon(Icons.photo, color: Colors.grey),
-          SizedBox(width: 5),
-          ...row
-        ];
-        break;
-      case AttachmentType.video:
-        row = [
-          Icon(Icons.videocam, color: Colors.grey),
-          SizedBox(width: 5),
-          ...row
-        ];
-        break;
-      case AttachmentType.audio:
-        row = [
-          Icon(Icons.audiotrack, color: Colors.grey),
-          SizedBox(width: 5),
-          ...row
-        ];
-        break;
-      default:
+    Icon icon = AttachmentTypes.parseInt(chatMessage.attachmentType).toIcon();
+    if (icon != null) {
+      row = [
+        IconTheme(data: IconThemeData(color: Colors.grey), child: icon),
+        SizedBox(width: 5),
+        ...row
+      ];
     }
 
     Widget widget = Row(children: row);
