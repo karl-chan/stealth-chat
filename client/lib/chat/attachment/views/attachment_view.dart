@@ -27,7 +27,6 @@ class AttachmentView extends StatelessWidget {
     stayAwake(true);
     await OpenFile.open(path);
     stayAwake(false);
-    await File(path).delete();
   }
 
   Widget getConcreteView() {
