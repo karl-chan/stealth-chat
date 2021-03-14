@@ -43,7 +43,10 @@ class VideoAttachmentView extends StatelessWidget {
           : ColorFiltered(
               colorFilter: ColorFilter.mode(
                   Colors.black.withOpacity(0.6), BlendMode.dstATop),
-              child: Image.memory(c.thumbnail.value))),
+              child: Image.memory(
+                c.thumbnail.value,
+                gaplessPlayback: true,
+              ))),
       Icon(Icons.play_circle_fill, size: 96, color: Colors.white),
     ]);
   }

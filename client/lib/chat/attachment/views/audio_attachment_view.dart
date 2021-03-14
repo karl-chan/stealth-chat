@@ -1,18 +1,26 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'package:flutter_ffmpeg/media_information.dart';
 import 'package:get/state_manager.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 
 class AudioAttachmentController extends GetxController {
+  final AudioPlayer player = AudioPlayer();
+  final RxBool isPlaying = false.obs;
   final Rx<Duration> duration = Duration.zero.obs;
+  final RxDouble currentPositionMs = 0.0.obs;
 
   AudioAttachmentController(Attachment attachment) {
     loadAudio(attachment);
+    player.playbackStateStream.listen((state) {
+      isPlaying.value = state == AudioPlaybackState.playing;
+    });
+    player.getPositionStream().listen((duration) {
+      currentPositionMs.value = duration.inMilliseconds.toDouble();
+    });
   }
 
   Future<void> loadAudio(Attachment attachment) async {
@@ -20,11 +28,7 @@ class AudioAttachmentController extends GetxController {
     String path = join(tempDir.path, attachment.name);
     await File(path).writeAsBytes(attachment.value);
 
-    FlutterFFprobe ffprobe = FlutterFFprobe();
-    MediaInformation info = await ffprobe.getMediaInformation(path);
-    double milliseconds =
-        double.parse(info.getMediaProperties()['duration']) * 1000;
-    duration.value = Duration(milliseconds: milliseconds.toInt());
+    duration.value = await player.setFilePath(path);
   }
 }
 
@@ -45,14 +49,31 @@ class AudioAttachmentView extends StatelessWidget {
   Widget build(BuildContext context) {
     AudioAttachmentController c = AudioAttachmentController(attachment);
 
-    return Container(
+    final playButton = Obx(
+      () => IconButton(
+          padding: EdgeInsets.zero,
+          constraints: BoxConstraints(),
+          onPressed: c.isPlaying.isTrue ? c.player.pause : c.player.play,
+          icon: Icon(c.isPlaying.isTrue ? Icons.pause : Icons.play_arrow)),
+    );
+
+    return Obx(() => Container(
         color: Colors.grey.shade300,
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 5),
             child: Row(children: [
-              Icon(Icons.play_arrow),
-              Flexible(child: Slider(value: 0, onChanged: null)),
-              Obx(() => Text(format(c.duration.value)))
-            ])));
+              playButton,
+              Flexible(
+                  child: Slider(
+                      value: c.currentPositionMs.value,
+                      min: 0,
+                      max: c.duration.value.inMilliseconds.toDouble(),
+                      onChanged: (ms) async {
+                        c.currentPositionMs.value = ms;
+                        await c.player.seek(Duration(milliseconds: ms.toInt()));
+                      })),
+              Text(format(
+                  Duration(milliseconds: c.currentPositionMs.value.toInt())))
+            ]))));
   }
 }

@@ -1,35 +1,35 @@
 PODS:
-  - DKImagePickerController/Core (4.2.2):
+  - DKImagePickerController/Core (4.3.2):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
-  - DKImagePickerController/ImageDataManager (4.2.2)
-  - DKImagePickerController/PhotoGallery (4.2.2):
+  - DKImagePickerController/ImageDataManager (4.3.2)
+  - DKImagePickerController/PhotoGallery (4.3.2):
     - DKImagePickerController/Core
     - DKPhotoGallery
-  - DKImagePickerController/Resource (4.2.2)
-  - DKPhotoGallery (0.0.14):
-    - DKPhotoGallery/Core (= 0.0.14)
-    - DKPhotoGallery/Model (= 0.0.14)
-    - DKPhotoGallery/Preview (= 0.0.14)
-    - DKPhotoGallery/Resource (= 0.0.14)
+  - DKImagePickerController/Resource (4.3.2)
+  - DKPhotoGallery (0.0.17):
+    - DKPhotoGallery/Core (= 0.0.17)
+    - DKPhotoGallery/Model (= 0.0.17)
+    - DKPhotoGallery/Preview (= 0.0.17)
+    - DKPhotoGallery/Resource (= 0.0.17)
     - SDWebImage
-    - SDWebImageFLPlugin
-  - DKPhotoGallery/Core (0.0.14):
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.17):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Preview
     - SDWebImage
-    - SDWebImageFLPlugin
-  - DKPhotoGallery/Model (0.0.14):
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.17):
     - SDWebImage
-    - SDWebImageFLPlugin
-  - DKPhotoGallery/Preview (0.0.14):
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.17):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Resource
     - SDWebImage
-    - SDWebImageFLPlugin
-  - DKPhotoGallery/Resource (0.0.14):
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.17):
     - SDWebImage
-    - SDWebImageFLPlugin
+    - SwiftyGif
   - emoji_picker (0.0.3):
     - Flutter
   - file_picker (0.0.1):
@@ -73,7 +73,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/Reachability (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
-  - FLAnimatedImage (1.0.12)
   - Flutter (1.0.0)
   - flutter_ffmpeg/min-lts (0.3.1):
     - Flutter
@@ -107,6 +106,8 @@ PODS:
     - GoogleUtilities/Logger
   - image_picker (0.0.1):
     - Flutter
+  - just_audio (0.0.1):
+    - Flutter
   - libwebp (1.2.0):
     - libwebp/demux (= 1.2.0)
     - libwebp/mux (= 1.2.0)
@@ -136,15 +137,12 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
-  - SDWebImage (5.9.5):
-    - SDWebImage/Core (= 5.9.5)
-  - SDWebImage/Core (5.9.5)
-  - SDWebImageFLPlugin (0.4.0):
-    - FLAnimatedImage (>= 1.0.11)
-    - SDWebImage/Core (~> 5.6)
-  - SDWebImageWebPCoder (0.6.1):
+  - SDWebImage (5.10.4):
+    - SDWebImage/Core (= 5.10.4)
+  - SDWebImage/Core (5.10.4)
+  - SDWebImageWebPCoder (0.8.3):
     - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.7)
+    - SDWebImage/Core (~> 5.10)
   - share (0.0.1):
     - Flutter
   - shared_preferences (0.0.1):
@@ -156,11 +154,11 @@ PODS:
   - sqflite_sqlcipher (0.0.1):
     - Flutter
     - FMDB/SQLCipher (~> 2.7.5)
-    - SQLCipher (= 4.4.2)
-  - SQLCipher (4.4.2):
-    - SQLCipher/standard (= 4.4.2)
-  - SQLCipher/common (4.4.2)
-  - SQLCipher/standard (4.4.2):
+    - SQLCipher (= 4.4.1)
+  - SQLCipher (4.4.1):
+    - SQLCipher/standard (= 4.4.1)
+  - SQLCipher/common (4.4.1)
+  - SQLCipher/standard (4.4.1):
     - SQLCipher/common
   - sqlite3 (3.32.3):
     - sqlite3/common (= 3.32.3)
@@ -180,6 +178,7 @@ PODS:
     - sqlite3/json1
     - sqlite3/perf-threadsafe
     - sqlite3/rtree
+  - SwiftyGif (5.4.0)
   - uni_links (0.0.1):
     - Flutter
   - url_launcher (0.0.1):
@@ -196,6 +195,7 @@ DEPENDENCIES:
   - flutter_ffmpeg/min-lts (from `.symlinks/plugins/flutter_ffmpeg/ios`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -219,7 +219,6 @@ SPEC REPOS:
     - FirebaseInstallations
     - FirebaseInstanceID
     - FirebaseMessaging
-    - FLAnimatedImage
     - FMDB
     - GoogleDataTransport
     - GoogleUtilities
@@ -230,10 +229,10 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - SDWebImage
-    - SDWebImageFLPlugin
     - SDWebImageWebPCoder
     - SQLCipher
     - sqlite3
+    - SwiftyGif
 
 EXTERNAL SOURCES:
   emoji_picker:
@@ -252,6 +251,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_image_compress/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  just_audio:
+    :path: ".symlinks/plugins/just_audio/ios"
   open_file:
     :path: ".symlinks/plugins/open_file/ios"
   package_info:
@@ -278,8 +279,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_compress/ios"
 
 SPEC CHECKSUMS:
-  DKImagePickerController: 4a3e7948a848c4348e600b3fe5ce41478835fa10
-  DKPhotoGallery: 0290d32343574f06eaa4c26f8f2f8a1035e916be
+  DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
+  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   emoji_picker: 0e868059aa18f9473d234f3d0701fbd4d5fd310c
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   Firebase: 26223c695fe322633274198cb19dca8cb7e54416
@@ -290,7 +291,6 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 7f7ed0e7e27fb51f57291e1876e2ddb1524126c1
   FirebaseInstanceID: aaecc93b4528bbcafea12c477e26827719ca1183
   FirebaseMessaging: 68d1bcb14880189558a8ae57167abe0b7e417232
-  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_ffmpeg: 582ed04161233e3955540e32e79fd30bcbec272d
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
@@ -298,6 +298,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: b006084b73915a42c28a3466961a4edda3065da6
   GoogleUtilities: abda45f519bc4073aa1171d2f8742108def46017
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
+  just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   mobile-ffmpeg-min: dd2fd38da2788ccb7be5720fc308cb69160820e7
@@ -308,16 +309,16 @@ SPEC CHECKSUMS:
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
-  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
-  SDWebImageFLPlugin: 6c2295fb1242d44467c6c87dc5db6b0a13228fd8
-  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
+  SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
+  SDWebImageWebPCoder: bbf46e29fb8d1980a78ad3d5e9b4123c77f10ebc
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 9b549b4a8b0a7f9ea465738a929b247655c8da27
-  sqflite_sqlcipher: 70eb7fd8d4f0b0352d0bde5cf345b810737f54bb
-  SQLCipher: 1ab0b9486a77d141e72e92ff30681926ed79c07a
+  sqflite_sqlcipher: cc00ecef02643b799857eb5c66c7074660aa658a
+  SQLCipher: 0b81a39b21247c559c52c3bd2234808e626c008b
   sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
   sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
+  SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_compress: fce97e4fb1dfd88175aa07d2ffc8a2f297f87fbe
