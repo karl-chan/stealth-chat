@@ -24,6 +24,7 @@ extension AttachmentTypes on AttachmentType {
       case 'aac':
       case 'm4a':
       case 'mp3':
+      case 'm4a':
         return AttachmentType.audio;
       default:
         return AttachmentType.other;
