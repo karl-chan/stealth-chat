@@ -21,7 +21,7 @@ dependencies:
     git:
       url: https://github.com/simolus3/moor.git
       path: extras/encryption
-      ref: 51e62d4
+      ref: 42ba773
   file_picker:
   filesize:
   firebase_core:
@@ -42,7 +42,7 @@ dependencies:
   intl:
   json_serializable:
   logging:
-  moor: 3.4.0
+  moor: 4.1.0
   open_file:
   package_info:
   path:
@@ -64,14 +64,14 @@ dependencies:
 
 dev_dependencies:
   build_runner:
-  flutter_launcher_name:
-  flutter_launcher_icons:
+  flutter_launcher_icons: 0.9.0
   flutter_test:
     sdk: flutter
   freezed:
   moor_generator:
 
 dependency_overrides:
+  args: 2.0.0
   sqflite:
     git:
       url: https://www.github.com/davidmartos96/sqflite_sqlcipher.git
@@ -89,6 +89,3 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/icon.png"
-
-flutter_launcher_name:
-  name: "Dictionary"
