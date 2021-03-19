@@ -1,9 +1,9 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 
 class AvatarController extends GetxController {
   final Rx<Contact> contact;
@@ -27,8 +27,7 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AvatarController c =
-        Get.put(AvatarController(contact, globals), tag: contact.id);
+    AvatarController c = Get.safePut(AvatarController(contact, globals));
 
     return Container(
       child: Obx(() {

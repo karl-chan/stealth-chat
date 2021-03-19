@@ -7,15 +7,16 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
 import 'package:stealth_chat/util/api/user_api.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/security/auth.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:uuid/uuid.dart';
 
 enum RegistrationStep {
+  ENABLE_NOTIFICATIONS,
   SET_NAME,
   SET_PASSWORD,
   CONFIRM_PASSWORD,
-  ENABLE_NOTIFICATIONS,
   REGISTRATION
 }
 
@@ -53,6 +54,16 @@ class RegistrationController extends GetxController {
     super.onClose();
   }
 
+  Future<bool> runEnableNotifications() async {
+    authorizationStatus.value = await globals.firebase.requestPermissions();
+    switch (authorizationStatus.value) {
+      case AuthorizationStatus.authorized:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   Future<bool> runSetName() async {
     final name = setNameController.text;
     if (name.isBlank) {
@@ -88,16 +99,6 @@ class RegistrationController extends GetxController {
     }
   }
 
-  Future<bool> runEnableNotifications() async {
-    authorizationStatus.value = await globals.firebase.requestPermissions();
-    switch (authorizationStatus.value) {
-      case AuthorizationStatus.authorized:
-        return true;
-      default:
-        return false;
-    }
-  }
-
   Future<bool> runRegistration() async {
     isRegistering.value = true;
 
@@ -124,6 +125,12 @@ class RegistrationController extends GetxController {
 
   nextStep() async {
     switch (step.value) {
+      case RegistrationStep.ENABLE_NOTIFICATIONS:
+        final enableNotificationsSuccess = await runEnableNotifications();
+        if (enableNotificationsSuccess) {
+          step.value = RegistrationStep.SET_NAME;
+        }
+        break;
       case RegistrationStep.SET_NAME:
         final setNameSuccess = await runSetName();
         if (setNameSuccess) {
@@ -139,12 +146,6 @@ class RegistrationController extends GetxController {
       case RegistrationStep.CONFIRM_PASSWORD:
         final confirmPasswordSuccess = await runConfirmPassword();
         if (confirmPasswordSuccess) {
-          step.value = RegistrationStep.ENABLE_NOTIFICATIONS;
-        }
-        break;
-      case RegistrationStep.ENABLE_NOTIFICATIONS:
-        final enableNotificationsSuccess = await runEnableNotifications();
-        if (enableNotificationsSuccess) {
           step.value = RegistrationStep.REGISTRATION;
         }
         break;
@@ -160,7 +161,7 @@ class RegistrationController extends GetxController {
 
   prevStep() async {
     switch (step.value) {
-      case RegistrationStep.SET_NAME:
+      case RegistrationStep.ENABLE_NOTIFICATIONS:
         Get.back();
         return;
       default:
@@ -193,7 +194,7 @@ class RegistrationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    final c = Get.put(RegistrationController(globals, boot));
+    final c = Get.safePut(RegistrationController(globals, boot));
 
     final enableNotificationsViaPrompt = Column(children: [
       RichText(
@@ -265,6 +266,23 @@ class RegistrationPage extends StatelessWidget {
         body: Obx(() => Stepper(
               steps: [
                 Step(
+                    title: const Text('Enable notifications'),
+                    content: c.authorizationStatus.value ==
+                            AuthorizationStatus.notDetermined
+                        ? enableNotificationsViaPrompt
+                        : (c.authorizationStatus.value ==
+                                AuthorizationStatus.denied
+                            ? enableNotificationsViaSettings
+                            : Column(children: [
+                                Icon(Icons.check_circle,
+                                    color: Colors.green, size: 50),
+                                Text("You're all set!")
+                              ])),
+                    isActive:
+                        c.isCurrentStep(RegistrationStep.ENABLE_NOTIFICATIONS),
+                    state:
+                        c.getStepState(RegistrationStep.ENABLE_NOTIFICATIONS)),
+                Step(
                     title: const Text('Enter a name'),
                     content: TextField(
                       controller: c.setNameController,
@@ -294,23 +312,6 @@ class RegistrationPage extends StatelessWidget {
                     isActive:
                         c.isCurrentStep(RegistrationStep.CONFIRM_PASSWORD),
                     state: c.getStepState(RegistrationStep.CONFIRM_PASSWORD)),
-                Step(
-                    title: const Text('Enable notifications'),
-                    content: c.authorizationStatus.value ==
-                            AuthorizationStatus.notDetermined
-                        ? enableNotificationsViaPrompt
-                        : (c.authorizationStatus.value ==
-                                AuthorizationStatus.denied
-                            ? enableNotificationsViaSettings
-                            : Column(children: [
-                                Icon(Icons.check_circle,
-                                    color: Colors.green, size: 50),
-                                Text("You're all set!")
-                              ])),
-                    isActive:
-                        c.isCurrentStep(RegistrationStep.ENABLE_NOTIFICATIONS),
-                    state:
-                        c.getStepState(RegistrationStep.ENABLE_NOTIFICATIONS)),
                 Step(
                     title: const Text('Register'),
                     content: ConstrainedBox(

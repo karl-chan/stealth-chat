@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 
 class NotificationsController extends GetxController {
   final RxList<Notification> notifications;
@@ -79,7 +80,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    NotificationsController c = Get.put(NotificationsController(globals));
+    NotificationsController c = Get.safePut(NotificationsController(globals));
 
     final emptyView = DefaultTextStyle(
         style: TextStyle(color: Colors.grey, fontSize: 24),

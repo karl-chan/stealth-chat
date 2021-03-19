@@ -9,6 +9,7 @@ import 'package:share/share.dart';
 import 'package:stealth_chat/contact/accept_invite_page.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
 
 class AddContactController extends GetxController {
@@ -145,7 +146,7 @@ class AddContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    AddContactController c = Get.put(AddContactController(globals));
+    AddContactController c = Get.safePut(AddContactController(globals));
 
     return DefaultTabController(
         length: 2,

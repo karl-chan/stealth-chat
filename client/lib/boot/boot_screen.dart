@@ -5,6 +5,7 @@ import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/login/LoginPage.dart';
 import 'package:stealth_chat/register/registration_page.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/logging.dart';
 
 enum BootStatus {
@@ -49,7 +50,7 @@ class BootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logDebug('Boot screen:' + (boot.destination == null).toString());
-    final BootController c = Get.put(BootController());
+    final BootController c = Get.safePut(BootController());
     c.boot();
 
     return Obx(() {

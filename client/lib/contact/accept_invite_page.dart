@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/home/home_page.dart';
 import 'package:stealth_chat/util/api/user_api.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/logging.dart';
 import 'package:stealth_chat/util/security/keys.dart';
 import 'package:stealth_chat/util/security/rsa.dart';
@@ -118,7 +119,7 @@ class AcceptInvitePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Globals globals = Get.find();
     AcceptInviteController c =
-        Get.put(AcceptInviteController(appLink, globals));
+        Get.safePut(AcceptInviteController(appLink, globals));
 
     final errorScreen = Obx(
       () => Column(

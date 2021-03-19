@@ -12,6 +12,7 @@ import 'package:stealth_chat/notifications/notifications_page.dart';
 import 'package:stealth_chat/settings/settings_page.dart';
 import 'package:stealth_chat/util/date_time_formatter.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/socket/client/delete_contacts_event.dart';
 
 enum Menu { addContact, settings }
@@ -99,7 +100,7 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Globals globals = Get.find();
-    ContactsController c = Get.put(ContactsController(globals));
+    ContactsController c = Get.safePut(ContactsController(globals));
 
     final appBar = AppBar(
       title: const Text('Contacts'),
