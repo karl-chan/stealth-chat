@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stealth_chat/globals.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 
 // Change connection settings
 class ChangeConnectionSettingsController extends GetxController {
@@ -81,7 +82,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Globals globals = Get.find();
     ChangeConnectionSettingsController c =
-        Get.put(ChangeConnectionSettingsController(globals));
+        Get.safePut(ChangeConnectionSettingsController(globals));
     return Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),

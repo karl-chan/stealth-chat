@@ -6,13 +6,13 @@ import 'package:emoji_picker/emoji_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:stealth_chat/chat/attachment/views/attachment_view.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/compress.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/logging.dart';
 
 typedef SendCallback = void Function(String, Attachment);
@@ -145,7 +145,7 @@ class ChatInputPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ChatInputPanelController c = Get.put(ChatInputPanelController(onSend));
+    ChatInputPanelController c = Get.safePut(ChatInputPanelController(onSend));
 
     Widget emojiKeyboard = EmojiPicker(
         rows: 4,

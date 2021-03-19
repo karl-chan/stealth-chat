@@ -10,6 +10,7 @@ import 'package:stealth_chat/globals.dart';
 import 'package:stealth_chat/main.dart';
 import 'package:stealth_chat/util/compress.dart';
 import 'package:stealth_chat/util/db/db.dart';
+import 'package:stealth_chat/util/get_extras.dart';
 import 'package:stealth_chat/util/logging.dart';
 
 class ContactSettingsController extends GetxController {
@@ -105,7 +106,7 @@ class ContactSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Globals globals = Get.find();
     ContactSettingsController c =
-        Get.put(ContactSettingsController(contact, globals));
+        Get.safePut(ContactSettingsController(contact, globals));
     return Obx(() => Scaffold(
             body: CustomScrollView(
           slivers: [
