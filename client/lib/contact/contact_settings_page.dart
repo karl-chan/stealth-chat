@@ -28,6 +28,38 @@ class ContactSettingsController extends GetxController {
     ever(this.contact, (c) => this.themeColour.value = Color(c.color));
   }
 
+  Future<void> showChangeNameDialog() async {
+    RxString changeNameErrorText = RxString(null);
+    TextEditingController controller =
+        TextEditingController(text: contact.value.name);
+    controller.addListener(() {
+      if (controller.text.isBlank) {
+        changeNameErrorText.value = 'Must not be blank!';
+      } else {
+        changeNameErrorText.nil();
+      }
+    });
+    await Get.defaultDialog(
+      title: 'Change display name',
+      content: Obx(() => TextField(
+            controller: controller,
+            decoration: InputDecoration(
+                labelText: 'Enter new name',
+                errorText: changeNameErrorText.value),
+          )),
+      textConfirm: 'Done',
+      confirmTextColor: Colors.white,
+      onConfirm: () async {
+        String newName = controller.text;
+        if (!newName.isBlank) {
+          await globals.db.contacts.changeName(contact.value.id, newName);
+          await Get.back();
+        }
+      },
+    );
+    controller.dispose();
+  }
+
   Future<void> showChangeColourDialog() async {
     await Get.defaultDialog(
       title: 'Pick a colour',
@@ -134,6 +166,11 @@ class ContactSettingsPage extends StatelessWidget {
             ),
             SliverList(
               delegate: SliverChildListDelegate.fixed([
+                ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Change name'),
+                  onTap: c.showChangeNameDialog,
+                ),
                 ListTile(
                   leading: Icon(Icons.color_lens, color: c.themeColour.value),
                   title: Text('Change colour'),

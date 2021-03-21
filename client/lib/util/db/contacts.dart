@@ -62,6 +62,11 @@ class ContactsDao extends DatabaseAccessor<AppDb> with _$ContactsDaoMixin {
     return (select(contacts)).watch();
   }
 
+  Future<void> changeName(String id, String name) {
+    return (update(contacts)..where((c) => c.id.equals(id)))
+        .write(ContactsCompanion(name: Value(name)));
+  }
+
   Future<void> changeColour(String id, Color colour) {
     return (update(contacts)..where((c) => c.id.equals(id)))
         .write(ContactsCompanion(color: Value(colour.value)));
