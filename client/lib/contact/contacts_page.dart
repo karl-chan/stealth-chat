@@ -71,7 +71,10 @@ class ContactsController extends GetxController {
         confirm: TextButton(
             onPressed: () async {
               final contactIds = this.selected.map(((c) => c.id)).toList();
-              await globals.db.contacts.deleteContacts(contactIds);
+              await Future.wait([
+                globals.db.contacts.deleteContacts(contactIds),
+                globals.db.chatMessages.deleteAllMessages(contactIds)
+              ]);
               await globals.socket.client.deleteContacts
                   .push(DeleteContactsMessage(contactIds: contactIds));
               Get.back();
