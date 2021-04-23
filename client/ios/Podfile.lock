@@ -1,4 +1,6 @@
 PODS:
+  - audio_session (0.0.1):
+    - Flutter
   - DKImagePickerController/Core (4.3.2):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -40,10 +42,10 @@ PODS:
   - Firebase/Messaging (7.3.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 7.3.0)
-  - firebase_core (1.0.1):
+  - firebase_core (1.0.4):
     - Firebase/CoreOnly (= 7.3.0)
     - Flutter
-  - firebase_messaging (9.0.0):
+  - firebase_messaging (9.1.2):
     - Firebase/Messaging (= 7.3.0)
     - firebase_core
     - Flutter
@@ -51,17 +53,17 @@ PODS:
     - FirebaseCoreDiagnostics (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/Logger (~> 7.0)
-  - FirebaseCoreDiagnostics (7.8.0):
-    - GoogleDataTransport (~> 8.0)
+  - FirebaseCoreDiagnostics (7.11.0):
+    - GoogleDataTransport (~> 8.4)
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/Logger (~> 7.0)
-    - nanopb (~> 2.30907.0)
-  - FirebaseInstallations (7.8.0):
+    - nanopb (~> 2.30908.0)
+  - FirebaseInstallations (7.11.0):
     - FirebaseCore (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
     - PromisesObjC (~> 1.2)
-  - FirebaseInstanceID (7.8.0):
+  - FirebaseInstanceID (7.11.0):
     - FirebaseCore (~> 7.0)
     - FirebaseInstallations (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
@@ -74,7 +76,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
   - Flutter (1.0.0)
-  - flutter_ffmpeg/min-lts (0.3.1):
+  - flutter_ffmpeg/min-lts (0.4.0):
     - Flutter
     - mobile-ffmpeg-min (= 4.4.LTS)
   - flutter_image_compress (0.0.1):
@@ -83,26 +85,26 @@ PODS:
     - SDWebImageWebPCoder
   - FMDB/SQLCipher (2.7.5):
     - SQLCipher
-  - GoogleDataTransport (8.3.0):
+  - GoogleDataTransport (8.4.0):
     - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30907.0)
+    - nanopb (~> 2.30908.0)
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.3.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.3.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.3.0):
+  - GoogleUtilities/Environment (7.3.1):
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/Logger (7.3.0):
+  - GoogleUtilities/Logger (7.3.1):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.3.0):
+  - GoogleUtilities/Network (7.3.1):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.3.0)"
-  - GoogleUtilities/Reachability (7.3.0):
+  - "GoogleUtilities/NSData+zlib (7.3.1)"
+  - GoogleUtilities/Reachability (7.3.1):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.3.0):
+  - GoogleUtilities/UserDefaults (7.3.1):
     - GoogleUtilities/Logger
   - image_picker (0.0.1):
     - Flutter
@@ -122,11 +124,11 @@ PODS:
   - Mantle/extobjc (2.1.6)
   - mobile-ffmpeg-min (4.4.LTS)
   - MTBBarcodeScanner (5.0.11)
-  - nanopb (2.30907.0):
-    - nanopb/decode (= 2.30907.0)
-    - nanopb/encode (= 2.30907.0)
-  - nanopb/decode (2.30907.0)
-  - nanopb/encode (2.30907.0)
+  - nanopb (2.30908.0):
+    - nanopb/decode (= 2.30908.0)
+    - nanopb/encode (= 2.30908.0)
+  - nanopb/decode (2.30908.0)
+  - nanopb/encode (2.30908.0)
   - open_file (0.0.1):
     - Flutter
   - package_info (0.0.1):
@@ -137,9 +139,9 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
-  - SDWebImage (5.10.4):
-    - SDWebImage/Core (= 5.10.4)
-  - SDWebImage/Core (5.10.4)
+  - SDWebImage (5.11.0):
+    - SDWebImage/Core (= 5.11.0)
+  - SDWebImage/Core (5.11.0)
   - SDWebImageWebPCoder (0.8.3):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
@@ -147,18 +149,18 @@ PODS:
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
-  - sqflite (0.0.1):
+  - sqflite (0.0.2):
     - Flutter
-    - FMDB/SQLCipher (~> 2.7.5)
+    - FMDB/SQLCipher (>= 2.7.5)
     - SQLCipher (~> 4.4.0)
   - sqflite_sqlcipher (0.0.1):
     - Flutter
     - FMDB/SQLCipher (~> 2.7.5)
-    - SQLCipher (= 4.4.1)
-  - SQLCipher (4.4.1):
-    - SQLCipher/standard (= 4.4.1)
-  - SQLCipher/common (4.4.1)
-  - SQLCipher/standard (4.4.1):
+    - SQLCipher (= 4.4.2)
+  - SQLCipher (4.4.2):
+    - SQLCipher/standard (= 4.4.2)
+  - SQLCipher/common (4.4.2)
+  - SQLCipher/standard (4.4.2):
     - SQLCipher/common
   - sqlite3 (3.32.3):
     - sqlite3/common (= 3.32.3)
@@ -187,6 +189,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - emoji_picker (from `.symlinks/plugins/emoji_picker/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -235,6 +238,8 @@ SPEC REPOS:
     - SwiftyGif
 
 EXTERNAL SOURCES:
+  audio_session:
+    :path: ".symlinks/plugins/audio_session/ios"
   emoji_picker:
     :path: ".symlinks/plugins/emoji_picker/ios"
   file_picker:
@@ -279,43 +284,44 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_compress/ios"
 
 SPEC CHECKSUMS:
+  audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   emoji_picker: 0e868059aa18f9473d234f3d0701fbd4d5fd310c
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   Firebase: 26223c695fe322633274198cb19dca8cb7e54416
-  firebase_core: d2e03528e2a600891f6f460b5e92932624480d1d
-  firebase_messaging: fc1811236795c2313b8339c35d31295b1cd8486f
+  firebase_core: 4be162b452c4af1f8257dc7a55003ceacec028ac
+  firebase_messaging: 4747d2f670b47152f973067db8504d2c8668902a
   FirebaseCore: 4d3c72622ce0e2106aaa07bb4b2935ba2c370972
-  FirebaseCoreDiagnostics: 066f996579cf097bdad3d7dc9a918d6b9e129c50
-  FirebaseInstallations: 7f7ed0e7e27fb51f57291e1876e2ddb1524126c1
-  FirebaseInstanceID: aaecc93b4528bbcafea12c477e26827719ca1183
+  FirebaseCoreDiagnostics: 68ad972f99206cef818230f3f3179d52ccfb7f8c
+  FirebaseInstallations: a58d4f72ec5861840b84df489f2668d970df558a
+  FirebaseInstanceID: ad5135045a498d7775903efd39762d2cdfa1be27
   FirebaseMessaging: 68d1bcb14880189558a8ae57167abe0b7e417232
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  flutter_ffmpeg: 582ed04161233e3955540e32e79fd30bcbec272d
+  flutter_ffmpeg: bc8496ea20331e486cd29a03a3c6ff10d32db565
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  GoogleDataTransport: b006084b73915a42c28a3466961a4edda3065da6
-  GoogleUtilities: abda45f519bc4073aa1171d2f8742108def46017
+  GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
+  GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   mobile-ffmpeg-min: dd2fd38da2788ccb7be5720fc308cb69160820e7
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  nanopb: 59221d7f958fb711001e6a449489542d92ae113e
+  nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
-  SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
+  SDWebImage: 7acbb57630ac7db4a495547fb73916ff3e432f6b
   SDWebImageWebPCoder: bbf46e29fb8d1980a78ad3d5e9b4123c77f10ebc
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
-  sqflite: 9b549b4a8b0a7f9ea465738a929b247655c8da27
-  sqflite_sqlcipher: cc00ecef02643b799857eb5c66c7074660aa658a
-  SQLCipher: 0b81a39b21247c559c52c3bd2234808e626c008b
+  sqflite: c0667567fd3e682beb9509976c08bc2325429aab
+  sqflite_sqlcipher: 70eb7fd8d4f0b0352d0bde5cf345b810737f54bb
+  SQLCipher: 1ab0b9486a77d141e72e92ff30681926ed79c07a
   sqlite3: 8f7d2078ae27778699a622a94b853285793422a2
   sqlite3_flutter_libs: 5651f8ff48e3b44d910863c4ea5916085b1b245f
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7

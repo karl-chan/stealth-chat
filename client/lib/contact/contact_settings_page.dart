@@ -36,7 +36,7 @@ class ContactSettingsController extends GetxController {
       if (controller.text.isBlank) {
         changeNameErrorText.value = 'Must not be blank!';
       } else {
-        changeNameErrorText.nil();
+        changeNameErrorText.value = null;
       }
     });
     await Get.defaultDialog(

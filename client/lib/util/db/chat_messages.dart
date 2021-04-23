@@ -121,4 +121,9 @@ class ChatMessagesDao extends DatabaseAccessor<AppDb>
           ..where((m) => m.timestamp.isIn(messages.map((m2) => m2.timestamp))))
         .go();
   }
+
+  Future<void> deleteAllMessages(List<String> contactIds) async {
+    return (delete(chatMessages)..where((m) => m.contactId.isIn(contactIds)))
+        .go();
+  }
 }

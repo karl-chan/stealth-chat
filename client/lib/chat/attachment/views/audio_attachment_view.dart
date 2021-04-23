@@ -15,10 +15,10 @@ class AudioAttachmentController extends GetxController {
 
   AudioAttachmentController(Attachment attachment) {
     loadAudio(attachment);
-    player.playbackStateStream.listen((state) {
-      isPlaying.value = state == AudioPlaybackState.playing;
+    player.playingStream.listen((boolean) {
+      isPlaying.value = boolean;
     });
-    player.getPositionStream().listen((duration) {
+    player.positionStream.listen((duration) {
       currentPositionMs.value = duration.inMilliseconds.toDouble();
     });
   }

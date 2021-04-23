@@ -71,7 +71,7 @@ $inviteLink''';
   }
 
   Future<void> showAcceptInviteTextDialog() async {
-    Rx<Uri> acceptInviteLink = Rx(null);
+    Rxn<Uri> acceptInviteLink = Rxn();
     TextEditingController controller = TextEditingController();
     controller.addListener(() {
       final uri = Uri.tryParse(controller.text.trim());
@@ -81,7 +81,7 @@ $inviteLink''';
           uri.path == Paths.ACCEPT_INVITE) {
         acceptInviteLink.value = uri;
       } else {
-        acceptInviteLink.nil();
+        acceptInviteLink.value = null;
       }
     });
     await Get.defaultDialog(
