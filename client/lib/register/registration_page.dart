@@ -70,7 +70,7 @@ class RegistrationController extends GetxController {
       setNameErrorText.value = 'Name must not be empty!';
       return false;
     } else {
-      setNameErrorText.nil();
+      setNameErrorText.value = null;
       return true;
     }
   }
@@ -82,7 +82,7 @@ class RegistrationController extends GetxController {
           'Password must be at least 6 characters long!';
       return false;
     } else {
-      setPasswordErrorText.nil();
+      setPasswordErrorText.value = null;
       return true;
     }
   }
@@ -94,7 +94,7 @@ class RegistrationController extends GetxController {
       confirmPasswordErrorText.value = 'Passwords do not match!';
       return false;
     } else {
-      confirmPasswordErrorText.nil();
+      confirmPasswordErrorText.value = null;
       return true;
     }
   }
@@ -113,7 +113,7 @@ class RegistrationController extends GetxController {
       await Auth.setUser(id, name, password, keys);
       await Auth.login(password);
 
-      registrationErrorText.nil();
+      registrationErrorText.value = null;
       isRegistering.value = false;
       return true;
     } catch (err) {

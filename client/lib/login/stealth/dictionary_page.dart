@@ -13,7 +13,7 @@ part 'dictionary_page.freezed.dart';
 class DictionaryController extends GetxController {
   final searchTermController = TextEditingController();
   final RxBool isSearching = false.obs;
-  final Rx<Search> currSearch = Rx(null);
+  final Rxn<Search> currSearch = Rxn(null);
 
   DictionaryController() : super();
 

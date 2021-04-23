@@ -10,7 +10,7 @@ import 'package:stealth_chat/chat/attachment/attachment.dart';
 import 'package:video_compress/video_compress.dart';
 
 class VideoAttachmentController extends GetxController {
-  final Rx<Uint8List> thumbnail = Rx(null);
+  final Rxn<Uint8List> thumbnail = Rxn();
 
   VideoAttachmentController(Attachment attachment) {
     loadThumbnail(attachment);
