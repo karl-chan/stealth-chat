@@ -4,6 +4,8 @@ Yet another (secure) chat app
 
 *Shhhhhh... even more than Signal!*
 
+![Demo](demo.gif)
+
 ## Why?
 
 - [x] Host your own server
