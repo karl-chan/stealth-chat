@@ -4,7 +4,7 @@ Yet another (secure) chat app
 
 *Shhhhhh... even more than Signal!*
 
-<img src="demo.gif" height="70vh"/>
+<img src="demo.gif" height="500px"/>
 
 ## Why?
 
