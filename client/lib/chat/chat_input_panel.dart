@@ -21,7 +21,7 @@ class ChatInputPanelController extends GetxController {
   final ImagePicker imagePicker = ImagePicker();
   final TextEditingController inputMessageController = TextEditingController();
   final RxBool canSend = false.obs;
-  final Rx<Attachment> inputAttachment = Rx(null);
+  final Rxn<Attachment> inputAttachment = Rxn();
   final RxBool showEmojiKeyboard;
   final SendCallback onSend;
 
@@ -30,12 +30,6 @@ class ChatInputPanelController extends GetxController {
         this.onSend = onSend {
     inputMessageController.addListener(updateCanSend);
     ever(this.inputAttachment, (_) => updateCanSend);
-  }
-
-  @override
-  void onClose() {
-    inputMessageController.dispose();
-    super.onClose();
   }
 
   void updateCanSend() {
@@ -119,7 +113,7 @@ class ChatInputPanelController extends GetxController {
   }
 
   void deleteAttachment() {
-    this.inputAttachment.nil();
+    inputAttachment.value = null;
   }
 
   Future<void> sendMessage() async {
@@ -127,7 +121,7 @@ class ChatInputPanelController extends GetxController {
     String message = inputMessageController.text;
     Attachment attachment = inputAttachment.value;
     inputMessageController.clear();
-    inputAttachment.nil();
+    inputAttachment.value = null;
 
     onSend(message, attachment);
   }
