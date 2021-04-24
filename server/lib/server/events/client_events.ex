@@ -1,6 +1,7 @@
 defmodule Server.Events.ClientEvents do
   use EnumType
   alias Server.Events.ServerEvents
+  alias Server.Events.PushEvents
   alias Phoenix.Socket
 
   defmodule AcceptInvite do
@@ -106,7 +107,7 @@ defmodule Server.Events.ClientEvents do
           eventTimestamp: System.os_time(:millisecond)
         })
 
-        ServerEvents.send_notification(contact_id)
+        PushEvents.push(contact_id, %PushEvents.NewMessageNotification{})
 
       %SendChatUpdate{
         contactId: contact_id,

@@ -1,6 +1,5 @@
 defmodule Server.Events.ServerEvents do
   use EnumType
-  alias Server.Caches.UserCache
   require Logger
 
   @coll "messages"
@@ -100,18 +99,6 @@ defmodule Server.Events.ServerEvents do
       fn _resume_token -> nil end,
       full_document: "updateLookup"
     )
-  end
-
-  def send_notification(user_id) do
-    {:ok, fcm_token} = UserCache.get_fcm_token(user_id)
-
-    msg = %{
-      "title" => "Dictionary",
-      "body" => "New content is available!"
-    }
-
-    n = Pigeon.FCM.Notification.new(fcm_token, msg)
-    Pigeon.FCM.push(n)
   end
 
   @dialyzer {:nowarn_function, create_index: 0}
