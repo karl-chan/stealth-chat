@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:stealth_chat/chat/attachment/attachment.dart';
+import 'package:stealth_chat/chat/badge/chat_date_badge.dart';
 import 'package:stealth_chat/chat/chat_input_panel.dart';
 import 'package:stealth_chat/chat/message/message_card.dart';
 import 'package:stealth_chat/chat/message/message_info_page.dart';
@@ -21,6 +23,9 @@ import 'package:tinycolor/tinycolor.dart';
 
 class ChatController extends GetxController {
   final GZipCodec gzip = GZipCodec();
+  final ItemPositionsListener itemPositionListener =
+      ItemPositionsListener.create();
+  final Rxn<ChatMessage> firstVisibleMessage = Rxn();
 
   final Globals globals;
   final Rx<Contact> contact;
@@ -44,6 +49,11 @@ class ChatController extends GetxController {
         this.selected = Set<ChatMessage>().obs {
     ever(this.contact, (c) => this.themeColour.value = Color(c.color));
     markAsReadWorker = ever(chatMessages, markIncomingMessagesAsRead);
+    this.itemPositionListener.itemPositions.addListener(() {
+      int firstVisibleIndex =
+          this.itemPositionListener.itemPositions.value.last.index;
+      this.firstVisibleMessage.value = this.chatMessages[firstVisibleIndex];
+    });
   }
 
   @override
@@ -209,61 +219,61 @@ class ChatPage extends StatelessWidget {
       ],
     );
 
-    final chatPanel = Obx(() => Container(
-          decoration: c.contact.value.wallpaper != null
-              ? BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.9), BlendMode.dstATop),
-                      image: MemoryImage(c.contact.value.wallpaper)))
-              : null,
-          child: ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              ChatMessage message = c.chatMessages.elementAt(index);
+    final chatPanel = Obx(() => Stack(
+          alignment: AlignmentDirectional.topCenter,
+          children: [
+            Container(
+              decoration: c.contact.value.wallpaper != null
+                  ? BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.9), BlendMode.dstATop),
+                          image: MemoryImage(c.contact.value.wallpaper)))
+                  : null,
+              child: ScrollablePositionedList.separated(
+                itemBuilder: (BuildContext context, int index) {
+                  ChatMessage message = c.chatMessages.elementAt(index);
 
-              return Obx(() => Container(
-                  foregroundDecoration: BoxDecoration(
-                      color: c.isSelected(message)
-                          ? Colors.lightBlueAccent.withAlpha(64)
-                          : null),
-                  child: FractionallySizedBox(
-                      alignment: message.isSelf
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      widthFactor: 0.7,
-                      child: MessageCard(
-                        message,
-                        colour: message.isSelf
-                            ? Colors.grey.shade200
-                            : c.themeColour.value,
-                        onTap: () => c.isMultiSelectMode.value
-                            ? c.toggleSelect(message)
-                            : null,
-                        onLongPress: () => c.enterMultiSelectMode(message),
-                      ).marginSymmetric(horizontal: 5))));
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);
-              ChatMessage message = c.chatMessages.elementAt(index);
-              if (prevMessage.timestamp.day != message.timestamp.day) {
-                return Center(
-                    child: Card(
-                            elevation: 2,
-                            color: Colors.lightBlueAccent.shade100,
-                            child: Text(
-                              DateTimeFormatter.formatDateShort(
-                                  message.timestamp),
-                              style: TextStyle(color: Colors.grey.shade700),
-                            ).paddingSymmetric(vertical: 5, horizontal: 10))
-                        .marginSymmetric(vertical: 20));
-              } else {
-                return const SizedBox(height: 0, width: 0);
-              }
-            },
-            itemCount: c.chatMessages.length,
-            reverse: true,
-          ),
+                  return Obx(() => Container(
+                      foregroundDecoration: BoxDecoration(
+                          color: c.isSelected(message)
+                              ? Colors.lightBlueAccent.withAlpha(64)
+                              : null),
+                      child: FractionallySizedBox(
+                          alignment: message.isSelf
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          widthFactor: 0.7,
+                          child: MessageCard(
+                            message,
+                            colour: message.isSelf
+                                ? Colors.grey.shade200
+                                : c.themeColour.value,
+                            onTap: () => c.isMultiSelectMode.value
+                                ? c.toggleSelect(message)
+                                : null,
+                            onLongPress: () => c.enterMultiSelectMode(message),
+                          ).marginSymmetric(horizontal: 5))));
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  ChatMessage prevMessage = c.chatMessages.elementAt(index + 1);
+                  ChatMessage message = c.chatMessages.elementAt(index);
+                  if (prevMessage.timestamp.day != message.timestamp.day) {
+                    return Center(child: ChatDateBadge(message));
+                  } else {
+                    return const SizedBox(height: 0, width: 0);
+                  }
+                },
+                itemCount: c.chatMessages.length,
+                itemPositionsListener: c.itemPositionListener,
+                reverse: true,
+              ),
+            ),
+            ...(c.firstVisibleMessage.value == null
+                ? []
+                : [ChatDateBadge(c.firstVisibleMessage.value)])
+          ],
         ));
 
     final archivedInputPanel = Text('This contact no longer accepts messages.');

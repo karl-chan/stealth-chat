@@ -51,6 +51,7 @@ dependencies:
   phoenix_socket:
   qr_code_scanner:
   qr_flutter:
+  scrollable_positioned_list:
   share:
   shared_preferences:
   steel_crypt:
